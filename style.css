@@ -80,3 +80,26 @@ table tr:hover {
 td {
   font-weight: bold;
 }
+
+.rule-banner {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.rule-banner a {
+  display: inline-block;
+  background: linear-gradient(135deg, #ff9800, #ff5722);
+  color: #fff;
+  padding: 12px 25px;
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: bold;
+  text-decoration: none;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+  transition: 0.2s;
+}
+
+.rule-banner a:hover {
+  transform: scale(1.05);
+  opacity: 0.9;
+}
