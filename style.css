@@ -2,49 +2,113 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>2026.4 トレード日誌</title>
-<link rel="stylesheet" href="style.css">
-
+<title>2026.4 トレード管理</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
+/* ===== ベース ===== */
 body {
-  background-color: #0d0f14; /* 少し青寄りにする */
-  color: #e6edf3;
-  font-family: Arial, sans-serif;
   margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial;
+  background: #0d1117;
+  color: #c9d1d9;
 }
 
-/* ヘッダー */
-.top-header {
-  background: #161b22;
-  padding: 15px;
-  text-align: center;
-  border-bottom: 1px solid #30363d;
-}
-
-/* カード（ここが最重要） */
-.card {
-  background: #161b22; /* ←黒やめる */
-  margin: 15px;
+/* ===== レイアウト ===== */
+.wrapper {
+  max-width: 1000px;
+  margin: auto;
   padding: 20px;
-  border-radius: 12px;
-  border: 1px solid #30363d; /* ←枠を見せる */
 }
 
-/* 見出し強調 */
-h2 {
+/* ===== ヘッダー ===== */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.header h1 {
+  font-size: 22px;
+  color: #e6edf3;
+}
+
+.rule-btn {
+  background: #21262d;
+  border: 1px solid #30363d;
+  padding: 6px 12px;
+  border-radius: 6px;
+  text-decoration: none;
   color: #58a6ff;
+}
+
+.rule-btn:hover {
+  background: #30363d;
+}
+
+/* ===== カード ===== */
+.card {
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 10px;
+  padding: 18px;
+  margin-bottom: 20px;
+}
+
+.card h2 {
+  font-size: 16px;
+  margin-bottom: 15px;
+  color: #58a6ff;
+}
+
+/* ===== サマリー（横並び） ===== */
+.summary {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.summary-box {
+  background: #0d1117;
+  padding: 12px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.summary-box span {
+  display: block;
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 5px;
+}
+
+/* ===== グラフ ===== */
+.chart-box {
+  position: relative;
+  height: 300px;
+}
+
+/* ===== ボタン ===== */
+.filter {
   margin-bottom: 10px;
 }
 
-/* リンク */
-a {
-  color: #58a6ff;
-  text-decoration: none;
+.filter button {
+  background: #21262d;
+  border: 1px solid #30363d;
+  color: #c9d1d9;
+  padding: 6px 10px;
+  margin-right: 5px;
+  border-radius: 6px;
+  cursor: pointer;
 }
 
-/* テーブル */
+.filter button:hover {
+  background: #30363d;
+}
+
+/* ===== テーブル ===== */
 table {
   width: 100%;
   border-collapse: collapse;
@@ -52,104 +116,103 @@ table {
 
 th {
   background: #21262d;
-  padding: 8px;
+  padding: 10px;
+  text-align: left;
 }
 
 td {
-  padding: 8px;
+  padding: 10px;
   border-bottom: 1px solid #30363d;
 }
 
-/* ホバー */
 tr:hover {
-  background: #21262d;
+  background: #161b22;
 }
 
-/* メモ */
-.memo {
-  font-size: 12px;
-  color: #c9d1d9; /* ←少し明るく */
-}
+/* ===== 色分け ===== */
+.plus { color:#3fb950; }
+.minus { color:#f85149; }
 
-/* ランク */
 .rank-s { color:#3fb950; }
 .rank-a { color:#58a6ff; }
 .rank-b { color:#d29922; }
 .rank-c { color:#f85149; }
 
-/* 強調 */
 .check {
-  font-weight: bold;
   color: #ff7b72;
+  font-weight: bold;
 }
 
-/* ボタン */
-.filter-btn {
-  margin: 5px;
-  padding: 6px 12px;
-  background: #21262d;
-  color: #e6edf3;
-  border: 1px solid #30363d;
-  border-radius: 6px;
-  cursor: pointer;
+/* メモ */
+.memo {
+  font-size: 12px;
+  color: #8b949e;
+  line-height: 1.4;
 }
 
-.filter-btn:hover {
-  background: #30363d;
+/* ===== リンク ===== */
+a {
+  color: #58a6ff;
+  text-decoration: none;
 }
 
-/* グラフ */
-#equityChart {
-  width: 100% !important;
-  height: 300px !important;
+/* ===== レスポンシブ ===== */
+@media (max-width: 768px) {
+  .summary {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
-
-canvas {
-  width: 100% !important;
-}
-
 </style>
 </head>
 
 <body>
 
-<header class="top-header">
+<div class="wrapper">
+
+<!-- ===== ヘッダー ===== -->
+<div class="header">
   <h1>📊 2026年4月 トレード管理</h1>
-  <a href="temp/my_rule5.html" class="rule-link">
-　📘 ルール確認（最重要）
-　<span class="mini">※エントリー前必須</span>
-  </a>
-</header>
+  <a href="temp/my_rule5.html" class="rule-btn">📘 ルール</a>
+</div>
 
-<section class="card">
+<!-- ===== サマリー ===== -->
+<div class="card">
   <h2>月間サマリー</h2>
-  <p>総Pips：<span id="totalPips">0</span></p>
-  <p>勝率：<span id="winRate">0%</span></p>
-  <p>平均Pips：<span id="avgPips">0</span></p>
-  <p>最大DD：<span id="maxDD">0</span></p>
-  <p>
-    S：<span id="countS">0</span>
-    A：<span id="countA">0</span>
-    B：<span id="countB">0</span>
-    C：<span id="countC">0</span>
+
+  <div class="summary">
+    <div class="summary-box">総Pips<span id="totalPips">0</span></div>
+    <div class="summary-box">勝率<span id="winRate">0%</span></div>
+    <div class="summary-box">平均<span id="avgPips">0</span></div>
+    <div class="summary-box">DD<span id="maxDD">0</span></div>
+  </div>
+
+  <p style="margin-top:10px;">
+    S:<span id="countS">0</span> /
+    A:<span id="countA">0</span> /
+    B:<span id="countB">0</span> /
+    C:<span id="countC">0</span>
   </p>
-</section>
+</div>
 
-<section class="card">
-  <h2>📈 資金推移（累積Pips）</h2>
-  <canvas id="equityChart"></canvas>
-</section>
+<!-- ===== グラフ ===== -->
+<div class="card">
+  <h2>📈 資金推移</h2>
+  <div class="chart-box">
+    <canvas id="equityChart"></canvas>
+  </div>
+</div>
 
-<section class="card">
-  <h2>フィルタ</h2>
-  <button class="filter-btn" onclick="filterTable('all')">全て</button>
-  <button class="filter-btn" onclick="filterTable('win')">勝ち</button>
-  <button class="filter-btn" onclick="filterTable('loss')">負け</button>
-  <button class="filter-btn" onclick="filterTable('check')">🚨のみ</button>
-</section>
+<!-- ===== テーブル ===== -->
+<div class="card">
+  <h2>トレード履歴</h2>
 
-<section class="card">
-  <h2>日別データ</h2>
+  <div class="filter">
+    <button onclick="filterTable('all')">全て</button>
+    <button onclick="filterTable('win')">勝ち</button>
+    <button onclick="filterTable('loss')">負け</button>
+    <button onclick="filterTable('check')">🚨</button>
+  </div>
+
   <table id="tradeTable">
     <tr>
       <th>日付</th>
@@ -158,16 +221,9 @@ canvas {
       <th>メモ</th>
     </tr>
   </table>
-</section>
+</div>
 
-<section class="card">
-  <h2>リンク</h2>
-  <ul>
-    <li><a href="nissi/20260401.html">2026-04-01</a></li>
-    <li><a href="nissi/20260402.html">2026-04-02</a></li>
-    <li><a href="temp/my_rule5.html">ルールページ</a></li>
-  </ul>
-</section>
+</div>
 
 <script>
 const files = [
@@ -190,9 +246,7 @@ async function loadData() {
     const res = await fetch(file);
     const text = await res.text();
 
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(text, "text/html");
-
+    const doc = new DOMParser().parseFromString(text, "text/html");
     const data = doc.querySelector(".trade-data");
     if (!data) continue;
 
@@ -210,14 +264,12 @@ async function loadData() {
 
     chartData.push({ date, pips });
 
-    const mark = check ? "🚨" : "";
-
     const row = document.createElement("tr");
     row.dataset.type = check ? "check" : (pips >= 0 ? "win" : "loss");
 
     row.innerHTML = `
       <td class="${check ? 'check' : ''}">
-        <a href="${file}">${date}</a> ${mark}
+        <a href="${file}">${date}</a> ${check ? "🚨" : ""}
       </td>
       <td class="${pips>=0?'plus':'minus'}">${pips}</td>
       <td class="rank-${rank.toLowerCase()}">${rank}</td>
@@ -234,30 +286,24 @@ async function loadData() {
   document.getElementById("countB").innerText = counts.B;
   document.getElementById("countC").innerText = counts.C;
 
-  let winRate = totalTrades > 0 ? (winTrades / totalTrades * 100).toFixed(1) : 0;
-  document.getElementById("winRate").innerText = winRate + "%";
+  document.getElementById("winRate").innerText =
+    (totalTrades ? (winTrades/totalTrades*100).toFixed(1) : 0) + "%";
 
-  let avgPips = totalTrades > 0 ? (totalPips / totalTrades).toFixed(1) : 0;
-  document.getElementById("avgPips").innerText = avgPips;
+  document.getElementById("avgPips").innerText =
+    (totalTrades ? (totalPips/totalTrades).toFixed(1) : 0);
 
-  drawEquityChart();
+  drawChart();
 }
 
-function drawEquityChart() {
-  const ctx = document.getElementById("equityChart");
+function drawChart() {
+  let cumulative = 0, peak = 0, maxDD = 0;
 
-  let cumulative = 0;
-  let peak = 0;
-  let maxDD = 0;
-
-  const labels = [];
-  const equity = [];
+  const labels = [], equity = [];
 
   chartData.forEach(d => {
     cumulative += d.pips;
     peak = Math.max(peak, cumulative);
-    const dd = peak - cumulative;
-    maxDD = Math.max(maxDD, dd);
+    maxDD = Math.max(maxDD, peak - cumulative);
 
     labels.push(d.date);
     equity.push(cumulative);
@@ -265,7 +311,7 @@ function drawEquityChart() {
 
   document.getElementById("maxDD").innerText = maxDD;
 
-  new Chart(ctx, {
+  new Chart(document.getElementById("equityChart"), {
     type: 'line',
     data: {
       labels: labels,
@@ -284,11 +330,8 @@ function drawEquityChart() {
 
 function filterTable(type) {
   tableRows.forEach(row => {
-    if (type === "all") {
-      row.style.display = "";
-    } else {
-      row.style.display = (row.dataset.type === type) ? "" : "none";
-    }
+    row.style.display =
+      type === "all" || row.dataset.type === type ? "" : "none";
   });
 }
 
