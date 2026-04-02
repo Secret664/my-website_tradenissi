@@ -9,60 +9,103 @@
 
 <style>
 body {
-  background-color: #111;
-  color: #eee;
+  background-color: #0d0f14; /* 少し青寄りにする */
+  color: #e6edf3;
   font-family: Arial, sans-serif;
   margin: 0;
 }
 
+/* ヘッダー */
 .top-header {
-  background: #000;
+  background: #161b22;
   padding: 15px;
   text-align: center;
+  border-bottom: 1px solid #30363d;
 }
 
+/* カード（ここが最重要） */
 .card {
-  background: #1a1a1a;
+  background: #161b22; /* ←黒やめる */
   margin: 15px;
-  padding: 15px;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.5);
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid #30363d; /* ←枠を見せる */
 }
 
+/* 見出し強調 */
+h2 {
+  color: #58a6ff;
+  margin-bottom: 10px;
+}
+
+/* リンク */
 a {
-  color: #66ccff;
+  color: #58a6ff;
   text-decoration: none;
 }
 
+/* テーブル */
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th {
+  background: #21262d;
+  padding: 8px;
+}
+
+td {
+  padding: 8px;
+  border-bottom: 1px solid #30363d;
+}
+
+/* ホバー */
+tr:hover {
+  background: #21262d;
+}
+
+/* メモ */
 .memo {
   font-size: 12px;
-  text-align: left;
+  color: #c9d1d9; /* ←少し明るく */
 }
 
-tr:hover {
-  background: #222;
-}
+/* ランク */
+.rank-s { color:#3fb950; }
+.rank-a { color:#58a6ff; }
+.rank-b { color:#d29922; }
+.rank-c { color:#f85149; }
 
-.rank-s { color:#66ff99; }
-.rank-a { color:#66ccff; }
-.rank-b { color:#ffff99; }
-.rank-c { color:#ff6666; }
-
+/* 強調 */
 .check {
   font-weight: bold;
+  color: #ff7b72;
 }
 
+/* ボタン */
 .filter-btn {
   margin: 5px;
-  padding: 5px 10px;
+  padding: 6px 12px;
+  background: #21262d;
+  color: #e6edf3;
+  border: 1px solid #30363d;
+  border-radius: 6px;
   cursor: pointer;
 }
 
+.filter-btn:hover {
+  background: #30363d;
+}
+
+/* グラフ */
+#equityChart {
+  width: 100% !important;
+  height: 300px !important;
+}
+
 canvas {
-  max-width: 600px;
-  max-height: 300px;
-  margin: auto;
-  display: block;
+  width: 100% !important;
 }
 
 </style>
