@@ -3,209 +3,113 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>2026.4 トレード日誌</title>
-<link rel="stylesheet" href="style.css">
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<title>📅 2026-04-02 トレード記録</title>
+<link rel="stylesheet" href="../style.css">
 </head>
 
 <body>
 
-<!-- ★ sticky固定ヘッダー。top-header-inner でカード幅に揃える -->
+<!--
+  インデックスページがここからデータを読み取る隠し要素
+  ★ 毎日この値を書き換える
+-->
+<div class="trade-data"
+  data-date="2026-04-02"
+  data-pips="-10"
+  data-rank="C"
+  data-comment="高値圏エントリー。1時間足が天井形成。横ばい・分配局面を見抜けなかった。"
+  data-check="false"
+  style="display:none">
+</div>
+
+<!-- sticky固定ヘッダー -->
 <header class="top-header">
   <div class="top-header-inner">
-    <h1>📊 2026年4月 トレード管理</h1>
-    <a href="temp/my_rule5.html" class="rule-link">
-      📘 ルールを確認する
-      <span class="mini">※エントリー前必須</span>
-    </a>
+    <h1>📅 2026-04-02 トレード記録</h1>
+    <a href="../index_tradenissi_2026_4.html" class="rule-link">← トップへ戻る</a>
   </div>
 </header>
 
-<!-- ★ page-wrap でカードをヘッダーと同じ幅・位置に揃える -->
 <div class="page-wrap">
 
-  <!-- サマリー -->
+  <!-- チャート画像: width:100% + max-width:100% で枠内に収める -->
   <section class="card">
-    <h2>月間サマリー</h2>
-    <div class="summary">
-      <div class="summary-box">総Pips<span id="totalPips">-</span></div>
-      <div class="summary-box">勝率<span id="winRate">-</span></div>
-      <div class="summary-box">平均<span id="avgPips">-</span></div>
-      <div class="summary-box">最大DD<span id="maxDD">-</span></div>
-    </div>
-    <p style="margin: 14px 0 0; font-size: 14px;">
-      S：<span id="countS" class="rank-s">0</span> &nbsp;
-      A：<span id="countA" class="rank-a">0</span> &nbsp;
-      B：<span id="countB" class="rank-b">0</span> &nbsp;
-      C：<span id="countC" class="rank-c">0</span>
-    </p>
+    <h2>📷 チャート</h2>
+    <img src="../images/20260402_day.png"  alt="日足チャート"
+         onerror="this.parentNode.removeChild(this)">
+    <img src="../images/20260402_hour.png" alt="1時間足チャート"
+         onerror="this.parentNode.removeChild(this)">
   </section>
 
-  <!-- グラフ -->
+  <!-- 分析チェック -->
   <section class="card">
-    <h2>📈 資金推移（累積Pips）</h2>
-    <div class="chart-box">
-      <canvas id="equityChart"></canvas>
-    </div>
-  </section>
-
-  <!-- トレード履歴 -->
-  <section class="card">
-    <h2>トレード履歴</h2>
-    <div class="filter">
-      <button onclick="filterTable('all', this)" class="active">全て</button>
-      <button onclick="filterTable('win', this)">勝ち</button>
-      <button onclick="filterTable('loss', this)">負け</button>
-      <button onclick="filterTable('check', this)">🚨 要注意</button>
-    </div>
-    <table id="tradeTable">
-      <tr>
-        <th>日付</th>
-        <th>Pips</th>
-        <th>評価</th>
-        <th>メモ</th>
-      </tr>
+    <h2>✅ 分析チェック</h2>
+    <table class="check-table">
+      <tr><th>項目</th><th>評価</th></tr>
+      <tr><td>日足5波認識</td>       <td style="color:#3fb950;">OK</td></tr>
+      <tr><td>1時間足 押し目形状</td> <td style="color:#f85149;">NG</td></tr>
+      <tr><td>ストキャス条件</td>     <td style="color:#3fb950;">OK</td></tr>
+      <tr><td>クロス</td>            <td style="color:#3fb950;">OK</td></tr>
+      <tr><td>足確定（2本前陽線）</td><td style="color:#3fb950;">OK</td></tr>
+      <tr><td>エントリー位置</td>     <td style="color:#f85149;">高値圏</td></tr>
+      <tr><td>損切り位置</td>         <td style="color:#3fb950;">適正</td></tr>
+      <tr><td>利確（10pips）</td>     <td style="color:#3fb950;">遵守</td></tr>
     </table>
   </section>
 
-  <!-- リンク -->
+  <!-- 結果 -->
   <section class="card">
-    <h2>リンク</h2>
-    <ul style="padding-left: 18px; line-height: 2;">
-      <li><a href="nissi/20260401.html">2026-04-01</a></li>
-      <li><a href="nissi/20260402.html">2026-04-02</a></li>
-      <li><a href="temp/my_rule5.html">📘 ルールページ</a></li>
+    <h2>📊 結果</h2>
+    <div class="result-row">
+      <div class="result-item">
+        <label>Pips</label>
+        <span class="value minus">-10</span>
+      </div>
+      <div class="result-item">
+        <label>総合評価</label>
+        <span class="value rank-c">C</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 感情ログ -->
+  <section class="card">
+    <h2>🧠 感情ログ</h2>
+    <ul class="emotion-log">
+      <li>エントリー前：<strong>2</strong>（やや焦り・取りに行った）</li>
+      <li>保有中：<strong>2</strong>（監視継続）</li>
+      <li>決済後：<strong>3</strong>（納得＋課題明確）</li>
     </ul>
   </section>
 
+  <!-- メモ: memo-block で広く・読みやすく -->
+  <section class="card">
+    <h2>📝 メモ</h2>
+    <div class="memo-block">
+      <p>
+        <strong>【今回の本質】</strong>
+        日足5波は合っていたが、1時間足が押し目ではなく天井形成だった。
+      </p>
+      <p>
+        <strong>【負けの原因】</strong>
+        ・高値圏でのエントリー<br>
+        ・浅い押し（エネルギー不足）<br>
+        ・横ばい＝分配局面を見抜けなかった
+      </p>
+      <p>
+        <strong>【改善ルール】</strong>
+        ・直近高値付近ではエントリーしない<br>
+        ・1時間足で横ばい・上ヒゲ増加は見送り<br>
+        ・「押し目＝再加速の形」以外は入らない
+      </p>
+      <p>
+        <strong>【一言】</strong>
+        タイミングは良い。場所を修正すれば勝てる。
+      </p>
+    </div>
+  </section>
+
 </div><!-- /.page-wrap -->
-
-<script>
-const files = [
-  "nissi/20260401.html",
-  "nissi/20260402.html"
-];
-
-let totalPips = 0;
-let counts = { S:0, A:0, B:0, C:0 };
-let totalTrades = 0;
-let winTrades = 0;
-const chartData = [];
-const tableRows = [];
-
-async function loadData() {
-  const table = document.getElementById("tradeTable");
-
-  for (let file of files) {
-    let res, text;
-    try {
-      res = await fetch(file);
-      if (!res.ok) continue;
-      text = await res.text();
-    } catch(e) {
-      console.warn("読み込み失敗:", file);
-      continue;
-    }
-
-    const doc = new DOMParser().parseFromString(text, "text/html");
-    const data = doc.querySelector(".trade-data");
-    if (!data) { console.warn(".trade-data なし:", file); continue; }
-
-    const date    = data.dataset.date;
-    const pips    = parseFloat(data.dataset.pips);
-    const rank    = data.dataset.rank;
-    const comment = data.dataset.comment || "";
-    const check   = data.dataset.check === "true";
-
-    totalTrades++;
-    totalPips += pips;
-    if (counts[rank] !== undefined) counts[rank]++;
-    if (rank === "S" || rank === "A") winTrades++;
-    chartData.push({ date, pips });
-
-    const row = document.createElement("tr");
-    row.dataset.type = check ? "check" : (pips >= 0 ? "win" : "loss");
-    row.innerHTML = `
-      <td class="${check ? 'check' : ''}">
-        <a href="${file}">${date}</a>${check ? " 🚨" : ""}
-      </td>
-      <td class="${pips >= 0 ? 'plus' : 'minus'}">${pips > 0 ? '+' : ''}${pips}</td>
-      <td class="rank-${rank.toLowerCase()}">${rank}</td>
-      <td class="memo">${comment}</td>
-    `;
-    table.appendChild(row);
-    tableRows.push(row);
-  }
-
-  const pipsEl = document.getElementById("totalPips");
-  pipsEl.innerText = (totalPips > 0 ? "+" : "") + totalPips;
-  pipsEl.style.color = totalPips >= 0 ? "#3fb950" : "#f85149";
-
-  document.getElementById("countS").innerText = counts.S;
-  document.getElementById("countA").innerText = counts.A;
-  document.getElementById("countB").innerText = counts.B;
-  document.getElementById("countC").innerText = counts.C;
-  document.getElementById("winRate").innerText =
-    (totalTrades ? (winTrades / totalTrades * 100).toFixed(1) : 0) + "%";
-  document.getElementById("avgPips").innerText =
-    (totalTrades ? (totalPips / totalTrades).toFixed(1) : 0);
-
-  drawChart();
-}
-
-function drawChart() {
-  let cumulative = 0, peak = 0, maxDD = 0;
-  const labels = [], equity = [], ptColors = [];
-
-  chartData.forEach(d => {
-    cumulative += d.pips;
-    peak = Math.max(peak, cumulative);
-    maxDD = Math.max(maxDD, peak - cumulative);
-    labels.push(d.date);
-    equity.push(cumulative);
-    ptColors.push(d.pips >= 0 ? "#3fb950" : "#f85149");
-  });
-
-  document.getElementById("maxDD").innerText = maxDD;
-
-  new Chart(document.getElementById("equityChart"), {
-    type: 'line',
-    data: {
-      labels,
-      datasets: [{
-        label: '累積Pips',
-        data: equity,
-        tension: 0.3,
-        borderColor: "#58a6ff",
-        backgroundColor: "rgba(88,166,255,0.08)",
-        fill: true,
-        pointBackgroundColor: ptColors,
-        pointRadius: 5,
-        pointHoverRadius: 7
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { labels: { color: "#8b949e" } } },
-      scales: {
-        x: { ticks: { color: "#8b949e" }, grid: { color: "#21262d" } },
-        y: { ticks: { color: "#8b949e" }, grid: { color: "#21262d" } }
-      }
-    }
-  });
-}
-
-function filterTable(type, btn) {
-  document.querySelectorAll('.filter button').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  tableRows.forEach(row => {
-    row.style.display = (type === "all" || row.dataset.type === type) ? "" : "none";
-  });
-}
-
-loadData();
-</script>
 
 </body>
 </html>
