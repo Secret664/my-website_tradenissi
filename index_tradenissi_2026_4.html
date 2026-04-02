@@ -22,62 +22,98 @@
 
 <div class="page-wrap">
 
-  <section class="card">
-    <h2>月間サマリー</h2>
+  <!-- ===== サマリー ===== -->
+  <div class="card">
+    <p class="card-title">Monthly Summary</p>
     <div class="summary">
-      <div class="summary-box">総Pips<span id="totalPips">-</span></div>
-      <div class="summary-box">勝率<span id="winRate">-</span></div>
-      <div class="summary-box">平均<span id="avgPips">-</span></div>
-      <div class="summary-box">最大DD<span id="maxDD">-</span></div>
+      <div class="summary-box">
+        <span class="label">総 Pips</span>
+        <span class="value" id="totalPips">—</span>
+      </div>
+      <div class="summary-box">
+        <span class="label">勝率</span>
+        <span class="value" id="winRate">—</span>
+      </div>
+      <div class="summary-box">
+        <span class="label">平均 Pips</span>
+        <span class="value" id="avgPips">—</span>
+      </div>
+      <div class="summary-box">
+        <span class="label">最大 DD</span>
+        <span class="value" id="maxDD">—</span>
+      </div>
     </div>
-    <p style="margin: 14px 0 0; font-size: 14px;">
-      S：<span id="countS" class="rank-s">0</span> &nbsp;
-      A：<span id="countA" class="rank-a">0</span> &nbsp;
-      B：<span id="countB" class="rank-b">0</span> &nbsp;
-      C：<span id="countC" class="rank-c">0</span>
-    </p>
-  </section>
+    <div class="rank-row">
+      <span class="rank-badge s">S <span id="countS">0</span></span>
+      <span class="rank-badge a">A <span id="countA">0</span></span>
+      <span class="rank-badge b">B <span id="countB">0</span></span>
+      <span class="rank-badge c">C <span id="countC">0</span></span>
+    </div>
+  </div>
 
-  <section class="card">
-    <h2>📈 資金推移（累積Pips）</h2>
+  <!-- ===== 資金推移グラフ ===== -->
+  <div class="card">
+    <p class="card-title">📈 資金推移（累積 Pips）</p>
     <div class="chart-box">
       <canvas id="equityChart"></canvas>
     </div>
-  </section>
+  </div>
 
-  <section class="card">
-    <h2>トレード履歴</h2>
-    <div class="filter">
-      <button onclick="filterTable('all', this)" class="active">全て</button>
-      <button onclick="filterTable('win', this)">勝ち</button>
-      <button onclick="filterTable('loss', this)">負け</button>
-      <button onclick="filterTable('check', this)">🚨 要注意</button>
+  <!-- ===== トレード履歴 ===== -->
+  <div class="card">
+    <p class="card-title">Trade History</p>
+
+    <!--
+      フィルター: ボタンをクリックして表示行を絞り込めます
+      ● 全て / 勝ち（S・A評価） / 負け（B・C評価） / 🚨 要チェック
+    -->
+    <div class="filter-bar">
+      <span class="filter-label">Filter</span>
+      <button onclick="filterTable('all',  this)" class="active">● 全て</button>
+      <button onclick="filterTable('win',  this)">✅ 勝ち</button>
+      <button onclick="filterTable('loss', this)">❌ 負け</button>
+      <button onclick="filterTable('check',this)">🚨 要注意</button>
+      <span class="filter-hint">← クリックで絞り込み</span>
     </div>
-    <table id="tradeTable">
-      <tr>
-        <th>日付</th><th>Pips</th><th>評価</th><th>メモ</th>
-      </tr>
-    </table>
-  </section>
 
-  <section class="card">
-    <h2>リンク</h2>
-    <ul style="padding-left: 18px; line-height: 2.2;">
-      <li><a href="nissi/20260401.html">2026-04-01</a></li>
-      <li><a href="nissi/20260402.html">2026-04-02</a></li>
-      <li><a href="nissi/20260403.html">2026-04-03</a></li>
-      <li><a href="temp/my_rule5.html">📘 ルールページ</a></li>
-    </ul>
-  </section>
+    <div class="table-wrap">
+      <table id="tradeTable">
+        <thead>
+          <tr>
+            <th>日付 🔗</th>
+            <th>通貨ペア</th>
+            <th>方向</th>
+            <th>Pips</th>
+            <th>評価</th>
+            <th>時間帯</th>
+            <th>メモ</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+    <p style="margin:12px 0 0; font-size:11px; color:var(--text-muted);">
+      🔗 日付をクリックすると詳細ページへ移動します
+    </p>
+  </div>
 
-</div>
+</div><!-- /.page-wrap -->
 
 <script>
-const files = [
-  "nissi/20260401.html",
-  "nissi/20260402.html",
-  "nissi/20260403.html"
-];
+// ★ nissi/ フォルダを GitHub API で自動スキャン
+// → 新しい日誌ファイルを追加するだけで自動反映（この配列の編集は不要）
+const REPO = "secret664/my-website_tradenissi";
+
+async function getFiles() {
+  const res = await fetch(
+    `https://api.github.com/repos/${REPO}/contents/nissi`
+  );
+  const items = await res.json();
+  return items
+    .filter(f => f.name.match(/^\d{8}\.html$/))   // 20260401.html 形式のみ
+    .sort((a, b) => a.name.localeCompare(b.name))  // 日付昇順
+    .map(f => `nissi/${f.name}`);
+}
 
 let totalPips = 0;
 let counts = { S:0, A:0, B:0, C:0 };
@@ -85,7 +121,8 @@ let totalTrades = 0, winTrades = 0;
 const chartData = [], tableRows = [];
 
 async function loadData() {
-  const table = document.getElementById("tradeTable");
+  const files = await getFiles();  // ← APIでファイル一覧を取得
+  const tbody = document.getElementById("tableBody");
 
   for (let file of files) {
     let res, text;
@@ -100,11 +137,13 @@ async function loadData() {
     if (!data) { console.warn(".trade-data なし:", file); continue; }
 
     const date    = data.dataset.date;
-    
     const pips    = parseFloat(data.dataset.pips);
     const rank    = data.dataset.rank;
     const comment = data.dataset.comment || "";
     const check   = data.dataset.check === "true";
+    const pair    = data.dataset.pair    || "—";
+    const dir     = data.dataset.dir     || "—";
+    const session = data.dataset.session || "—";
 
     totalTrades++;
     totalPips += pips;
@@ -112,28 +151,35 @@ async function loadData() {
     if (rank === "S" || rank === "A") winTrades++;
     chartData.push({ date, pips });
 
+    const dirClass = dir === "買い" ? "plus" : dir === "売り" ? "minus" : "neutral";
+
     const row = document.createElement("tr");
     row.dataset.type = check ? "check" : (pips >= 0 ? "win" : "loss");
     row.innerHTML = `
       <td class="${check ? 'check' : ''}">
-        <a href="${file}">${date}</a>${check ? " 🚨" : ""}
+        <a href="${file}" style="font-weight:700;">${date}</a>${check ? " 🚨" : ""}
       </td>
+      <td style="font-weight:600; color:var(--text-primary);">${pair}</td>
+      <td class="${dirClass}">${dir}</td>
       <td class="${pips >= 0 ? 'plus' : 'minus'}">${pips > 0 ? '+' : ''}${pips}</td>
       <td class="rank-${rank.toLowerCase()}">${rank}</td>
+      <td style="font-size:12px; color:var(--text-muted);">${session}</td>
       <td class="memo">${comment}</td>
     `;
-    table.appendChild(row);
+    tbody.appendChild(row);
     tableRows.push(row);
   }
 
+  // サマリー
   const pipsEl = document.getElementById("totalPips");
   pipsEl.innerText = (totalPips > 0 ? "+" : "") + totalPips;
-  pipsEl.style.color = totalPips >= 0 ? "#3fb950" : "#f85149";
+  pipsEl.style.color = totalPips >= 0 ? "var(--green)" : "var(--red)";
 
   document.getElementById("countS").innerText = counts.S;
   document.getElementById("countA").innerText = counts.A;
   document.getElementById("countB").innerText = counts.B;
   document.getElementById("countC").innerText = counts.C;
+
   document.getElementById("winRate").innerText =
     (totalTrades ? (winTrades / totalTrades * 100).toFixed(1) : 0) + "%";
   document.getElementById("avgPips").innerText =
@@ -151,11 +197,11 @@ function drawChart() {
     peak = Math.max(peak, cumulative);
     maxDD = Math.max(maxDD, peak - cumulative);
     labels.push(d.date);
-    equity.push(cumulative);
+    equity.push(+cumulative.toFixed(1));
     ptColors.push(d.pips >= 0 ? "#3fb950" : "#f85149");
   });
 
-  document.getElementById("maxDD").innerText = maxDD;
+  document.getElementById("maxDD").innerText = maxDD.toFixed(1);
 
   new Chart(document.getElementById("equityChart"), {
     type: 'line',
@@ -164,29 +210,46 @@ function drawChart() {
       datasets: [{
         label: '累積Pips',
         data: equity,
-        tension: 0.3,
+        tension: 0.4,
         borderColor: "#58a6ff",
-        backgroundColor: "rgba(88,166,255,0.08)",
+        backgroundColor: "rgba(88,166,255,0.07)",
         fill: true,
         pointBackgroundColor: ptColors,
-        pointRadius: 5,
-        pointHoverRadius: 7
+        pointBorderColor: "#0d1117",
+        pointBorderWidth: 2,
+        pointRadius: 6,
+        pointHoverRadius: 8
       }]
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      plugins: { legend: { labels: { color: "#8b949e" } } },
+      plugins: {
+        legend: { labels: { color: "#8b949e", font: { size: 12 } } },
+        tooltip: {
+          backgroundColor: "#161b22",
+          borderColor: "#30363d",
+          borderWidth: 1,
+          titleColor: "#e6edf3",
+          bodyColor: "#8b949e"
+        }
+      },
       scales: {
-        x: { ticks: { color: "#8b949e" }, grid: { color: "#21262d" } },
-        y: { ticks: { color: "#8b949e" }, grid: { color: "#21262d" } }
+        x: {
+          ticks: { color: "#8b949e", font: { size: 12 } },
+          grid:  { color: "#1c2128" }
+        },
+        y: {
+          ticks: { color: "#8b949e", font: { size: 12 } },
+          grid:  { color: "#1c2128" }
+        }
       }
     }
   });
 }
 
 function filterTable(type, btn) {
-  document.querySelectorAll('.filter button').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.filter-bar button').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   tableRows.forEach(row => {
     row.style.display = (type === "all" || row.dataset.type === type) ? "" : "none";
