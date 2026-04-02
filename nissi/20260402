@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>2026-04-02 トレード記録</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+
+<body>
+
+<header>
+  <h1>📅 2026-04-02 トレード記録</h1>
+  <a href="../index_tradenissi_2026_4.html">← トップへ戻る</a>
+</header>
+
+<!-- ★ 自動集計用データ -->
+<div class="trade-data"
+     data-date="2026-04-02"
+     data-pips="-10"
+     data-rank="C">
+</div>
+
+<section class="card">
+  <h2>チャート</h2>
+  <img src="../images/20260402_day.png">
+  <img src="../images/20260402_hour.png">
+</section>
+
+<section class="card">
+  <h2>分析チェック</h2>
+  <table>
+    <tr><th>項目</th><th>評価</th></tr>
+    <tr><td>日足5波認識</td><td class="ok">OK</td></tr>
+    <tr><td>1時間足 押し目形状</td><td class="ng">NG</td></tr>
+    <tr><td>ストキャス条件</td><td class="ok">OK</td></tr>
+    <tr><td>クロス</td><td class="ok">OK</td></tr>
+    <tr><td>足確定（2本前陽線）</td><td class="ok">OK</td></tr>
+    <tr><td>エントリー位置</td><td class="ng">高値圏</td></tr>
+    <tr><td>損切り位置</td><td class="ok">適正</td></tr>
+    <tr><td>利確（10pips）</td><td class="ok">遵守</td></tr>
+  </table>
+</section>
+
+<section class="card">
+  <h2>結果</h2>
+  <p>Pips：<span class="minus">-10</span></p>
+  <p>総合評価：<span class="rank-c">C</span></p>
+</section>
+
+<section class="card">
+  <h2>感情ログ</h2>
+  <ul>
+    <li>エントリー前：2（やや焦り・取りに行った）</li>
+    <li>保有中：2（監視継続）</li>
+    <li>決済後：3（納得＋課題明確）</li>
+  </ul>
+</section>
+
+<section class="card">
+  <h2>メモ</h2>
+  <textarea>
+【今回の本質】
+日足5波は合っていたが、1時間足が押し目ではなく天井形成だった。
+
+【負けの原因】
+・高値圏でのエントリー
+・浅い押し（エネルギー不足）
+・横ばい＝分配局面を見抜けなかった
+
+【改善ルール】
+・直近高値付近ではエントリーしない
+・1時間足で横ばい・上ヒゲ増加は見送り
+・「押し目＝再加速の形」以外は入らない
+
+【一言】
+タイミングは良い。場所を修正すれば勝てる。
+  </textarea>
+</section>
+
+</body>
+</html>
