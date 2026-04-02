@@ -4,6 +4,29 @@
 <meta charset="UTF-8">
 <title>2026.4 トレード日誌</title>
 <link rel="stylesheet" href="style.css">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+.memo {
+  font-size: 12px;
+  text-align: left;
+}
+
+tr:hover {
+  background: #222;
+}
+
+.rank-s { color:#66ff99; }
+.rank-a { color:#66ccff; }
+.rank-b { color:#ffff99; }
+.rank-c { color:#ff6666; }
+
+.check {
+  font-weight: bold;
+}
+</style>
+
 </head>
 
 <body>
@@ -30,12 +53,18 @@
 </section>
 
 <section class="card">
+  <h2>📈 Pips推移</h2>
+  <canvas id="pipsChart"></canvas>
+</section>
+
+<section class="card">
   <h2>日別データ</h2>
   <table id="tradeTable">
     <tr>
       <th>日付</th>
       <th>Pips</th>
       <th>評価</th>
+      <th>メモ</th>
     </tr>
   </table>
 </section>
@@ -44,6 +73,7 @@
   <h2>リンク</h2>
   <ul>
     <li><a href="nissi/20260401.html">2026-04-01</a></li>
+    <li><a href="nissi/20260402.html">2026-04-02</a></li>
     <li><a href="temp/my_rule5.html">ルールページ</a></li>
   </ul>
 </section>
@@ -51,13 +81,15 @@
 <script>
 const files = [
   "nissi/20260401.html",
-  // ここに日誌を追加
+  "nissi/20260402.html"
 ];
 
 let totalPips = 0;
 let counts = { S:0, A:0, B:0, C:0 };
 let totalTrades = 0;
 let winTrades = 0;
+
+const chartData = [];
 
 async function loadData() {
   const table = document.getElementById("tradeTable");
@@ -75,27 +107,33 @@ async function loadData() {
     const date = data.dataset.date;
     const pips = parseFloat(data.dataset.pips);
     const rank = data.dataset.rank;
+    const comment = data.dataset.comment || "";
+    const check = data.dataset.check === "true";
 
     totalTrades++;
     totalPips += pips;
 
     if (counts[rank] !== undefined) counts[rank]++;
 
-    if (rank === "S" || rank === "A") {
-      winTrades++;
-    }
+    if (rank === "S" || rank === "A") winTrades++;
+
+    chartData.push({ date, pips });
+
+    const mark = check ? "🚨" : "";
 
     const row = document.createElement("tr");
     row.innerHTML = `
-      <td><a href="${file}">${date}</a></td>
+      <td class="${check ? 'check' : ''}">
+        <a href="${file}">${date}</a> ${mark}
+      </td>
       <td class="${pips>=0?'plus':'minus'}">${pips}</td>
       <td class="rank-${rank.toLowerCase()}">${rank}</td>
+      <td class="memo">${comment}</td>
     `;
     table.appendChild(row);
   }
 
   document.getElementById("totalPips").innerText = totalPips;
-
   document.getElementById("countS").innerText = counts.S;
   document.getElementById("countA").innerText = counts.A;
   document.getElementById("countB").innerText = counts.B;
@@ -106,6 +144,27 @@ async function loadData() {
 
   let avgPips = totalTrades > 0 ? (totalPips / totalTrades).toFixed(1) : 0;
   document.getElementById("avgPips").innerText = avgPips;
+
+  drawChart();
+}
+
+function drawChart() {
+  const ctx = document.getElementById("pipsChart");
+
+  const labels = chartData.map(d => d.date);
+  const data = chartData.map(d => d.pips);
+
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'Pips推移',
+        data: data,
+        tension: 0.3
+      }]
+    }
+  });
 }
 
 loadData();
