@@ -1,0 +1,605 @@
+/* ============================================
+   TRADE JOURNAL — DESIGN SYSTEM
+   ============================================ */
+
+/* ===== リセット & ベース ===== */
+*, *::before, *::after { box-sizing: border-box; }
+
+:root {
+  --bg-base:    #0d1117;
+  --bg-card:    #161b22;
+  --bg-subtle:  #1c2128;
+  --bg-hover:   #21262d;
+  --border:     #30363d;
+  --border-sub: #21262d;
+
+  --text-primary:   #e6edf3;
+  --text-secondary: #c9d1d9;
+  --text-muted:     #8b949e;
+
+  --blue:   #58a6ff;
+  --green:  #3fb950;
+  --yellow: #d29922;
+  --red:    #f85149;
+  --orange: #ff7b72;
+  --purple: #bc8cff;
+
+  --radius:    10px;
+  --radius-sm: 6px;
+  --shadow:    0 2px 12px rgba(0,0,0,.4);
+}
+
+body {
+  margin: 0;
+  background: var(--bg-base);
+  color: var(--text-secondary);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* ===== スクロールバー ===== */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-base); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+/* ===== リンク ===== */
+a { color: var(--blue); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ============================================
+   STICKY HEADER
+   ============================================ */
+.top-header {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  background: rgba(22,27,34,.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+
+.top-header-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 0 28px;
+  height: 58px;
+}
+
+.top-header h1 {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+  letter-spacing: -.01em;
+  white-space: nowrap;
+}
+
+.rule-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-hover);
+  border: 1px solid var(--border);
+  padding: 6px 14px;
+  border-radius: var(--radius-sm);
+  color: var(--blue);
+  font-size: 13px;
+  transition: background .15s;
+  flex-shrink: 0;
+}
+.rule-link:hover { background: var(--border); text-decoration: none; }
+.mini { font-size: 10px; color: var(--text-muted); display: block; }
+
+/* ============================================
+   LAYOUT
+   ============================================ */
+.page-wrap {
+  width: 100%;
+  padding: 24px 28px 60px;
+}
+
+/* ============================================
+   CARDS
+   ============================================ */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 22px;
+  margin-top: 20px;
+  box-shadow: var(--shadow);
+}
+
+.card-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  margin: 0 0 16px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border-sub);
+}
+
+/* ============================================
+   SUMMARY GRID
+   ============================================ */
+.summary {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.summary-box {
+  background: var(--bg-base);
+  border: 1px solid var(--border-sub);
+  padding: 14px 12px;
+  border-radius: var(--radius-sm);
+  text-align: center;
+}
+
+.summary-box .label {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+
+.summary-box .value {
+  display: block;
+  font-size: 22px;
+  font-weight: 800;
+  margin-top: 4px;
+  color: var(--text-primary);
+  letter-spacing: -.02em;
+}
+
+.rank-row {
+  display: flex;
+  gap: 16px;
+  font-size: 13px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-sub);
+}
+
+.rank-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.rank-badge.s { background: rgba(63,185,80,.12);  color: var(--green); }
+.rank-badge.a { background: rgba(88,166,255,.12); color: var(--blue);  }
+.rank-badge.b { background: rgba(210,153,34,.12); color: var(--yellow);}
+.rank-badge.c { background: rgba(248,81,73,.12);  color: var(--red);   }
+
+/* ============================================
+   CHART
+   ============================================ */
+.chart-box {
+  position: relative;
+  height: 280px;
+}
+
+/* ============================================
+   FILTER BAR
+   ============================================ */
+.filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.filter-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  margin-right: 4px;
+}
+
+.filter-bar button {
+  background: var(--bg-hover);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  padding: 4px 12px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  transition: all .15s;
+}
+
+.filter-bar button:hover { border-color: var(--blue); color: var(--blue); }
+
+.filter-bar button.active {
+  background: rgba(88,166,255,.15);
+  border-color: var(--blue);
+  color: var(--blue);
+}
+
+.filter-bar .filter-hint {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* ============================================
+   TRADE TABLE
+   ============================================ */
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 600px;
+}
+
+thead th {
+  background: var(--bg-hover);
+  padding: 9px 12px;
+  text-align: left;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+tbody td {
+  padding: 11px 12px;
+  border-bottom: 1px solid var(--border-sub);
+  font-size: 13px;
+  vertical-align: middle;
+}
+
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:hover td { background: var(--bg-subtle); }
+
+/* ============================================
+   COLOR UTILS
+   ============================================ */
+.plus  { color: var(--green); font-weight: 700; }
+.minus { color: var(--red);   font-weight: 700; }
+.neutral { color: var(--text-muted); }
+
+.rank-s { color: var(--green);  font-weight: 700; }
+.rank-a { color: var(--blue);   font-weight: 700; }
+.rank-b { color: var(--yellow); font-weight: 700; }
+.rank-c { color: var(--red);    font-weight: 700; }
+
+.check { color: var(--orange); font-weight: 700; }
+
+.text-ok  { color: var(--green); font-weight: 700; }
+.text-ng  { color: var(--red);   font-weight: 700; }
+.text-warn{ color: var(--yellow);font-weight: 700; }
+
+.memo {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  max-width: 360px;
+}
+
+/* ============================================
+   NISSI PAGE — TRADE INFO BAR
+   ============================================ */
+.trade-info-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  padding: 16px 20px;
+  background: var(--bg-base);
+  border: 1px solid var(--border-sub);
+  border-radius: var(--radius-sm);
+  margin-bottom: 0;
+}
+
+.trade-info-bar .info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.trade-info-bar .info-label {
+  font-size: 10px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+
+.trade-info-bar .info-value {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.trade-info-bar .info-value.buy  { color: var(--blue); }
+.trade-info-bar .info-value.sell { color: var(--red);  }
+.trade-info-bar .sep {
+  width: 1px;
+  background: var(--border);
+  align-self: stretch;
+  margin: 4px 0;
+}
+
+/* ============================================
+   NISSI PAGE — CHECK TABLE
+   ============================================ */
+.check-table thead th { min-width: 120px; }
+.check-table tbody td:first-child { color: var(--text-secondary); }
+
+/* ============================================
+   NISSI PAGE — RESULT
+   ============================================ */
+.result-row {
+  display: flex;
+  gap: 36px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  padding: 6px 0;
+}
+
+.result-item label {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.result-item .big-value {
+  font-size: 36px;
+  font-weight: 800;
+  letter-spacing: -.03em;
+  line-height: 1;
+}
+
+/* ============================================
+   RANK LEGEND
+   ============================================ */
+.rank-legend {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.rank-legend-item {
+  background: var(--bg-base);
+  border: 1px solid var(--border-sub);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+}
+
+.rank-legend-item .rank-head {
+  font-size: 18px;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.rank-legend-item .rank-desc {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* ============================================
+   NISSI PAGE — EMOTION LOG
+   ============================================ */
+.emotion-log {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.emotion-log li {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 10px 4px;
+  border-bottom: 1px solid var(--border-sub);
+  font-size: 14px;
+}
+
+.emotion-log li:last-child { border-bottom: none; }
+
+.emotion-log .phase {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  min-width: 90px;
+  flex-shrink: 0;
+}
+
+.emotion-log .score {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--blue);
+  min-width: 24px;
+}
+
+.emotion-log .note {
+  color: var(--text-muted);
+  font-size: 13px;
+}
+
+/* ============================================
+   NISSI PAGE — MEMO
+   ============================================ */
+.memo-block {
+  font-size: 14px;
+  line-height: 1.9;
+  color: var(--text-secondary);
+}
+
+.memo-block section {
+  margin-bottom: 20px;
+}
+
+.memo-block section:last-child { margin-bottom: 0; }
+
+.memo-block .memo-heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--blue);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border-sub);
+}
+
+.memo-block p {
+  margin: 0;
+  padding-left: 4px;
+}
+
+/* ============================================
+   NISSI PAGE — CHART GRID
+   ============================================ */
+.chart-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.chart-grid .chart-item label {
+  display: block;
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  margin-bottom: 8px;
+}
+
+.chart-grid img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  object-fit: contain;
+}
+
+/* ============================================
+   RULE PAGE
+   ============================================ */
+.rule-wrap {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0 28px 60px;
+}
+
+.rule-section {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px 24px;
+  margin-top: 20px;
+}
+
+.rule-section h2 {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 14px 0;
+  padding-left: 12px;
+  border-left: 3px solid var(--blue);
+}
+
+.rule-section h3 {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin: 16px 0 8px;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+
+.rule-section ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.rule-section li {
+  margin-bottom: 6px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.rule-section .good  { color: var(--green); }
+.rule-section .warn  { color: var(--yellow); }
+.rule-section .bad   { color: var(--red); }
+
+.flow-box {
+  background: var(--bg-base);
+  border: 1px solid var(--border-sub);
+  border-radius: var(--radius-sm);
+  padding: 16px 20px;
+  font-size: 14px;
+  line-height: 2;
+  color: var(--text-secondary);
+}
+
+.highlight-text {
+  font-size: 22px;
+  font-weight: 800;
+  text-align: center;
+  color: var(--blue);
+  letter-spacing: .01em;
+  line-height: 1.6;
+  padding: 10px 0;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 768px) {
+  .summary { grid-template-columns: repeat(2, 1fr); }
+  .rank-legend { grid-template-columns: repeat(2, 1fr); }
+  .chart-grid { grid-template-columns: 1fr; }
+  .trade-info-bar .sep { display: none; }
+
+  .top-header-inner {
+    padding: 0 16px;
+    height: auto;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .page-wrap { padding: 16px 16px 60px; }
+  .rule-wrap  { padding: 16px 16px 60px; }
+}

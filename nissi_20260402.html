@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📅 2026-04-02 トレード記録</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+
+<body>
+
+<!--
+  ★ インデックスページが読み取る隠しデータ要素
+    data-pair    : 通貨ペア
+    data-dir     : 買い / 売り
+    data-session : 市場時間帯
+    data-pips    : 損益 pips
+    data-rank    : S / A / B / C
+    data-comment : 一行メモ（インデックス表示用）
+    data-check   : true = 🚨 要注意フラグ
+-->
+<div class="trade-data"
+  data-date    = "2026-04-02"
+  data-pair    = "AUD/CAD"
+  data-dir     = "買い"
+  data-session = "NY終盤"
+  data-pips    = "-20"
+  data-rank    = "C"
+  data-comment = "高値圏エントリー。1時間足が天井形成。横ばい・分配局面を見抜けなかった。"
+  data-check   = "false"
+  style="display:none">
+</div>
+
+<!-- ===== STICKY HEADER ===== -->
+<header class="top-header">
+  <div class="top-header-inner">
+    <h1>📅 2026-04-02 &nbsp;<span style="color:var(--text-muted);font-weight:400;font-size:14px;">AUD/CAD</span></h1>
+    <a href="../index_tradenissi_2026_4.html" class="rule-link">← トップへ戻る</a>
+  </div>
+</header>
+
+<div class="page-wrap">
+
+  <!-- ===== TRADE INFO BAR ===== -->
+  <div class="card" style="padding:0;">
+    <div class="trade-info-bar">
+      <div class="info-item">
+        <span class="info-label">通貨ペア</span>
+        <span class="info-value">AUD/CAD</span>
+      </div>
+      <div class="sep"></div>
+      <div class="info-item">
+        <span class="info-label">方向</span>
+        <span class="info-value buy">▲ 買い</span>
+      </div>
+      <div class="sep"></div>
+      <div class="info-item">
+        <span class="info-label">ロット</span>
+        <span class="info-value">0.01</span>
+      </div>
+      <div class="sep"></div>
+      <div class="info-item">
+        <span class="info-label">エントリー</span>
+        <span class="info-value">0.96097</span>
+      </div>
+      <div class="sep"></div>
+      <div class="info-item">
+        <span class="info-label">決済</span>
+        <span class="info-value">0.95897</span>
+      </div>
+      <div class="sep"></div>
+      <div class="info-item">
+        <span class="info-label">損益</span>
+        <span class="info-value minus">−20 pips</span>
+      </div>
+      <div class="sep"></div>
+      <div class="info-item">
+        <span class="info-label">時間</span>
+        <span class="info-value" style="font-size:13px;">05:02 → 10:06</span>
+      </div>
+      <div class="sep"></div>
+      <div class="info-item">
+        <span class="info-label">市場</span>
+        <span class="info-value" style="font-size:13px; color:var(--yellow);">NY市場終盤</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 分析チェック ===== -->
+  <div class="card">
+    <p class="card-title">✅ 分析チェック</p>
+    <div class="table-wrap">
+      <table class="check-table">
+        <thead>
+          <tr>
+            <th>カテゴリ</th>
+            <th>項目</th>
+            <th>評価</th>
+            <th>備考</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td rowspan="2" style="color:var(--text-muted); font-size:12px; border-right:1px solid var(--border-sub);">環境認識</td>
+            <td>日足5波認識</td>
+            <td class="text-ok">OK</td>
+            <td style="font-size:12px; color:var(--text-muted);">上昇5波と判断</td>
+          </tr>
+          <tr>
+            <td>1時間足 押し目形状</td>
+            <td class="text-ng">NG</td>
+            <td style="font-size:12px; color:var(--text-muted);">天井形成・横ばい継続</td>
+          </tr>
+          <tr>
+            <td rowspan="3" style="color:var(--text-muted); font-size:12px; border-right:1px solid var(--border-sub);">インジケーター</td>
+            <td>ストキャス条件（20以下）</td>
+            <td class="text-ok">OK</td>
+            <td style="font-size:12px; color:var(--text-muted);">条件内</td>
+          </tr>
+          <tr>
+            <td>クロス確認</td>
+            <td class="text-ok">OK</td>
+            <td style="font-size:12px; color:var(--text-muted);">ゴールデンクロス確認</td>
+          </tr>
+          <tr>
+            <td>足確定（2本前陽線）</td>
+            <td class="text-ok">OK</td>
+            <td style="font-size:12px; color:var(--text-muted);">足確定後エントリー</td>
+          </tr>
+          <tr>
+            <td rowspan="2" style="color:var(--text-muted); font-size:12px; border-right:1px solid var(--border-sub);">エントリー</td>
+            <td>エントリー位置</td>
+            <td class="text-ng">NG</td>
+            <td style="font-size:12px; color:var(--text-muted);">直近高値圏 → 要注意ゾーン</td>
+          </tr>
+          <tr>
+            <td>損切り位置</td>
+            <td class="text-ok">OK</td>
+            <td style="font-size:12px; color:var(--text-muted);">直近安値 − 3pips</td>
+          </tr>
+          <tr>
+            <td rowspan="2" style="color:var(--text-muted); font-size:12px; border-right:1px solid var(--border-sub);">通貨強弱</td>
+            <td>AUD（買い通貨）強弱</td>
+            <td class="text-warn">△</td>
+            <td style="font-size:12px; color:var(--text-muted);">やや弱含み・トレンド不明確</td>
+          </tr>
+          <tr>
+            <td>CAD（売り通貨）強弱</td>
+            <td class="text-ok">OK</td>
+            <td style="font-size:12px; color:var(--text-muted);">弱い → 買い有利</td>
+          </tr>
+          <tr>
+            <td rowspan="2" style="color:var(--text-muted); font-size:12px; border-right:1px solid var(--border-sub);">時間帯</td>
+            <td>市場セッション</td>
+            <td class="text-warn">△</td>
+            <td style="font-size:12px; color:var(--text-muted);">NY終盤（05:02 → 10:06）流動性低下</td>
+          </tr>
+          <tr>
+            <td>利確（10pips）遵守</td>
+            <td class="text-ok">OK</td>
+            <td style="font-size:12px; color:var(--text-muted);">ルール通り</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===== 結果 ===== -->
+  <div class="card">
+    <p class="card-title">📊 結果</p>
+    <div class="result-row">
+      <div class="result-item">
+        <label>損益 Pips</label>
+        <span class="big-value minus">−20</span>
+      </div>
+      <div class="result-item">
+        <label>総合評価</label>
+        <span class="big-value rank-c">C</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 評価基準 ===== -->
+  <div class="card">
+    <p class="card-title">🏅 評価基準（ランク定義）</p>
+    <div class="rank-legend">
+      <div class="rank-legend-item">
+        <div class="rank-head rank-s">S</div>
+        <div class="rank-desc">
+          ルール完全遵守<br>
+          勝ち or 想定内の負け<br>
+          <span style="color:var(--green);">最高評価</span>
+        </div>
+      </div>
+      <div class="rank-legend-item">
+        <div class="rank-head rank-a">A</div>
+        <div class="rank-desc">
+          ルール遵守<br>
+          軽微ミスあり<br>
+          <span style="color:var(--blue);">良好</span>
+        </div>
+      </div>
+      <div class="rank-legend-item">
+        <div class="rank-head rank-b">B</div>
+        <div class="rank-desc">
+          一部ルール違反<br>
+          結果は勝ち<br>
+          <span style="color:var(--yellow);">要改善</span>
+        </div>
+      </div>
+      <div class="rank-legend-item">
+        <div class="rank-head rank-c">C</div>
+        <div class="rank-desc">
+          ルール違反あり<br>
+          負け or 大きなミス<br>
+          <span style="color:var(--red);">反省必須</span>
+        </div>
+      </div>
+    </div>
+    <p style="margin:12px 0 0; font-size:12px; color:var(--text-muted);">
+      ※勝敗ではなくルール遵守度で評価。S・Aは「プロセス正解」としてカウント。
+    </p>
+  </div>
+
+  <!-- ===== 感情ログ ===== -->
+  <div class="card">
+    <p class="card-title">🧠 感情ログ <span style="font-size:11px; color:var(--text-muted); font-weight:400; text-transform:none; letter-spacing:0;">（1=冷静 ／ 5=パニック）</span></p>
+    <ul class="emotion-log">
+      <li>
+        <span class="phase">エントリー前</span>
+        <span class="score">2</span>
+        <span class="note">やや焦り・取りに行った</span>
+      </li>
+      <li>
+        <span class="phase">保有中</span>
+        <span class="score">2</span>
+        <span class="note">監視継続・判断保留</span>
+      </li>
+      <li>
+        <span class="phase">決済後</span>
+        <span class="score">3</span>
+        <span class="note">納得 + 課題が明確になった</span>
+      </li>
+    </ul>
+  </div>
+
+  <!-- ===== メモ ===== -->
+  <div class="card">
+    <p class="card-title">📝 振り返りメモ</p>
+    <div class="memo-block">
+      <section>
+        <div class="memo-heading">今回の本質</div>
+        <p>日足5波は合っていたが、1時間足が押し目ではなく天井形成だった。AUD強弱も不明確な状態でエントリーしており、根拠が不十分だった。</p>
+      </section>
+      <section>
+        <div class="memo-heading">負けの原因</div>
+        <p>
+          ・直近高値圏でのエントリー（エネルギー不足ゾーン）<br>
+          ・浅い押し → 再加速の形になっていなかった<br>
+          ・横ばい = 分配局面を見抜けなかった<br>
+          ・NY終盤の流動性低下を考慮しなかった
+        </p>
+      </section>
+      <section>
+        <div class="memo-heading">改善ルール</div>
+        <p>
+          ・直近高値付近ではエントリーしない<br>
+          ・1時間足で横ばい・上ヒゲ増加は見送り<br>
+          ・「押し目 = 再加速の形」以外は入らない<br>
+          ・通貨強弱を必ず確認してから判断する<br>
+          ・NY終盤（06:00以降）は新規エントリー見送り検討
+        </p>
+      </section>
+      <section>
+        <div class="memo-heading">一言</div>
+        <p>タイミングは良い。場所と通貨強弱を修正すれば勝てる。</p>
+      </section>
+    </div>
+  </div>
+
+  <!-- ===== チャート（最下部・横2列） ===== -->
+  <div class="card">
+    <p class="card-title">📷 チャート</p>
+    <div class="chart-grid">
+      <div class="chart-item">
+        <label>日足 — 方向認識</label>
+        <img src="../images/20260402_day.png" alt="日足チャート"
+             onerror="this.closest('.chart-item').style.display='none'">
+      </div>
+      <div class="chart-item">
+        <label>1時間足 — エントリー根拠</label>
+        <img src="../images/20260402_hour.png" alt="1時間足チャート"
+             onerror="this.closest('.chart-item').style.display='none'">
+      </div>
+    </div>
+  </div>
+
+</div><!-- /.page-wrap -->
+</body>
+</html>
