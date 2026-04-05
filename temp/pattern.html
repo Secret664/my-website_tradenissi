@@ -168,6 +168,9 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;height:52px;display:flex;ali
 .fg.prohibited .fn{color:var(--red);}.fg.prohibited h5{color:var(--red);}
 .final-note{margin-top:3rem;padding:1.75rem 2.5rem;border:1px solid var(--line2);border-radius:10px;text-align:center;font-size:14px;color:var(--muted);line-height:2.2;}
 .final-note strong{color:var(--text);}
+.break{
+  display:block;
+}
 footer{padding:2.5rem 5vw;border-top:1px solid var(--line);font-size:11px;letter-spacing:.1em;color:var(--faint);text-align:center;}
 @media(max-width:1100px){
   .hero{grid-template-columns:1fr;}.hero-right{display:none;}
@@ -199,7 +202,10 @@ footer{padding:2.5rem 5vw;border-top:1px solid var(--line);font-size:11px;letter
 <div class="hero">
   <div class="hero-left">
     <div class="hero-eyebrow">トレードマニュアル</div>
-    <h1 class="hero-h1">鉄板<em>チャート</em>パターン</h1>
+    <h1 class="hero-h1">
+  鉄板<em>チャート</em>
+  <span class="break">パターン</span>
+</h1>
     <p class="hero-h2">必ずテクニカルが入る — 5つの鉄板形を習得せよ</p>
     <p class="hero-lead">
       相場を動かしている正体（大衆の決済行動）を理解し、<br>その発動ポイントだけを狙う。<br><br>
@@ -210,7 +216,9 @@ footer{padding:2.5rem 5vw;border-top:1px solid var(--line);font-size:11px;letter
   </div>
   <div class="hero-right">
     <div class="hero-stat">
-      <div class="stat-num">5</div>
+          <div class="stat-num">
+      5<span class="unit">つ</span>
+    </div>
       <div class="stat-label">鉄板パターン</div>
       <div class="stat-desc">全て大衆の決済行動に基づく客観的なエントリー条件</div>
     </div>
