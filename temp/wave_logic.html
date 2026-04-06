@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>エリオット波動ロジック</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;500;700&family=JetBrains+Mono:wght@300;400;500&family=Cormorant+Garamond:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #09090d;
+  --surface-1: #111116;
+  --surface-2: #17171e;
+  --surface-3: #1f1f28;
+  --border: rgba(255,255,255,0.07);
+  --border-bright: rgba(255,255,255,0.13);
+  --text-primary: #e8e6df;
+  --text-secondary: #8a8880;
+  --text-muted: #555450;
+  --gold: #c8a84b;
+  --gold-dim: rgba(200,168,75,0.15);
+  --gold-glow: rgba(200,168,75,0.08);
+  --red: #e05252;
+  --red-dim: rgba(224,82,82,0.12);
+  --red-glow: rgba(224,82,82,0.06);
+  --green: #52b87a;
+  --green-dim: rgba(82,184,122,0.12);
+  --green-glow: rgba(82,184,122,0.06);
+  --blue: #5b9de8;
+  --blue-dim: rgba(91,157,232,0.12);
+  --blue-glow: rgba(91,157,232,0.06);
+  --amber: #d4884a;
+  --amber-dim: rgba(212,136,74,0.12);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Noto Serif JP', serif;
+  background: var(--bg);
+  color: var(--text-primary);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ─── Noise texture overlay ─── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+  opacity: .4;
+}
+
+.page-wrap {
+  position: relative;
+  z-index: 1;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 60px 24px 100px;
+}
+
+/* ─── Header ─── */
+.header {
+  margin-bottom: 72px;
+  opacity: 0;
+  animation: fadeUp .8s ease forwards;
+}
+
+.header-eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: .22em;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.header-eyebrow::after {
+  content: '';
+  flex: 1;
+  max-width: 80px;
+  height: 1px;
+  background: linear-gradient(to right, var(--gold), transparent);
+}
+
+.header-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(36px, 6vw, 58px);
+  font-weight: 300;
+  letter-spacing: -.01em;
+  line-height: 1.1;
+  color: var(--text-primary);
+  margin-bottom: 20px;
+}
+.header-title strong {
+  font-weight: 600;
+  color: var(--gold);
+}
+
+.header-sub {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 300;
+  color: var(--text-secondary);
+  letter-spacing: .04em;
+  line-height: 1.8;
+  max-width: 560px;
+}
+
+/* ─── Wave diagram ─── */
+.wave-diagram-wrap {
+  margin-bottom: 72px;
+  opacity: 0;
+  animation: fadeUp .8s ease .15s forwards;
+}
+
+.wave-diagram-wrap svg { width: 100%; height: auto; display: block; }
+
+/* ─── Section ─── */
+.sec {
+  margin-bottom: 64px;
+  opacity: 0;
+  animation: fadeUp .7s ease forwards;
+}
+.sec:nth-child(2) { animation-delay: .1s; }
+.sec:nth-child(3) { animation-delay: .18s; }
+.sec:nth-child(4) { animation-delay: .25s; }
+.sec:nth-child(5) { animation-delay: .3s; }
+.sec:nth-child(6) { animation-delay: .35s; }
+.sec:nth-child(7) { animation-delay: .38s; }
+.sec:nth-child(8) { animation-delay: .41s; }
+.sec:nth-child(9) { animation-delay: .44s; }
+.sec:nth-child(10) { animation-delay: .47s; }
+
+.sec-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: .18em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.sec-label span {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: .02em;
+  color: var(--gold);
+  text-transform: none;
+}
+.sec-label::before {
+  content: '';
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--gold);
+  flex-shrink: 0;
+}
+
+/* ─── Cards ─── */
+.card {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px 28px;
+  margin-bottom: 12px;
+  transition: border-color .25s;
+}
+.card:hover { border-color: var(--border-bright); }
+
+.card.c-red { border-left: 2px solid var(--red); background: linear-gradient(135deg, var(--red-dim) 0%, var(--surface-1) 60%); }
+.card.c-green { border-left: 2px solid var(--green); background: linear-gradient(135deg, var(--green-dim) 0%, var(--surface-1) 60%); }
+.card.c-blue { border-left: 2px solid var(--blue); background: linear-gradient(135deg, var(--blue-dim) 0%, var(--surface-1) 60%); }
+.card.c-amber { border-left: 2px solid var(--amber); background: linear-gradient(135deg, var(--amber-dim) 0%, var(--surface-1) 60%); }
+.card.c-gold {
+  border: 1px solid rgba(200,168,75,.25);
+  background: linear-gradient(135deg, var(--gold-dim) 0%, var(--surface-1) 60%);
+  box-shadow: 0 0 40px var(--gold-glow);
+}
+
+.card-title {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 10px;
+  line-height: 1.5;
+}
+.card-body {
+  font-size: 13.5px;
+  color: var(--text-secondary);
+  line-height: 1.9;
+}
+
+/* ─── Quote block ─── */
+.quote-block {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 19px;
+  font-weight: 400;
+  color: var(--text-primary);
+  line-height: 1.65;
+  letter-spacing: .01em;
+  padding: 20px 24px;
+  background: var(--surface-2);
+  border-radius: 10px;
+  margin-bottom: 16px;
+  border-left: 3px solid var(--gold);
+  position: relative;
+}
+.quote-block::before {
+  content: '"';
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 60px;
+  color: var(--gold);
+  opacity: .25;
+  position: absolute;
+  top: -4px;
+  right: 20px;
+  line-height: 1;
+}
+
+/* ─── Grid ─── */
+.g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.g3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+
+/* ─── Tag ─── */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: .06em;
+  padding: 3px 10px;
+  border-radius: 20px;
+  margin-bottom: 10px;
+}
+.tag-red { background: var(--red-dim); color: var(--red); border: 1px solid rgba(224,82,82,.2); }
+.tag-green { background: var(--green-dim); color: var(--green); border: 1px solid rgba(82,184,122,.2); }
+.tag-blue { background: var(--blue-dim); color: var(--blue); border: 1px solid rgba(91,157,232,.2); }
+.tag-amber { background: var(--amber-dim); color: var(--amber); border: 1px solid rgba(212,136,74,.2); }
+.tag-muted { background: var(--surface-3); color: var(--text-secondary); border: 1px solid var(--border); }
+
+/* ─── Player card ─── */
+.player-card {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 18px 20px;
+  transition: transform .2s, border-color .2s;
+}
+.player-card:hover { transform: translateY(-2px); border-color: var(--border-bright); }
+.player-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 500;
+  margin-bottom: 10px;
+  letter-spacing: .06em;
+}
+.player-body { font-size: 12.5px; color: var(--text-secondary); line-height: 1.8; }
+.player-footer {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+/* ─── Phase list ─── */
+.phase-list { display: flex; flex-direction: column; gap: 4px; }
+.phase-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 14px 16px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  transition: background .2s;
+}
+.phase-item:hover { background: var(--surface-3); }
+.phase-num {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.phase-num-neutral { background: var(--surface-3); color: var(--text-secondary); border: 1px solid var(--border); }
+.phase-num-red { background: var(--red-dim); color: var(--red); border: 1px solid rgba(224,82,82,.25); }
+.phase-num-green { background: var(--green-dim); color: var(--green); border: 1px solid rgba(82,184,122,.25); }
+.phase-title { font-size: 13.5px; font-weight: 500; color: var(--text-primary); margin-bottom: 4px; }
+.phase-body { font-size: 12.5px; color: var(--text-secondary); line-height: 1.75; }
+
+/* ─── Divider ─── */
+.divider { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
+
+/* ─── Row item ─── */
+.row-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+}
+.row-item:last-child { border-bottom: none; }
+.row-arrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 500;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.row-text { font-size: 13px; color: var(--text-secondary); line-height: 1.7; }
+
+/* ─── VS layout ─── */
+.vs-grid {
+  display: grid;
+  grid-template-columns: 1fr 36px 1fr;
+  gap: 0;
+  align-items: stretch;
+}
+.vs-sep {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text-muted);
+  letter-spacing: .08em;
+  position: relative;
+}
+.vs-sep::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  width: 1px;
+  height: 60%;
+  background: var(--border);
+}
+
+/* ─── Label box ─── */
+.label-box {
+  border-radius: 10px;
+  padding: 16px 18px;
+  border: 1px solid var(--border);
+  margin-bottom: 8px;
+}
+.label-box-title { font-size: 13px; font-weight: 500; margin-bottom: 5px; }
+.label-box-body { font-size: 12.5px; color: var(--text-secondary); line-height: 1.75; }
+
+/* ─── Info row (共通認識) ─── */
+.info-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+}
+.info-row:last-of-type { border-bottom: none; }
+.info-key {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--gold);
+  min-width: 80px;
+  flex-shrink: 0;
+  letter-spacing: .04em;
+  padding-top: 1px;
+}
+.info-val { font-size: 13px; color: var(--text-secondary); line-height: 1.8; }
+
+/* ─── Final highlight ─── */
+.highlight-text {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+  line-height: 1.8;
+}
+
+/* ─── Role row (究極) ─── */
+.role-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.role-row:last-child { border-bottom: none; }
+.role-key {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--blue);
+  min-width: 80px;
+  flex-shrink: 0;
+  letter-spacing: .04em;
+}
+.role-arrow { color: var(--text-muted); font-family: 'JetBrains Mono', monospace; font-size: 14px; }
+.role-val { font-size: 13.5px; color: var(--text-secondary); line-height: 1.7; }
+
+/* ─── Footer note ─── */
+.footer-note {
+  margin-top: 80px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  opacity: 0;
+  animation: fadeUp .6s ease .6s forwards;
+}
+.footer-mono {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 300;
+  color: var(--text-muted);
+  letter-spacing: .1em;
+}
+.footer-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--border), transparent);
+}
+
+/* ─── Animations ─── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 640px) {
+  .g2, .g3 { grid-template-columns: 1fr; }
+  .vs-grid { grid-template-columns: 1fr; }
+  .vs-sep { display: none; }
+  .page-wrap { padding: 40px 16px 80px; }
+  .header-title { font-size: 32px; }
+}
+
+/* ─── Scrollbar ─── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--surface-3); border-radius: 2px; }
+</style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <!-- ════ HEADER ════ -->
+  <header class="header">
+    <div class="header-eyebrow">Elliott Wave Logic</div>
+    <h1 class="header-title">エリオット<br><strong>波動ロジック</strong></h1>
+    <p class="header-sub">損切り連鎖・参加者行動・時間軸フレームの統合解説<br>大衆心理と相場の本質</p>
+  </header>
+
+  <!-- ════ WAVE SVG ════ -->
+  <div class="wave-diagram-wrap">
+    <svg viewBox="0 0 900 200" xmlns="http://www.w3.org/2000/svg" fill="none">
+      <defs>
+        <linearGradient id="gU" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#52b87a" stop-opacity=".3"/>
+          <stop offset="100%" stop-color="#52b87a" stop-opacity="0"/>
+        </linearGradient>
+        <linearGradient id="gD" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#e05252" stop-opacity="0"/>
+          <stop offset="100%" stop-color="#e05252" stop-opacity=".2"/>
+        </linearGradient>
+      </defs>
+      <!-- Grid lines -->
+      <line x1="0" y1="170" x2="900" y2="170" stroke="#ffffff" stroke-opacity=".05" stroke-width="1"/>
+      <line x1="0" y1="100" x2="900" y2="100" stroke="#ffffff" stroke-opacity=".03" stroke-width="1" stroke-dasharray="4 6"/>
+      <!-- Wave path fill -->
+      <path d="M0 170 L80 110 L140 140 L280 30 L370 90 L480 10 L580 80 L650 58 L760 130 L900 170 Z" fill="url(#gU)" opacity=".5"/>
+      <!-- Main wave -->
+      <polyline points="0,170 80,110 140,140 280,30 370,90 480,10 580,80 650,58 760,130 870,60" stroke="#52b87a" stroke-width="2" stroke-opacity=".7" fill="none" stroke-linejoin="round" stroke-linecap="round"/>
+      <!-- Corrective fill -->
+      <path d="M580 80 L650 58 L760 130 Z" fill="url(#gD)" opacity=".3"/>
+      <!-- Dots at key points -->
+      <circle cx="80" cy="110" r="3" fill="#52b87a" opacity=".9"/>
+      <circle cx="140" cy="140" r="3" fill="#e05252" opacity=".9"/>
+      <circle cx="280" cy="30" r="4" fill="#52b87a" opacity=".9"/>
+      <circle cx="370" cy="90" r="3" fill="#e05252" opacity=".9"/>
+      <circle cx="480" cy="10" r="4" fill="#52b87a" opacity=".9"/>
+      <circle cx="580" cy="80" r="3" fill="#e05252" opacity=".9"/>
+      <circle cx="650" cy="58" r="3" fill="#52b87a" opacity=".9"/>
+      <circle cx="760" cy="130" r="3" fill="#e05252" opacity=".9"/>
+      <circle cx="870" cy="60" r="4" fill="#52b87a" opacity=".9"/>
+      <!-- Wave labels -->
+      <text x="78" y="100" font-family="JetBrains Mono, monospace" font-size="10" fill="#52b87a" text-anchor="middle" opacity=".9">①</text>
+      <text x="138" y="157" font-family="JetBrains Mono, monospace" font-size="10" fill="#e05252" text-anchor="middle" opacity=".9">②</text>
+      <text x="278" y="22" font-family="JetBrains Mono, monospace" font-size="10" fill="#52b87a" text-anchor="middle" opacity=".9">③</text>
+      <text x="368" y="105" font-family="JetBrains Mono, monospace" font-size="10" fill="#e05252" text-anchor="middle" opacity=".9">④</text>
+      <text x="478" y="4" font-family="JetBrains Mono, monospace" font-size="10" fill="#52b87a" text-anchor="middle" opacity=".9">⑤</text>
+      <text x="578" y="95" font-family="JetBrains Mono, monospace" font-size="9" fill="#e05252" text-anchor="middle" opacity=".75">A</text>
+      <text x="648" y="52" font-family="JetBrains Mono, monospace" font-size="9" fill="#52b87a" text-anchor="middle" opacity=".75">B</text>
+      <text x="758" y="144" font-family="JetBrains Mono, monospace" font-size="9" fill="#e05252" text-anchor="middle" opacity=".75">C</text>
+      <!-- Legend -->
+      <line x1="20" y1="190" x2="36" y2="190" stroke="#52b87a" stroke-width="2" opacity=".7"/>
+      <text x="40" y="193" font-family="JetBrains Mono, monospace" font-size="9" fill="#52b87a" opacity=".7">推進波</text>
+      <line x1="100" y1="190" x2="116" y2="190" stroke="#e05252" stroke-width="2" opacity=".7"/>
+      <text x="120" y="193" font-family="JetBrains Mono, monospace" font-size="9" fill="#e05252" opacity=".7">修正波</text>
+    </svg>
+  </div>
+
+  <!-- ════ 1: 相場の正体 ════ -->
+  <section class="sec">
+    <div class="sec-label"><span>相場の正体</span>&nbsp;— 最上位定義</div>
+    <div class="card c-blue">
+      <div class="quote-block">相場は注文のぶつかり合いではなく、損切りの連鎖で動く</div>
+      <div class="card-body">
+        <span style="color:var(--green);font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:500;">上昇</span>　＝　売りの損切り（強制買い）＋ 新規買いの流入<br>
+        <span style="color:var(--red);font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:500;">下落</span>　＝　買いの損切り（強制売り）＋ 新規売りの流入
+      </div>
+      <hr class="divider">
+      <div class="card-body" style="color:var(--text-primary);">相場を動かすエネルギーの正体は「<strong style="color:var(--blue);">間違えた人の後始末</strong>」である。</div>
+    </div>
+  </section>
+
+  <!-- ════ 2: 3種類の参加者 ════ -->
+  <section class="sec">
+    <div class="sec-label"><span>市場参加者</span>&nbsp;— 3種類と役割</div>
+    <div class="g3">
+      <div class="player-card">
+        <div class="player-label" style="color:var(--red);">逆張り勢</div>
+        <div class="player-body">トレンドに逆らって売りで入る。高値付近で売りを積み上げる。損切りラインを高値の上に置いている。</div>
+        <div class="player-footer" style="color:var(--red);">→ 3波の「燃料タンク」</div>
+      </div>
+      <div class="player-card">
+        <div class="player-label" style="color:var(--green);">順張り勢</div>
+        <div class="player-body">トレンド方向に入っている。「まだ伸びる」と判断して保有継続。売り圧力を消す存在。</div>
+        <div class="player-footer" style="color:var(--green);">→ 売り圧力を消す存在</div>
+      </div>
+      <div class="player-card">
+        <div class="player-label" style="color:var(--blue);">新規参入勢</div>
+        <div class="player-body">ブレイクを確認してから順張りで参入。遅乗りだがさらに価格を押し上げる。5波では主役。</div>
+        <div class="player-footer" style="color:var(--blue);">→ 3波後半・5波の主動力</div>
+      </div>
+    </div>
+    <div class="card c-red" style="margin-top:0;">
+      <div class="card-title" style="color:var(--red);">3波が爆発する瞬間の構造</div>
+      <div class="card-body">逆張り勢の損切り（強制買い）＋ 順張り勢の保有継続（売り圧力ゼロ）＋ 新規勢の追随買い<br>→ 三者が同時に「買い方向」に動く → 売り注文が消滅 → <strong style="color:var(--red);">一方向に加速</strong></div>
+    </div>
+  </section>
+
+  <!-- ════ 3: 大衆心理6段階 ════ -->
+  <section class="sec">
+    <div class="sec-label"><span>大衆心理</span>&nbsp;— 6段階サイクル</div>
+    <div class="card" style="padding:16px 20px;">
+      <div class="phase-list">
+        <div class="phase-item">
+          <div class="phase-num phase-num-neutral">1</div>
+          <div>
+            <div class="phase-title">相場が上昇し始める — <span style="color:var(--gold);font-family:'JetBrains Mono',monospace;font-size:11px;">1波</span></div>
+            <div class="phase-body">「まだ戻す」「行きすぎ」と逆張り勢が売りを積み始める。売りポジションが蓄積される。</div>
+          </div>
+        </div>
+        <div class="phase-item">
+          <div class="phase-num phase-num-neutral">2</div>
+          <div>
+            <div class="phase-title">一度押す — <span style="color:var(--gold);font-family:'JetBrains Mono',monospace;font-size:11px;">2波</span></div>
+            <div class="phase-body">逆張り勢が「やっぱり下落だ」と確信を深め、さらに売りを追加。売りポジションが最大化される。</div>
+          </div>
+        </div>
+        <div class="phase-item" style="background:rgba(224,82,82,.06);border-color:rgba(224,82,82,.18);">
+          <div class="phase-num phase-num-red">3</div>
+          <div>
+            <div class="phase-title" style="color:var(--red);">1波の高値を超えるブレイク — <span style="font-family:'JetBrains Mono',monospace;font-size:11px;">3波の起点</span></div>
+            <div class="phase-body">逆張り勢の損切りライン（高値）を突破。損切りが一斉発動 = 強制的な買い注文が殺到。これが3波爆発の正体。</div>
+          </div>
+        </div>
+        <div class="phase-item" style="background:rgba(224,82,82,.06);border-color:rgba(224,82,82,.18);">
+          <div class="phase-num phase-num-red">4</div>
+          <div>
+            <div class="phase-title" style="color:var(--red);">連鎖的に損切りが広がる — <span style="font-family:'JetBrains Mono',monospace;font-size:11px;">3波の継続</span></div>
+            <div class="phase-body">1回目の損切りが次の損切りラインを突破 → さらに損切り発動。これが繰り返される。「止まる理由が存在しない状態」。</div>
+          </div>
+        </div>
+        <div class="phase-item">
+          <div class="phase-num phase-num-neutral">5</div>
+          <div>
+            <div class="phase-title">損切りが枯れる — <span style="color:var(--gold);font-family:'JetBrains Mono',monospace;font-size:11px;">4波</span></div>
+            <div class="phase-body">逆張り勢の損切りが完了。エネルギーが一時的に減少。調整（押し目）が入る。この深さは不確定。</div>
+          </div>
+        </div>
+        <div class="phase-item" style="background:rgba(82,184,122,.05);border-color:rgba(82,184,122,.15);">
+          <div class="phase-num phase-num-green">6</div>
+          <div>
+            <div class="phase-title" style="color:var(--green);">新規勢が押し目と判断して参入 — <span style="font-family:'JetBrains Mono',monospace;font-size:11px;">5波</span></div>
+            <div class="phase-body">「安くなった」と押し目買い勢が流入。トレンド方向が確定したと確信した新規勢も追随。勝率が高い理由はここ。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════ 4: 1波の長さ ════ -->
+  <section class="sec">
+    <div class="sec-label"><span>1波の長さ</span>&nbsp;— 全エネルギーを決める理由</div>
+    <div class="g2">
+      <div class="card c-green">
+        <div class="tag tag-green">1波が短い ◎</div>
+        <div class="card-title" style="color:var(--green);">燃料が満タンの状態</div>
+        <div class="card-body">1波の上昇中に逆張り勢は損切りしていない。「含み益があるから利確しない」。売りポジションが大量に残存。<br><br>3波のブレイク時に一気に全員の損切りが連鎖 → <strong style="color:var(--green);">爆発的な上昇</strong></div>
+      </div>
+      <div class="card c-red">
+        <div class="tag tag-red">1波が長い ✕</div>
+        <div class="card-title" style="color:var(--red);">燃料切れの状態</div>
+        <div class="card-body">1波が長い = すでに損切りが大量発生済み。逆張り勢は「やられる前に逃げた」状態。<br><br>3波到達時には売りポジションがほぼ残っていない → <strong style="color:var(--red);">エネルギー不足・伸びない</strong></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════ 5: 共通認識 ════ -->
+  <section class="sec">
+    <div class="sec-label"><span>共通認識</span>&nbsp;— 価格を動かすメカニズム</div>
+    <div class="card">
+      <div class="card-title">なぜ前日高値・直近高値で損切りが集中するのか</div>
+      <hr class="divider">
+      <div class="info-row">
+        <div class="info-key">前日高値</div>
+        <div class="info-val">全市場参加者が共通して認識できるライン。「昨日のピークを超えたら本物の上昇」という大衆判断が一致 → 同タイミングで損切り・新規参入が集中 → 価格が反応する。</div>
+      </div>
+      <div class="info-row">
+        <div class="info-key">直近高値</div>
+        <div class="info-val">短期の下落トレンド中に形成されたライン。15分足の売り勢が「ここを超えたら負け」と意識する損切りポイント。波形を読めないと特定できない。</div>
+      </div>
+      <hr class="divider">
+      <div class="card-body" style="color:var(--blue);font-weight:500;">本質：「多くの人が同じ場所を見る」という集合心理が、そのラインを「意味のある価格」に変える。</div>
+    </div>
+  </section>
+
+  <!-- ════ 6: ダマシの正体 ════ -->
+  <section class="sec">
+    <div class="sec-label"><span>ダマシの正体</span>&nbsp;— 「損切りが発生しないブレイク」</div>
+    <div class="g2">
+      <div class="card c-red">
+        <div class="tag tag-red">ダマシの発生条件</div>
+        <div class="card-title" style="color:var(--red);">抜けたのに伸びない</div>
+        <hr class="divider">
+        <div class="row-item"><span class="row-arrow" style="color:var(--red);">→</span><span class="row-text">ヒゲだけブレイク（実体が伴わない）</span></div>
+        <div class="row-item"><span class="row-arrow" style="color:var(--red);">→</span><span class="row-text">利確が出ている（買い勢が逃げている）</span></div>
+        <div class="row-item"><span class="row-arrow" style="color:var(--red);">→</span><span class="row-text">逆張り勢が参入している（ダイバージェンス）</span></div>
+        <div class="row-item"><span class="row-arrow" style="color:var(--red);">→</span><span class="row-text">損切りポジションが少ない（誰も困っていない）</span></div>
+      </div>
+      <div class="card c-green">
+        <div class="tag tag-green">本物のブレイクの条件</div>
+        <div class="card-title" style="color:var(--green);">損切りが発生する構造がある</div>
+        <hr class="divider">
+        <div class="row-item"><span class="row-arrow" style="color:var(--green);">→</span><span class="row-text">実体で明確に抜ける</span></div>
+        <div class="row-item"><span class="row-arrow" style="color:var(--green);">→</span><span class="row-text">利確が出ない（順張り勢が保有継続）</span></div>
+        <div class="row-item"><span class="row-arrow" style="color:var(--green);">→</span><span class="row-text">逆張りが入らない（ストキャス切り上げ）</span></div>
+        <div class="row-item"><span class="row-arrow" style="color:var(--green);">→</span><span class="row-text">初動段階（MACD 0付近）</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════ 7: 3波vs5波 ════ -->
+  <section class="sec">
+    <div class="sec-label"><span>3波と5波</span>&nbsp;— 大衆心理の質的違い</div>
+    <div class="vs-grid">
+      <div class="card c-red" style="margin-bottom:0;border-radius:14px 0 0 14px;">
+        <div class="tag tag-red">3波の大衆心理</div>
+        <div class="card-title" style="color:var(--red);">混乱・恐怖・強制</div>
+        <div class="card-body" style="font-size:13px;">逆張り勢が「やばい、逃げなければ」と恐怖で損切りする。感情的な強制決済。合理的判断ではなく痛みからの逃走。だから一気に動く。</div>
+      </div>
+      <div class="vs-sep"><span style="position:relative;z-index:1;background:var(--bg);padding:6px 0;font-size:9px;letter-spacing:.08em;">VS</span></div>
+      <div class="card c-green" style="margin-bottom:0;border-radius:0 14px 14px 0;">
+        <div class="tag tag-green">5波の大衆心理</div>
+        <div class="card-title" style="color:var(--green);">安心・確信・合理</div>
+        <div class="card-body" style="font-size:13px;">押し目を見て「安く買えるチャンス」と合理的に判断して参入。確信を持った計画的な買い。だから再現性が高くテクニカルが効く。</div>
+      </div>
+    </div>
+    <div class="card c-blue" style="margin-top:12px;">
+      <div class="card-title" style="color:var(--blue);">このロジックの本質（プロ視点）</div>
+      <div class="card-body">「強いから入る」ではなく「邪魔がいないから入る」（3波）。「安いから入る」でもなく「最安値付近であることが確認できたから入る」（5波）。どちらも相場を"感じる"のではなく"<strong style="color:var(--blue);">参加者の行動を読む</strong>"。</div>
+    </div>
+  </section>
+
+  <!-- ════ 8: N字と時間 ════ -->
+  <section class="sec">
+    <div class="sec-label"><span>N字と時間</span>&nbsp;— ローソク本数が示す心理状態</div>
+    <div class="g2">
+      <div class="card c-red">
+        <div class="tag tag-red">5〜8本（短いN字）</div>
+        <div class="card-title" style="color:var(--red);">売り方がまだ生きている</div>
+        <div class="card-body">急速な押しで逆張り勢が逃げる前にブレイクが来る。損切りが大量に残存 → 3波の爆発力が最大。「恐怖が蓄積されたまま爆発する」。</div>
+      </div>
+      <div class="card c-green">
+        <div class="tag tag-green">8本超〜（長いN字）</div>
+        <div class="card-title" style="color:var(--green);">売り方がじわじわ撤退済み</div>
+        <div class="card-body">時間をかけて損切りが消化される。ブレイク時には残存ポジションが少ない → 5波的な「新規参入が主役」の動きになる。</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════ 9: インジ ════ -->
+  <section class="sec">
+    <div class="sec-label"><span>インジケーター</span>&nbsp;— 本当の役割</div>
+    <div class="g3">
+      <div class="label-box" style="background:var(--red-dim);border-color:rgba(224,82,82,.2);">
+        <div class="label-box-title" style="color:var(--red);">MACD</div>
+        <div class="label-box-body">初動検知装置。「これから資金が流入する」タイミングを捉える。0付近 = まだ誰も乗っていない初期段階。</div>
+      </div>
+      <div class="label-box" style="background:var(--amber-dim);border-color:rgba(212,136,74,.2);">
+        <div class="label-box-title" style="color:var(--amber);">ストキャス</div>
+        <div class="label-box-body">「売りポジションが今もいるか」の検出器。切り上げ = 売る理由がない状態。ダイバージェンス = 売りが待機中。</div>
+      </div>
+      <div class="label-box" style="background:var(--green-dim);border-color:rgba(82,184,122,.2);">
+        <div class="label-box-title" style="color:var(--green);">ブレイク</div>
+        <div class="label-box-body">損切りトリガー。高値更新 = 売りの損切りが確定的に発動する物理的なイベント。</div>
+      </div>
+    </div>
+    <div class="card c-amber" style="margin-top:0;">
+      <div class="card-title" style="color:var(--amber);">正しい順序</div>
+      <div class="card-body">インジは「参加者の行動状態」を数値化したもの。波動と水平線で「どこで誰が損切りするか」を先に特定し、インジはその<strong style="color:var(--amber);">最終確認</strong>に使う。逆順は論外。</div>
+    </div>
+  </section>
+
+  <!-- ════ 10: 究極の一文 ════ -->
+  <section class="sec">
+    <div class="sec-label"><span>究極の一文</span>&nbsp;— すべてを貫く本質</div>
+    <div class="card c-gold">
+      <div class="quote-block" style="border-left-color:var(--gold);font-size:20px;">負ける人の行動を利用するアルゴリズム</div>
+      <hr class="divider">
+      <div class="role-row">
+        <div class="role-key">逆張り勢</div>
+        <div class="role-arrow">→</div>
+        <div class="role-val">焼く（3波）</div>
+      </div>
+      <div class="role-row">
+        <div class="role-key">早利確勢</div>
+        <div class="role-arrow">→</div>
+        <div class="role-val">いない場所で入る（初動エントリー）</div>
+      </div>
+      <div class="role-row">
+        <div class="role-key">遅乗り勢</div>
+        <div class="role-arrow">→</div>
+        <div class="role-val">後から燃料にする（5波・新規参入）</div>
+      </div>
+      <hr class="divider">
+      <div class="highlight-text">相場は「分析ゲー」ではなく「<strong style="color:var(--gold);">人間心理の再現ゲー</strong>」。勝つために必要なのは精度ではなく、同じパターンを一切ブレなく繰り返す<strong style="color:var(--gold);">実行力</strong>。</div>
+    </div>
+  </section>
+
+  <!-- ════ FOOTER ════ -->
+  <footer class="footer-note">
+    <span class="footer-mono">Elliott Wave Logic</span>
+    <div class="footer-line"></div>
+    <span class="footer-mono">大衆心理と相場の本質</span>
+  </footer>
+
+</div>
+</body>
+</html>
