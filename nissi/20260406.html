@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📅 2026-04-06 トレード記録</title>
+<link rel="stylesheet" href="../style.css">
+<style>
+  /* ===== LIGHTBOX ===== */
+  .chart-item img {
+    cursor: zoom-in;
+    transition: opacity 0.2s;
+  }
+  .chart-item img:hover {
+    opacity: 0.85;
+  }
+
+  #lightbox {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(0, 0, 0, 0.88);
+    justify-content: center;
+    align-items: center;
+    padding: 16px;
+    cursor: zoom-out;
+  }
+  #lightbox.open {
+    display: flex;
+  }
+  #lightbox img {
+    max-width: 95vw;
+    max-height: 92vh;
+    object-fit: contain;
+    border-radius: 6px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+    cursor: default;
+    user-select: none;
+  }
+  #lightbox-close {
+    position: fixed;
+    top: 14px;
+    right: 18px;
+    color: #fff;
+    font-size: 32px;
+    line-height: 1;
+    cursor: pointer;
+    opacity: 0.8;
+    background: none;
+    border: none;
+    padding: 4px 8px;
+    z-index: 10000;
+  }
+  #lightbox-close:hover {
+    opacity: 1;
+  }
+  #lightbox-caption {
+    position: fixed;
+    bottom: 16px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    color: rgba(255,255,255,0.75);
+    font-size: 13px;
+    pointer-events: none;
+  }
+</style>
+</head>
+
+<body>
+
+<div class="trade-data"
+  data-date    = "2026-04-06"
+  data-pair    = "GBP/USD"
+  data-dir     = "売り"
+  data-session = "NY時間"
+  data-pips    = "+10"
+  data-rank    = "A"
+  data-comment = "ストキャス＋MACD条件一致。戻り売り成功。エントリーはやや早いが許容範囲。"
+  data-check   = "false"
+  style="display:none">
+</div>
+
+<!-- ===== LIGHTBOX OVERLAY ===== -->
+<div id="lightbox" role="dialog" aria-modal="true" aria-label="画像拡大">
+  <button id="lightbox-close" aria-label="閉じる">✕</button>
+  <img id="lightbox-img" src="" alt="">
+  <div id="lightbox-caption"></div>
+</div>
+
+<header class="top-header">
+  <div class="top-header-inner">
+    <h1>📅 2026-04-06 &nbsp;<span style="color:var(--text-muted);font-weight:400;font-size:14px;">GBP/USD</span></h1>
+    <a href="../index_tradenissi_2026_4.html" class="rule-link">← トップへ戻る</a>
+  </div>
+</header>
+
+<div class="page-wrap">
+
+  <!-- ===== TRADE INFO BAR ===== -->
+  <div class="card" style="padding:0;">
+    <div class="trade-info-bar">
+      <div class="info-item">
+        <span class="info-label">通貨ペア</span>
+        <span class="info-value">GBP/USD</span>
+      </div>
+      <div class="sep"></div>
+      <div class="info-item">
+        <span class="info-label">方向</span>
+        <span class="info-value sell">▼ 売り</span>
+      </div>
+      <div class="sep"></div>
+      <div class="info-item">
+        <span class="info-label">ロット</span>
+        <span class="info-value">0.01</span>
+      </div>
+      <div class="sep"></div>
+      <div class="info-item">
+        <span class="info-label">エントリー</span>
+        <span class="info-value">1.32301</span>
+      </div>
+      <div class="sep"></div>
+      <div class="info-item">
+        <span class="info-label">決済</span>
+        <span class="info-value">1.32201</span>
+      </div>
+      <div class="sep"></div>
+      <div class="info-item">
+        <span class="info-label">損切り</span>
+        <span class="info-value" style="color:var(--red);">1.32501</span>
+      </div>
+      <div class="sep"></div>
+      <div class="info-item">
+        <span class="info-label">損益</span>
+        <span class="info-value plus">+10 pips</span>
+      </div>
+      <div class="sep"></div>
+      <div class="info-item">
+        <span class="info-label">時間</span>
+        <span class="info-value" style="font-size:13px;">17:28 → 01:50</span>
+      </div>
+      <div class="sep"></div>
+      <div class="info-item">
+        <span class="info-label">市場</span>
+        <span class="info-value" style="font-size:13px; color:var(--yellow);">NY時間</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 環境認識 ===== -->
+  <div class="card">
+    <p class="card-title">🌐 環境認識</p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>セッション</th>
+            <th>状況</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="color:var(--text-muted); font-size:12px;">ロンドン時間</td>
+            <td>戻り形成 → 上昇失速</td>
+          </tr>
+          <tr>
+            <td style="color:var(--text-muted); font-size:12px;">NY時間</td>
+            <td>下落再開</td>
+          </tr>
+          <tr>
+            <td style="color:var(--text-muted); font-size:12px;">構造</td>
+            <td>戻り売り（下降トレンド継続）</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===== 分析チェック ===== -->
+  <div class="card">
+    <p class="card-title">✅ 分析チェック</p>
+    <div class="table-wrap">
+      <table class="check-table">
+        <thead>
+          <tr>
+            <th>カテゴリ</th>
+            <th>項目</th>
+            <th>評価</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td rowspan="2" style="color:var(--text-muted); font-size:12px; border-right:1px solid var(--border-sub);">インジケーター</td>
+            <td>ストキャス（デッドクロス）</td>
+            <td class="text-ok">OK</td>
+          </tr>
+          <tr>
+            <td>MACD（0ライン以下）</td>
+            <td class="text-ok">OK</td>
+          </tr>
+          <tr>
+            <td rowspan="1" style="color:var(--text-muted); font-size:12px; border-right:1px solid var(--border-sub);">MA</td>
+            <td>MA位置（戻り位置）</td>
+            <td class="text-ok">OK</td>
+          </tr>
+          <tr>
+            <td rowspan="1" style="color:var(--text-muted); font-size:12px; border-right:1px solid var(--border-sub);">エントリー</td>
+            <td>エントリータイミング（やや早い）</td>
+            <td class="text-warn">△</td>
+          </tr>
+          <tr>
+            <td rowspan="1" style="color:var(--text-muted); font-size:12px; border-right:1px solid var(--border-sub);">時間帯</td>
+            <td>市場セッション（NY時間）</td>
+            <td class="text-ok">OK</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===== スコアリング ===== -->
+  <div class="card">
+    <p class="card-title">🎯 エントリースコアリング</p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>項目</th>
+            <th>内容</th>
+            <th style="text-align:right;">点数</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="font-weight:600;">波動</td>
+            <td style="color:var(--text-muted); font-size:13px;">下降トレンド</td>
+            <td style="text-align:right;" class="plus">15</td>
+          </tr>
+          <tr>
+            <td style="font-weight:600;">構造</td>
+            <td style="color:var(--text-muted); font-size:13px;">戻り売り</td>
+            <td style="text-align:right;" class="plus">15</td>
+          </tr>
+          <tr>
+            <td style="font-weight:600;">ストキャス</td>
+            <td style="color:var(--text-muted); font-size:13px;">デッドクロス</td>
+            <td style="text-align:right;" class="plus">10</td>
+          </tr>
+          <tr>
+            <td style="font-weight:600;">MACD</td>
+            <td style="color:var(--text-muted); font-size:13px;">0ライン以下</td>
+            <td style="text-align:right;" class="plus">10</td>
+          </tr>
+          <tr>
+            <td style="font-weight:600;">時間帯</td>
+            <td style="color:var(--text-muted); font-size:13px;">NY時間</td>
+            <td style="text-align:right;" class="plus">20</td>
+          </tr>
+          <tr style="border-top:2px solid var(--border);">
+            <td colspan="2" style="font-weight:700; color:var(--text-primary);">総合スコア</td>
+            <td style="text-align:right; font-size:16px; font-weight:800;" class="plus">70〜80 <span style="font-size:12px; font-weight:400; color:var(--text-muted);">/ 95</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===== 結果 ===== -->
+  <div class="card">
+    <p class="card-title">📊 結果</p>
+    <div class="result-row">
+      <div class="result-item">
+        <label>損益 Pips</label>
+        <span class="big-value plus">+10</span>
+      </div>
+      <div class="result-item">
+        <label>総合評価</label>
+        <span class="big-value rank-a">A</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 評価基準 ===== -->
+  <div class="card">
+    <p class="card-title">🏅 評価基準（ランク定義）</p>
+    <div class="rank-legend">
+      <div class="rank-legend-item">
+        <div class="rank-head rank-s">S</div>
+        <div class="rank-desc">
+          ルール完全遵守<br>
+          勝ち or 想定内の負け<br>
+          <span style="color:var(--green);">最高評価</span>
+        </div>
+      </div>
+      <div class="rank-legend-item">
+        <div class="rank-head rank-a">A</div>
+        <div class="rank-desc">
+          ルール遵守<br>
+          軽微ミスあり<br>
+          <span style="color:var(--blue);">良好</span>
+        </div>
+      </div>
+      <div class="rank-legend-item">
+        <div class="rank-head rank-b">B</div>
+        <div class="rank-desc">
+          一部ルール違反<br>
+          結果は勝ち<br>
+          <span style="color:var(--yellow);">要改善</span>
+        </div>
+      </div>
+      <div class="rank-legend-item">
+        <div class="rank-head rank-c">C</div>
+        <div class="rank-desc">
+          ルール違反あり<br>
+          負け or 大きなミス<br>
+          <span style="color:var(--red);">反省必須</span>
+        </div>
+      </div>
+    </div>
+    <p style="margin:12px 0 0; font-size:12px; color:var(--text-muted);">
+      ※勝敗ではなくルール遵守度で評価。S・Aは「プロセス正解」としてカウント。
+    </p>
+  </div>
+
+  <!-- ===== 感情ログ ===== -->
+  <div class="card">
+    <p class="card-title">🧠 感情ログ <span style="font-size:11px; color:var(--text-muted); font-weight:400; text-transform:none; letter-spacing:0;">（1=冷静 ／ 5=パニック）</span></p>
+    <ul class="emotion-log">
+      <li>
+        <span class="phase">エントリー前</span>
+        <span class="score">1</span>
+      </li>
+      <li>
+        <span class="phase">保有中</span>
+        <span class="score">1</span>
+      </li>
+      <li>
+        <span class="phase">決済後</span>
+        <span class="score">1</span>
+      </li>
+    </ul>
+  </div>
+
+  <!-- ===== 振り返りメモ ===== -->
+  <div class="card">
+    <p class="card-title">📝 振り返りメモ</p>
+    <div class="memo-block">
+      <section>
+        <div class="memo-heading">改善点</div>
+        <p>
+          ・戻り失敗の確認が弱い<br>
+          ・クロス直後で入りすぎ<br>
+        </p>
+      </section>
+      <section>
+        <div class="memo-heading">学び</div>
+        <p>
+          ・ストキャス＋MACDの一致は有効<br>
+          ・NY時間は素直に伸びる<br>
+        </p>
+      </section>
+    </div>
+  </div>
+
+  <!-- ===== チャート（最下部・横2列） ===== -->
+  <div class="card">
+    <p class="card-title">📷 チャート <span style="font-size:11px; color:var(--text-muted); font-weight:400;">（クリックで拡大）</span></p>
+    <div class="chart-grid">
+      <div class="chart-item">
+        <label>1時間足 — エントリー根拠</label>
+        <img src="../images/20260406_hour.png" alt="1時間足チャート"
+             onerror="this.closest('.chart-item').style.display='none'">
+      </div>
+      <div class="chart-item">
+        <label>15分足 — エントリー詳細</label>
+        <img src="../images/20260406_15.png" alt="15分足チャート"
+             onerror="this.closest('.chart-item').style.display='none'">
+      </div>
+    </div>
+  </div>
+
+</div><!-- /.page-wrap -->
+
+<script>
+  const lightbox  = document.getElementById('lightbox');
+  const lbImg     = document.getElementById('lightbox-img');
+  const lbCaption = document.getElementById('lightbox-caption');
+  const lbClose   = document.getElementById('lightbox-close');
+
+  document.querySelectorAll('.chart-item img').forEach(img => {
+    img.addEventListener('click', () => {
+      lbImg.src = img.src;
+      lbImg.alt = img.alt;
+      lbCaption.textContent = img.closest('.chart-item')?.querySelector('label')?.textContent ?? '';
+      lightbox.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    });
+  });
+
+  lbClose.addEventListener('click', closeLightbox);
+  lightbox.addEventListener('click', e => {
+    if (e.target === lightbox) closeLightbox();
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeLightbox();
+  });
+
+  function closeLightbox() {
+    lightbox.classList.remove('open');
+    document.body.style.overflow = '';
+    lbImg.src = '';
+  }
+</script>
+
+</body>
+</html>
