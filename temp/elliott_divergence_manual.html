@@ -1,0 +1,1426 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>エリオット × ヒドゥン × ダイバー 完全版マスターマニュアル</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;500;600&family=DM+Mono:wght@400;500&family=Zen+Old+Mincho:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0c10;
+  --bg2: #0f1218;
+  --bg3: #151a22;
+  --bg4: #1c2330;
+  --gold: #c9a84c;
+  --gold-light: #e8c97a;
+  --gold-dim: #6b5520;
+  --silver: #8b97a8;
+  --silver-light: #b8c4d0;
+  --text: #e8ecf0;
+  --text-muted: #7a8595;
+  --text-dim: #4a5565;
+  --teal: #2ec4a4;
+  --teal-dim: #0d3d33;
+  --coral: #e05c44;
+  --coral-dim: #3d1a12;
+  --amber: #d4852a;
+  --amber-dim: #3d2508;
+  --purple: #8b6fd4;
+  --purple-dim: #1e1535;
+  --green: #4caf7d;
+  --green-dim: #0d2e1c;
+  --red: #e05c5c;
+  --red-dim: #2e0d0d;
+  --border: rgba(255,255,255,0.07);
+  --border-gold: rgba(201,168,76,0.3);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Noto Serif JP', serif;
+  font-size: 15px;
+  line-height: 1.8;
+  overflow-x: hidden;
+}
+
+/* ─── SCROLLBAR ─── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 2px; }
+
+/* ─── NOISE TEXTURE OVERLAY ─── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.4;
+}
+
+/* ─── LAYOUT ─── */
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  position: relative;
+  z-index: 1;
+}
+
+/* ─── HEADER ─── */
+header {
+  position: relative;
+  padding: 5rem 0 4rem;
+  overflow: hidden;
+}
+
+.header-bg-line {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent,
+    transparent 59px,
+    rgba(201,168,76,0.04) 59px,
+    rgba(201,168,76,0.04) 60px
+  );
+  pointer-events: none;
+}
+
+.header-tag {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  opacity: 0;
+  animation: fadeUp 0.8s ease 0.2s forwards;
+}
+
+.header-tag::before {
+  content: '';
+  display: block;
+  width: 32px;
+  height: 1px;
+  background: var(--gold);
+}
+
+h1.main-title {
+  font-family: 'Zen Old Mincho', serif;
+  font-size: clamp(26px, 4vw, 40px);
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--text);
+  letter-spacing: 0.02em;
+  margin-bottom: 1rem;
+  opacity: 0;
+  animation: fadeUp 0.8s ease 0.4s forwards;
+}
+
+.title-accent {
+  color: var(--gold);
+}
+
+.header-sub {
+  font-size: 13px;
+  color: var(--silver);
+  letter-spacing: 0.05em;
+  opacity: 0;
+  animation: fadeUp 0.8s ease 0.6s forwards;
+}
+
+.header-divider {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, var(--gold-dim), transparent);
+  margin-top: 3rem;
+  opacity: 0;
+  animation: expandLine 1s ease 0.8s forwards;
+}
+
+/* ─── ESSENTIAL BOX ─── */
+.essential {
+  background: linear-gradient(135deg, var(--bg3), var(--bg4));
+  border: 1px solid var(--border-gold);
+  border-left: 3px solid var(--gold);
+  border-radius: 2px 8px 8px 2px;
+  padding: 1.75rem 2rem;
+  margin: 3rem 0;
+  position: relative;
+  overflow: hidden;
+  opacity: 0;
+  animation: fadeUp 0.8s ease 1s forwards;
+}
+
+.essential::before {
+  content: '"';
+  position: absolute;
+  top: -20px; right: 20px;
+  font-size: 120px;
+  font-family: Georgia, serif;
+  color: rgba(201,168,76,0.06);
+  line-height: 1;
+}
+
+.essential-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+}
+
+.essential-text {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text);
+  line-height: 1.8;
+  margin-bottom: 0.5rem;
+}
+
+.essential-sub {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--gold);
+  letter-spacing: 0.05em;
+}
+
+/* ─── NAV ─── */
+.toc {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.5rem 2rem;
+  margin-bottom: 4rem;
+}
+
+.toc-title {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+
+.toc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 0;
+}
+
+.toc-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0.4rem 0;
+  text-decoration: none;
+  color: var(--silver);
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  border-bottom: 1px solid var(--border);
+  transition: color 0.2s;
+}
+
+.toc-item:hover { color: var(--gold-light); }
+
+.toc-num {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--text-dim);
+  min-width: 28px;
+}
+
+/* ─── SECTION ─── */
+.section {
+  margin-bottom: 5rem;
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.section.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.section-header {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+}
+
+.section-header::after {
+  content: '';
+  position: absolute;
+  bottom: -1px; left: 0;
+  width: 80px;
+  height: 1px;
+  background: var(--gold);
+}
+
+.chapter-num {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: var(--gold);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.chapter-title {
+  font-family: 'Zen Old Mincho', serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: 0.03em;
+}
+
+/* ─── CARDS ─── */
+.card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.card-featured {
+  background: var(--bg3);
+  border: 1px solid var(--border-gold);
+  border-radius: 8px;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.card-purple { background: var(--purple-dim); border: 1px solid rgba(139,111,212,0.25); border-radius: 8px; padding: 1.25rem 1.5rem; margin-bottom: 1rem; }
+.card-teal { background: var(--teal-dim); border: 1px solid rgba(46,196,164,0.25); border-radius: 8px; padding: 1.25rem 1.5rem; margin-bottom: 1rem; }
+.card-coral { background: var(--coral-dim); border: 1px solid rgba(224,92,68,0.25); border-radius: 8px; padding: 1.25rem 1.5rem; margin-bottom: 1rem; }
+.card-amber { background: var(--amber-dim); border: 1px solid rgba(212,133,42,0.3); border-radius: 8px; padding: 1.25rem 1.5rem; margin-bottom: 1rem; }
+.card-green { background: var(--green-dim); border: 1px solid rgba(76,175,125,0.25); border-radius: 8px; padding: 1.25rem 1.5rem; margin-bottom: 1rem; }
+.card-red { background: var(--red-dim); border: 1px solid rgba(224,92,92,0.25); border-radius: 8px; padding: 1.25rem 1.5rem; margin-bottom: 1rem; }
+
+.card-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--silver-light);
+  letter-spacing: 0.05em;
+  margin-bottom: 0.6rem;
+  text-transform: uppercase;
+  font-family: 'DM Mono', monospace;
+}
+
+.card p {
+  font-size: 13.5px;
+  color: var(--silver);
+  line-height: 1.8;
+}
+
+/* ─── BADGE ─── */
+.badge {
+  display: inline-block;
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 3px 9px;
+  border-radius: 3px;
+  margin-bottom: 0.6rem;
+}
+
+.badge-gold { background: rgba(201,168,76,0.15); color: var(--gold); border: 1px solid var(--border-gold); }
+.badge-purple { background: rgba(139,111,212,0.15); color: var(--purple); border: 1px solid rgba(139,111,212,0.3); }
+.badge-teal { background: rgba(46,196,164,0.12); color: var(--teal); border: 1px solid rgba(46,196,164,0.3); }
+.badge-coral { background: rgba(224,92,68,0.12); color: var(--coral); border: 1px solid rgba(224,92,68,0.3); }
+.badge-amber { background: rgba(212,133,42,0.12); color: var(--amber); border: 1px solid rgba(212,133,42,0.3); }
+.badge-gray { background: rgba(138,151,168,0.1); color: var(--silver); border: 1px solid var(--border); }
+.badge-green { background: rgba(76,175,125,0.12); color: var(--green); border: 1px solid rgba(76,175,125,0.3); }
+.badge-red { background: rgba(224,92,92,0.12); color: var(--red); border: 1px solid rgba(224,92,92,0.3); }
+
+/* ─── TWO / THREE COLUMN ─── */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+.three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+
+@media (max-width: 600px) {
+  .two-col, .three-col { grid-template-columns: 1fr; }
+}
+
+/* ─── CONTRAST BOX ─── */
+.contrast-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.contrast-ng {
+  background: var(--red-dim);
+  border: 1px solid rgba(224,92,92,0.2);
+  border-radius: 8px;
+  padding: 1.1rem 1.25rem;
+}
+
+.contrast-ok {
+  background: var(--green-dim);
+  border: 1px solid rgba(76,175,125,0.2);
+  border-radius: 8px;
+  padding: 1.1rem 1.25rem;
+}
+
+.contrast-header {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 0.6rem;
+}
+
+.contrast-ng .contrast-header { color: var(--red); }
+.contrast-ok .contrast-header { color: var(--green); }
+
+.contrast-ng p, .contrast-ok p {
+  font-size: 12.5px;
+  line-height: 1.75;
+}
+
+.contrast-ng p { color: rgba(224,92,92,0.85); }
+.contrast-ok p { color: rgba(76,175,125,0.9); }
+
+@media (max-width: 600px) {
+  .contrast-pair { grid-template-columns: 1fr; }
+}
+
+/* ─── FLOW STEPS ─── */
+.flow { border-top: 1px solid var(--border); }
+
+.flow-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 0.85rem 0;
+  border-bottom: 1px dashed var(--border);
+}
+
+.flow-item:last-child { border-bottom: none; }
+
+.flow-num {
+  min-width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: transparent;
+  border: 1px solid var(--gold-dim);
+  color: var(--gold);
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.flow-body { flex: 1; }
+.flow-title { font-size: 13.5px; font-weight: 500; color: var(--text); line-height: 1.5; margin-bottom: 3px; }
+.flow-desc { font-size: 12px; color: var(--text-muted); line-height: 1.6; }
+
+/* ─── RULE LIST ─── */
+.rule-list { border-top: 1px solid var(--border); }
+
+.rule-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.rule-item:last-child { border-bottom: none; }
+
+.rule-icon {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  min-width: 20px;
+  margin-top: 3px;
+  color: var(--text-dim);
+}
+
+.rule-ok { color: var(--teal) !important; }
+.rule-ng { color: var(--red) !important; }
+
+.rule-body {
+  font-size: 13px;
+  color: var(--silver);
+  line-height: 1.7;
+  flex: 1;
+}
+
+.rule-body strong { color: var(--text); font-weight: 500; }
+
+/* ─── TIME AXIS TABLE ─── */
+.tf-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1rem;
+}
+
+.tf-table th {
+  background: var(--bg3);
+  color: var(--gold);
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 0.65rem 1rem;
+  text-align: left;
+  border: 1px solid var(--border);
+  font-weight: 500;
+}
+
+.tf-table td {
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--border);
+  font-size: 12.5px;
+  color: var(--silver);
+  line-height: 1.7;
+  vertical-align: top;
+}
+
+.tf-table td:first-child {
+  background: var(--bg3);
+  color: var(--silver-light);
+  font-weight: 500;
+  font-size: 12px;
+  white-space: nowrap;
+  border-right: 1px solid var(--border-gold);
+}
+
+.tf-table tr:nth-child(even) td:not(:first-child) { background: rgba(255,255,255,0.02); }
+
+.tf-sub {
+  display: block;
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  color: var(--text-dim);
+  letter-spacing: 0.05em;
+  margin-top: 2px;
+}
+
+/* ─── MATRIX TABLE ─── */
+.matrix-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.matrix-table th {
+  background: var(--bg3);
+  color: var(--gold);
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 0.6rem 0.85rem;
+  text-align: left;
+  border: 1px solid var(--border);
+  font-weight: 500;
+}
+
+.matrix-table td {
+  padding: 0.65rem 0.85rem;
+  border: 1px solid var(--border);
+  color: var(--silver);
+  line-height: 1.6;
+  vertical-align: top;
+}
+
+.matrix-table tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+
+/* ─── STATUS PILLS ─── */
+.pill {
+  display: inline-block;
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+
+.pill-ok { background: rgba(76,175,125,0.15); color: var(--green); border: 1px solid rgba(76,175,125,0.3); }
+.pill-ng { background: rgba(224,92,92,0.15); color: var(--red); border: 1px solid rgba(224,92,92,0.3); }
+.pill-warn { background: rgba(212,133,42,0.15); color: var(--amber); border: 1px solid rgba(212,133,42,0.3); }
+
+/* ─── PRIORITY LIST ─── */
+.priority-list { border-top: 1px solid var(--border); }
+
+.priority-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 0.7rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.priority-item:last-child { border-bottom: none; }
+
+.priority-num {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--bg3);
+  border: 1px solid var(--border-gold);
+  color: var(--gold);
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.priority-text { font-size: 13px; color: var(--silver); line-height: 1.7; flex: 1; }
+.priority-text strong { color: var(--text); font-weight: 500; }
+
+/* ─── TYPE CARDS ─── */
+.type-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1rem; }
+
+.type-card {
+  border-radius: 8px;
+  padding: 1.25rem;
+  border: 1px solid var(--border);
+  background: var(--bg2);
+  text-align: center;
+}
+
+.type-num {
+  font-family: 'DM Mono', monospace;
+  font-size: 32px;
+  font-weight: 400;
+  line-height: 1;
+  margin: 0.5rem 0;
+}
+
+.type-label { font-size: 10px; color: var(--text-muted); letter-spacing: 0.1em; }
+
+@media (max-width: 600px) {
+  .type-grid { grid-template-columns: 1fr; }
+}
+
+/* ─── FINAL GRID ─── */
+.final-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 1rem; }
+
+.final-card {
+  border-radius: 8px;
+  padding: 1.5rem 1.25rem;
+  text-align: center;
+}
+
+.final-title { font-size: 13px; font-weight: 500; margin-bottom: 0.6rem; letter-spacing: 0.03em; }
+.final-body { font-size: 11.5px; line-height: 1.7; }
+
+.final-purple { background: var(--purple-dim); border: 1px solid rgba(139,111,212,0.2); }
+.final-purple .final-title { color: var(--purple); }
+.final-purple .final-body { color: rgba(139,111,212,0.8); }
+
+.final-coral { background: var(--coral-dim); border: 1px solid rgba(224,92,68,0.2); }
+.final-coral .final-title { color: var(--coral); }
+.final-coral .final-body { color: rgba(224,92,68,0.8); }
+
+.final-teal { background: var(--teal-dim); border: 1px solid rgba(46,196,164,0.2); }
+.final-teal .final-title { color: var(--teal); }
+.final-teal .final-body { color: rgba(46,196,164,0.8); }
+
+@media (max-width: 600px) {
+  .final-grid { grid-template-columns: 1fr; }
+}
+
+/* ─── HIGHLIGHT TEXT ─── */
+.hl-gold { color: var(--gold); font-weight: 500; }
+.hl-teal { color: var(--teal); }
+.hl-coral { color: var(--coral); }
+.hl-purple { color: var(--purple); }
+
+/* ─── BIG STATEMENT ─── */
+.statement {
+  border-left: 2px solid var(--gold);
+  padding: 0.75rem 1.25rem;
+  margin: 1.25rem 0;
+  background: rgba(201,168,76,0.04);
+  border-radius: 0 6px 6px 0;
+}
+
+.statement p {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text);
+  line-height: 1.7;
+}
+
+.statement-sub {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--gold);
+  margin-top: 0.4rem;
+  display: block;
+}
+
+/* ─── FOOTER ─── */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 3rem 0;
+  margin-top: 4rem;
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.footer-title {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--text-dim);
+  letter-spacing: 0.15em;
+}
+
+.footer-line {
+  height: 1px;
+  flex: 1;
+  background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
+}
+
+/* ─── ANIMATIONS ─── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes expandLine {
+  from { transform: scaleX(0); transform-origin: left; }
+  to { transform: scaleX(1); transform-origin: left; opacity: 1; }
+}
+
+/* ─── DIVIDER ─── */
+.section-divider {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, var(--gold-dim), transparent);
+  margin: 1.5rem 0;
+}
+
+/* ─── INLINE MONO ─── */
+code {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  background: rgba(255,255,255,0.06);
+  padding: 1px 6px;
+  border-radius: 3px;
+  color: var(--silver-light);
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="container">
+  <header>
+    <div class="header-bg-line"></div>
+    <div class="header-tag">FX Technical Analysis — Complete Master Manual</div>
+    <h1 class="main-title">
+      エリオット波動 × <span class="title-accent">ヒドゥン</span>ダイバージェンス<br>× ダイバージェンス
+      <br><span style="font-size:0.55em;color:var(--silver);font-weight:300;letter-spacing:0.05em">時間軸統合 完全版マスターマニュアル</span>
+    </h1>
+    <div class="header-sub">「形だけ再現する人」から「勝てる思考を持つ人」へ</div>
+    <div class="header-divider"></div>
+  </header>
+
+  <!-- ESSENTIAL -->
+  <div class="essential">
+    <div class="essential-label">Core Philosophy</div>
+    <p class="essential-text">このマニュアルの本質はテクニックではない。<br>「やらない判断」を増やすことが、利益を作る。</p>
+    <span class="essential-sub">ヒドゥン ＝ 選ぶ技術（エントリーを減らす）　／　ダイバー ＝ やめる技術（無駄トレードを回避する）</span>
+  </div>
+
+  <!-- TOC -->
+  <nav class="toc">
+    <div class="toc-title">Contents</div>
+    <div class="toc-grid">
+      <a href="#ch0" class="toc-item"><span class="toc-num">Ch.0</span>2つのテクニックの本質的な役割</a>
+      <a href="#ch1" class="toc-item"><span class="toc-num">Ch.1</span>ヒドゥンダイバージェンスの発生条件</a>
+      <a href="#ch2" class="toc-item"><span class="toc-num">Ch.2</span>ダイバージェンスの正しい使い方と誤用</a>
+      <a href="#ch3" class="toc-item"><span class="toc-num">Ch.3</span>時間軸統合 — 許可とタイミングの分離</a>
+      <a href="#ch4" class="toc-item"><span class="toc-num">Ch.4</span>5波戦略と根拠の優先順位</a>
+      <a href="#ch5" class="toc-item"><span class="toc-num">Ch.5</span>3波戦略 — 乗り遅れたら終わり</a>
+      <a href="#ch6" class="toc-item"><span class="toc-num">Ch.6</span>エントリー回数 vs ピプス — 3つのタイプ</a>
+      <a href="#ch7" class="toc-item"><span class="toc-num">Ch.7</span>通貨ペア選定 — 綺麗な波を選ぶ</a>
+      <a href="#ch8" class="toc-item"><span class="toc-num">Ch.8</span>根拠の重ね方</a>
+      <a href="#ch9" class="toc-item"><span class="toc-num">Ch.9</span>損切り・利確の基準</a>
+      <a href="#ch10" class="toc-item"><span class="toc-num">Ch.10</span>ルール運用の鉄則</a>
+      <a href="#ch11" class="toc-item"><span class="toc-num">Ch.11</span>状況別行動マトリクス</a>
+      <a href="#ch12" class="toc-item"><span class="toc-num">Ch.12</span>勝てる人の思考サイクル</a>
+      <a href="#final" class="toc-item"><span class="toc-num">▶</span>本質まとめ</a>
+    </div>
+  </nav>
+
+  <!-- ─── CH 0 ─── -->
+  <section class="section" id="ch0">
+    <div class="section-header">
+      <span class="chapter-num">Chapter 0</span>
+      <h2 class="chapter-title">2つのテクニックの本質的な役割</h2>
+    </div>
+
+    <div class="two-col">
+      <div class="card-featured">
+        <div class="badge badge-gold">ヒドゥンダイバージェンス</div>
+        <div class="card-title" style="color:var(--gold)">エントリー制限条件</div>
+        <div class="statement" style="margin:0.75rem 0">
+          <p style="font-size:14px;color:var(--gold-light)">"入っていい押し目か" を選別する</p>
+        </div>
+        <p>「ヒドゥンが出たから入る」ではなく「ヒドゥンが出ていない押し目には入らない」が正しい使い方。エントリー回数を削るための技術であり、押し目の質を見極めるフィルター。</p>
+        <div class="section-divider"></div>
+        <table style="width:100%;font-size:12px;border-collapse:collapse">
+          <tr><td style="color:var(--text-muted);padding:4px 0">インジケーター</td><td style="text-align:right;color:var(--silver-light);font-family:'DM Mono',monospace;font-size:11px">Stochastics</td></tr>
+          <tr><td style="color:var(--text-muted);padding:4px 0">対象波</td><td style="text-align:right;color:var(--silver-light);font-family:'DM Mono',monospace;font-size:11px">エリオット第5波</td></tr>
+          <tr><td style="color:var(--text-muted);padding:4px 0">主な使用足</td><td style="text-align:right;color:var(--silver-light);font-family:'DM Mono',monospace;font-size:11px">日足（応用：1時間足）</td></tr>
+        </table>
+      </div>
+
+      <div class="card">
+        <div class="badge badge-coral">ダイバージェンス</div>
+        <div class="card-title" style="color:var(--coral)">利確・回避判断ツール</div>
+        <div class="statement" style="margin:0.75rem 0;border-left-color:var(--coral);background:rgba(224,92,68,0.04)">
+          <p style="font-size:14px;color:var(--coral)">"もう終わるかも" を察知する</p>
+        </div>
+        <p>「ダイバーが出たから逆張りエントリー」は誤用。正しくは、利確・様子見・通貨除外の判断ツール。トレンドの勢いの減衰を可視化するもの。</p>
+        <div class="section-divider"></div>
+        <table style="width:100%;font-size:12px;border-collapse:collapse">
+          <tr><td style="color:var(--text-muted);padding:4px 0">インジケーター</td><td style="text-align:right;color:var(--silver-light);font-family:'DM Mono',monospace;font-size:11px">MACD</td></tr>
+          <tr><td style="color:var(--text-muted);padding:4px 0">対象波</td><td style="text-align:right;color:var(--silver-light);font-family:'DM Mono',monospace;font-size:11px">エリオット第3波</td></tr>
+          <tr><td style="color:var(--text-muted);padding:4px 0">主な使用足</td><td style="text-align:right;color:var(--silver-light);font-family:'DM Mono',monospace;font-size:11px">1時間足</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="contrast-pair">
+      <div class="contrast-ng">
+        <div class="contrast-header">よくある誤解</div>
+        <p>ヒドゥン → エントリーするサイン<br>ダイバー → 逆張りのサイン</p>
+      </div>
+      <div class="contrast-ok">
+        <div class="contrast-header">正しい解釈</div>
+        <p>ヒドゥンなし → このエントリーは見送り<br>ダイバーあり → 利確・除外・静観</p>
+      </div>
+    </div>
+
+    <div class="card-amber">
+      <div class="card-title" style="color:var(--amber)">混乱防止の絶対ルール</div>
+      <p>5波狙いはヒドゥンのみ参照。3波狙いはダイバージェンスのみ参照。両方同時に参照すると判断が狂い、エントリー機会が激減する。スタイルを決めてから使うテクニックを選択する。</p>
+    </div>
+  </section>
+
+  <!-- ─── CH 1 ─── -->
+  <section class="section" id="ch1">
+    <div class="section-header">
+      <span class="chapter-num">Chapter 1</span>
+      <h2 class="chapter-title">ヒドゥンダイバージェンス — 発生条件と読み方</h2>
+    </div>
+
+    <div class="card-amber">
+      <div class="card-title" style="color:var(--amber)">前提条件 — これが崩れると無効</div>
+      <p>エリオット波動が曖昧な状態、トレンド方向が不明な状態では、ヒドゥンダイバージェンスは機能しない。<strong style="color:var(--text)">1〜4波が明確に成立していること</strong>が絶対条件。</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title">正しい発生条件（上昇トレンド）</div>
+      <div class="flow">
+        <div class="flow-item">
+          <div class="flow-num">1</div>
+          <div class="flow-body">
+            <div class="flow-title">明確なトレンドで1〜4波が成立している</div>
+            <div class="flow-desc">エリオット波動が曖昧な局面では適用しない。</div>
+          </div>
+        </div>
+        <div class="flow-item">
+          <div class="flow-num">2</div>
+          <div class="flow-body">
+            <div class="flow-title">4波の押し目局面にある</div>
+            <div class="flow-desc">押し目・戻りの局面でのみ有効。強い上昇中には出現しない。</div>
+          </div>
+        </div>
+        <div class="flow-item">
+          <div class="flow-num">3</div>
+          <div class="flow-body">
+            <div class="flow-title">安値が切り上がっているのにストキャスが切り下がっている</div>
+            <div class="flow-desc">2波・3波が作った安値のストキャス数値を基準として記録しておく。</div>
+          </div>
+        </div>
+        <div class="flow-item">
+          <div class="flow-num">4</div>
+          <div class="flow-body">
+            <div class="flow-title">ストキャスが<code>20以下</code>のゾーンに到達</div>
+            <div class="flow-desc">「どこで反転するかは誰にも分からない」—だからストキャスのゾーン（20以下・80以上）で反転候補を特定する。精確なポイントではなくゾーンで考える。</div>
+          </div>
+        </div>
+        <div class="flow-item">
+          <div class="flow-num">5</div>
+          <div class="flow-body">
+            <div class="flow-title">ゴールデンクロスを確認してエントリー検討</div>
+            <div class="flow-desc">クロスが5波開始の目安。ただしヒドゥンが未発生ならこのクロスもスルーする。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="card-green">
+        <div class="card-title" style="color:var(--green)">上昇トレンドの場合</div>
+        <p>安値が<strong style="color:var(--text)">切り上がっている</strong>にもかかわらず、ストキャスが<strong style="color:var(--text)">切り下がっている</strong>状態。一見弱そうだがトレンド継続の根拠。</p>
+      </div>
+      <div class="card-coral">
+        <div class="card-title" style="color:var(--coral)">下落トレンドの場合（逆）</div>
+        <p>高値が<strong style="color:var(--text)">切り下がっている</strong>にもかかわらず、ストキャスが<strong style="color:var(--text)">切り上がっている</strong>状態。下落5波の継続サイン。</p>
+      </div>
+    </div>
+
+    <div class="card-purple">
+      <div class="card-title" style="color:var(--purple)">ストキャスを使う本質的な理由</div>
+      <p>「どこで押し目が終わるか」は誰にも分からない。ストキャスの<code>20以下</code>ゾーンへの到達を「反転候補エリアへの到達」として使い、その中でクロスを確認する。精確なポイントではなくゾーンで考える。</p>
+    </div>
+  </section>
+
+  <!-- ─── CH 2 ─── -->
+  <section class="section" id="ch2">
+    <div class="section-header">
+      <span class="chapter-num">Chapter 2</span>
+      <h2 class="chapter-title">ダイバージェンス — 正しい使い方と誤用</h2>
+    </div>
+
+    <div class="two-col">
+      <div class="card-red">
+        <div class="card-title" style="color:var(--red)">誤用パターン（厳禁）</div>
+        <p style="color:rgba(224,92,92,0.85)">ダイバーが出た → 相場が転換すると判断して逆張りエントリー<br><br>→ これはトレード戦略として成立しない。発生はあくまで「勢いの減衰の示唆」であり、すぐ転換する保証はない。</p>
+      </div>
+      <div class="card-green">
+        <div class="card-title" style="color:var(--green)">正しい3つの使い方</div>
+        <p style="color:rgba(76,175,125,0.9)">① 既存ポジションの利確タイミング<br>② 「この通貨ペアは今やりにくい」という除外判断<br>③ エントリー前の回避フィルター<br><br>→ 「入るため」ではなく「やめるため」のツール</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">なぜストキャスではなくMACDを使うのか</div>
+      <div class="rule-list">
+        <div class="rule-item">
+          <span class="rule-icon">▷</span>
+          <span class="rule-body">ストキャスは反応が速い → 利確タイミングが早くなりすぎる → 3波でピプスを伸ばすという目的に合わない</span>
+        </div>
+        <div class="rule-item">
+          <span class="rule-icon">▷</span>
+          <span class="rule-body">MACDはゆったり動く → 保有を継続しやすい → 3波のピプスを最大限取れる</span>
+        </div>
+        <div class="rule-item">
+          <span class="rule-icon">▷</span>
+          <span class="rule-body">早めの利確が好きな人はストキャスでダイバーを見るのもあり。ただし3波のピプスは取りきれない</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── CH 3 ─── -->
+  <section class="section" id="ch3">
+    <div class="section-header">
+      <span class="chapter-num">Chapter 3</span>
+      <h2 class="chapter-title">時間軸統合 — 「許可」と「タイミング」の分離</h2>
+    </div>
+
+    <div class="card-featured" style="text-align:center;margin-bottom:1.5rem">
+      <div class="card-title" style="color:var(--gold);text-align:center;margin-bottom:1rem">時間軸の本質的な役割分担</div>
+      <div style="display:flex;justify-content:center;align-items:center;gap:1.5rem;flex-wrap:wrap">
+        <div style="text-align:center">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-muted);letter-spacing:0.1em;margin-bottom:4px">UPPER TIMEFRAME</div>
+          <div style="font-size:18px;font-weight:600;color:var(--gold)">上位足</div>
+          <div style="font-size:12px;color:var(--silver);margin-top:4px">「やっていい <span class="hl-gold">許可</span>」</div>
+        </div>
+        <div style="font-size:24px;color:var(--border-gold)">→</div>
+        <div style="text-align:center">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-muted);letter-spacing:0.1em;margin-bottom:4px">LOWER TIMEFRAME</div>
+          <div style="font-size:18px;font-weight:600;color:var(--silver-light)">下位足</div>
+          <div style="font-size:12px;color:var(--silver);margin-top:4px">「入る<span class="hl-gold">タイミング</span>」</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="overflow-x:auto">
+      <table class="tf-table">
+        <thead>
+          <tr>
+            <th>時間足</th>
+            <th>5波狙い（ヒドゥン）</th>
+            <th>3波狙い（ダイバー）</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>日足<span class="tf-sub">許可レイヤー</span></td>
+            <td>ヒドゥン発生を確認。「この押し目でエントリーしてよいか」の許可を出す。ヒドゥンなし→全ての下位足エントリーが自動的に不可。</td>
+            <td>ダイバー未発生を確認。「まだ伸びる環境か」の許可を出す。発生中→3波狙いの全エントリーを回避。</td>
+          </tr>
+          <tr>
+            <td>1時間足<span class="tf-sub">価値判断レイヤー</span></td>
+            <td>ヒドゥンを探して入る価値を確認。または前日高値ブレイクを待つ。下落の勢いが強い間は静観。</td>
+            <td>ダイバー発生状態を確認。発生中→15分足条件が揃っても早期利確が正解。未発生→ピプスを伸ばす。</td>
+          </tr>
+          <tr>
+            <td>15分足<span class="tf-sub">タイミングレイヤー</span></td>
+            <td>上位足の許可が出た上でのエントリーポイント確定。ストキャスのクロスを活用。</td>
+            <td>エントリー実行と利確判断。上位足ダイバー発生中なら5〜10pipsで早期利確を優先。</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card-red" style="margin-top:1rem">
+      <div class="card-title" style="color:var(--red)">絶対則</div>
+      <p style="color:rgba(224,92,92,0.85)">日足でできないことは1時間足でもできない。短期足ほど波形が細かく難しい。まず日足で習得し、応用として短期足へ。「短期足の方が簡単」という感覚は錯覚。</p>
+    </div>
+  </section>
+
+  <!-- ─── CH 4 ─── -->
+  <section class="section" id="ch4">
+    <div class="section-header">
+      <span class="chapter-num">Chapter 4</span>
+      <h2 class="chapter-title">5波戦略 — 3つの組み合わせと根拠の優先順位</h2>
+    </div>
+
+    <div class="card-amber">
+      <div class="card-title" style="color:var(--amber)">最重要の思考転換</div>
+      <p>ヒドゥンはエントリー条件ではなく「<strong style="color:var(--text)">エントリー制限条件</strong>」。「ヒドゥンが出た→入る」ではなく「ヒドゥンが出ていない→入らない」が正しい。</p>
+    </div>
+
+    <div class="card-purple">
+      <div class="badge badge-purple">戦略① シンプル型</div>
+      <div class="card-title" style="color:var(--purple)">日足ヒドゥン ＋ 前日高値ブレイク ＋ 15分足</div>
+      <p>日足でヒドゥン発生確認 → 1時間足で前日最高値のブレイクを待つ → 15分足でエントリー。最も取り組みやすく15分売買向き。</p>
+    </div>
+
+    <div class="card-teal">
+      <div class="badge badge-teal">戦略② 高精度型</div>
+      <div class="card-title" style="color:var(--teal)">日足ヒドゥン ＋ 1時間足ヒドゥン（ダブル確認）</div>
+      <p>日足・1時間足の両方でヒドゥン発生を確認。根拠の重なりが最も強く、ロットを上げやすい。ピプスを伸ばしたい人向き。</p>
+    </div>
+
+    <div class="card">
+      <div class="badge badge-gray">戦略③ ライン活用型</div>
+      <div class="card-title">日足5波確認 ＋ 1時間足ヒドゥン ＋ ラインの反発</div>
+      <p>日足ではヒドゥンを見ず5波を確認するだけ。1時間足でヒドゥンと意識されているラインの反発が重なる場所を狙う。1時間足メイン派向き。</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title">根拠の優先順位（強い順）</div>
+      <div class="priority-list">
+        <div class="priority-item">
+          <div class="priority-num">1</div>
+          <div class="priority-text"><strong>日足の方向性</strong> — これが全ての前提。逆らってはいけない。</div>
+        </div>
+        <div class="priority-item">
+          <div class="priority-num">2</div>
+          <div class="priority-text"><strong>エリオット波動</strong> — 今が何波かが分からなければ全て無効。</div>
+        </div>
+        <div class="priority-item">
+          <div class="priority-num">3</div>
+          <div class="priority-text"><strong>ヒドゥン または ダイバー</strong> — 自分のスタイルに合った方のみ使用。両方は混乱のもと。</div>
+        </div>
+        <div class="priority-item">
+          <div class="priority-num">4</div>
+          <div class="priority-text"><strong>サポレジライン</strong> — 根拠を厚くするための補強材料。</div>
+        </div>
+        <div class="priority-item">
+          <div class="priority-num">5</div>
+          <div class="priority-text"><strong>インジケーター全般</strong> — あくまで補助。インジで相場は読めない。</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── CH 5 ─── -->
+  <section class="section" id="ch5">
+    <div class="section-header">
+      <span class="chapter-num">Chapter 5</span>
+      <h2 class="chapter-title">3波戦略 — 「乗り遅れたら終わり」の意味</h2>
+    </div>
+
+    <div class="card-featured">
+      <div class="card-title" style="color:var(--gold)">3波エントリーの本質ルール</div>
+      <div class="rule-list">
+        <div class="rule-item">
+          <span class="rule-icon">▷</span>
+          <span class="rule-body"><strong>ブレイク初動のみ</strong> — 1波・2波が作った高値を超えた瞬間に近い場所でエントリー。遅れるほどダイバーが発生しやすくなる。</span>
+        </div>
+        <div class="rule-item">
+          <span class="rule-icon">▷</span>
+          <span class="rule-body"><strong>押し目は基本取らない</strong> — 3波の押し目狙いは別戦略。ブレイク初動という意識を保つ。</span>
+        </div>
+        <div class="rule-item">
+          <span class="rule-icon">▷</span>
+          <span class="rule-body"><strong>乗り遅れたら捨てる</strong> — 「安全になってから入ろう」と思った時点で、そのポイントにはダイバーが発生している可能性が高い。</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="contrast-pair">
+      <div class="contrast-ng">
+        <div class="contrast-header">遅れてエントリー</div>
+        <p>相場が上がりすぎている → MACD伸び過ぎ → ダイバー発生中の可能性 → 損切り深い → ダメージ大</p>
+      </div>
+      <div class="contrast-ok">
+        <div class="contrast-header">ブレイク初動エントリー</div>
+        <p>ダイバー未発生 → 伸びる根拠あり → 自信を持って保有継続 → ダイバー発生まで伸ばす</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── CH 6 ─── -->
+  <section class="section" id="ch6">
+    <div class="section-header">
+      <span class="chapter-num">Chapter 6</span>
+      <h2 class="chapter-title">エントリー回数 vs ピプス — 3つのタイプ</h2>
+    </div>
+
+    <div class="type-grid">
+      <div class="type-card">
+        <div class="badge badge-gray">回数型</div>
+        <div style="color:var(--silver-light)">
+          <div class="type-num" style="color:var(--silver)">4/4</div>
+          <div class="type-label">4回 → 4勝可能</div>
+        </div>
+        <div class="section-divider"></div>
+        <p style="font-size:11.5px;color:var(--text-muted);line-height:1.7;text-align:left">ストキャスのみ使用。クロスごとにエントリー。ヒドゥン不要。1回あたり5〜10pips。</p>
+      </div>
+      <div class="type-card" style="border-color:rgba(212,133,42,0.2);background:rgba(212,133,42,0.04)">
+        <div class="badge badge-amber">バランス型</div>
+        <div style="color:var(--amber)">
+          <div class="type-num">3/4</div>
+          <div class="type-label">回数を少し絞る</div>
+        </div>
+        <div class="section-divider"></div>
+        <p style="font-size:11.5px;color:var(--text-muted);line-height:1.7;text-align:left">ラインとの重なりなど1〜2個のフィルターで回数を絞る中間型。</p>
+      </div>
+      <div class="type-card" style="border-color:var(--border-gold);background:rgba(201,168,76,0.04)">
+        <div class="badge badge-gold">ピプス型</div>
+        <div style="color:var(--gold)">
+          <div class="type-num">2/4</div>
+          <div class="type-label">ヒドゥン厳選</div>
+        </div>
+        <div class="section-divider"></div>
+        <p style="font-size:11.5px;color:var(--text-muted);line-height:1.7;text-align:left">ヒドゥン発生時のみ。4回中2勝2敗でも利益が大きい。ロットを上げられる。</p>
+      </div>
+    </div>
+
+    <div class="card-red">
+      <div class="card-title" style="color:var(--red)">絶対に成立しない要求</div>
+      <p style="color:rgba(224,92,92,0.85)">「ピプスも多く取りたい、エントリー回数も多くしたい、勝率も上げたい」という3つの同時達成は不可能。何かを得るためには必ず何かを捨てる必要がある。これを受け入れられない状態では、長期的に勝ち続けることはできない。</p>
+    </div>
+  </section>
+
+  <!-- ─── CH 7 ─── -->
+  <section class="section" id="ch7">
+    <div class="section-header">
+      <span class="chapter-num">Chapter 7</span>
+      <h2 class="chapter-title">通貨ペア選定 — 一番綺麗な波を選ぶ</h2>
+    </div>
+
+    <div class="card">
+      <div class="card-title">選定の3基準（全て満たすものを選ぶ）</div>
+      <div class="rule-list">
+        <div class="rule-item">
+          <span class="rule-icon" style="color:var(--gold);font-family:'DM Mono',monospace;font-size:13px">①</span>
+          <span class="rule-body"><strong>波形が明確</strong> — エリオット波動がはっきり取れる通貨ペアを選ぶ。波形が曖昧なものは候補から外す。</span>
+        </div>
+        <div class="rule-item">
+          <span class="rule-icon" style="color:var(--gold);font-family:'DM Mono',monospace;font-size:13px">②</span>
+          <span class="rule-body"><strong>インジの条件が最も綺麗に揃っている</strong> — ダイバーなし（3波狙い）またはヒドゥンあり（5波狙い）のどちらかが最も明確な通貨を優先。</span>
+        </div>
+        <div class="rule-item">
+          <span class="rule-icon" style="color:var(--gold);font-family:'DM Mono',monospace;font-size:13px">③</span>
+          <span class="rule-body"><strong>トレンドが継続中</strong> — 方向感が出ている通貨を選ぶ。もみ合いや方向が不明な通貨は捨てる。</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-green">
+      <div class="card-title" style="color:var(--green)">核心</div>
+      <p style="color:rgba(76,175,125,0.9)">「やりにくい通貨は捨てる」がパフォーマンスを上げる最短ルート。複数の通貨を全部やろうとするのではなく、その時点で最も条件の揃った1〜2本だけに集中する。比較することで「どれが一番か」が見えてくる。</p>
+    </div>
+  </section>
+
+  <!-- ─── CH 8 ─── -->
+  <section class="section" id="ch8">
+    <div class="section-header">
+      <span class="chapter-num">Chapter 8</span>
+      <h2 class="chapter-title">根拠の重ね方 — 最強エントリーポイントの作り方</h2>
+    </div>
+
+    <div class="three-col">
+      <div style="background:var(--purple-dim);border:1px solid rgba(139,111,212,0.2);border-radius:8px;padding:1.1rem;text-align:center">
+        <div class="badge badge-purple">根拠①</div>
+        <p style="font-size:12px;color:rgba(139,111,212,0.85);line-height:1.7;margin-top:0.5rem">エリオット波動<br>波の位置が明確</p>
+      </div>
+      <div style="background:var(--teal-dim);border:1px solid rgba(46,196,164,0.2);border-radius:8px;padding:1.1rem;text-align:center">
+        <div class="badge badge-teal">根拠②</div>
+        <p style="font-size:12px;color:rgba(46,196,164,0.85);line-height:1.7;margin-top:0.5rem">サポレジライン<br>多くが意識するポイント</p>
+      </div>
+      <div style="background:var(--amber-dim);border:1px solid rgba(212,133,42,0.2);border-radius:8px;padding:1.1rem;text-align:center">
+        <div class="badge badge-amber">根拠③</div>
+        <p style="font-size:12px;color:rgba(212,133,42,0.85);line-height:1.7;margin-top:0.5rem">ヒドゥン / ダイバー<br>インジの補強</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <p>インジケーターは補助にすぎない。相場が動く本質的な理由は「多くのトレーダーが同じポイントに注目するから」。エリオット波動とラインが先にあり、ヒドゥン・ダイバーはその根拠を補強する役割。</p>
+    </div>
+
+    <div class="card-amber">
+      <div class="card-title" style="color:var(--amber)">前日の最高値・最安値が最強のテクニカルである理由</div>
+      <p>インジケーターは設定値によって見え方が人によって異なる。しかし前日高値・安値は<strong style="color:var(--text)">全員が同じポイントを見ている</strong>。「誰もが見ているから機能する」という普遍性こそがライン系テクニカルの強さ。</p>
+    </div>
+  </section>
+
+  <!-- ─── CH 9 ─── -->
+  <section class="section" id="ch9">
+    <div class="section-header">
+      <span class="chapter-num">Chapter 9</span>
+      <h2 class="chapter-title">損切り・利確 — 構造否定ベースの考え方</h2>
+    </div>
+
+    <div class="two-col">
+      <div class="card-red">
+        <div class="badge badge-red">損切り — 構造否定</div>
+        <div class="card-title" style="color:var(--red)">5波狙い（ヒドゥン使用時）</div>
+        <p style="color:rgba(224,92,92,0.85)">ゴールデンクロス発生時に形成した安値を少し下に設定。この安値を割り込んだ＝「押し目として機能しなかった」という構造の否定。トレードの根拠が崩れた地点。</p>
+      </div>
+      <div class="card-green">
+        <div class="badge badge-green">利確 — ダイバー発生</div>
+        <div class="card-title" style="color:var(--green)">3波狙い（ダイバー使用時）</div>
+        <p style="color:rgba(76,175,125,0.9)">1時間足でダイバーが発生したタイミングが最善。「出るまで保有する」という明確な基準があることで、根拠なく感情で早期利確するリスクが消える。</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">1時間足のダイバー状態が15分足の利確判断を変える</div>
+      <div style="overflow-x:auto;margin-top:0.75rem">
+        <table class="matrix-table">
+          <thead>
+            <tr><th>日足</th><th>1時間足</th><th>15分足での行動方針</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>ダイバーなし</td>
+              <td>ダイバーなし</td>
+              <td><span class="pill pill-ok">積極的に伸ばす</span> 両足で根拠あり。ロット上げも検討。</td>
+            </tr>
+            <tr>
+              <td>ダイバーなし</td>
+              <td>ダイバーあり</td>
+              <td><span class="pill pill-warn">早期利確</span> 上位足で転換リスクあり。条件揃っても伸ばさない。</td>
+            </tr>
+            <tr>
+              <td>ダイバーあり</td>
+              <td>ダイバーあり</td>
+              <td><span class="pill pill-ng">エントリー回避</span> または既存ポジションを利確。</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── CH 10 ─── -->
+  <section class="section" id="ch10">
+    <div class="section-header">
+      <span class="chapter-num">Chapter 10</span>
+      <h2 class="chapter-title">ルール運用の鉄則</h2>
+    </div>
+
+    <div class="card">
+      <div class="rule-list">
+        <div class="rule-item">
+          <span class="rule-icon rule-ng">✕</span>
+          <span class="rule-body"><strong>検証なしに導入しない</strong> — 「良さそう」という感覚でルールに加えると、初めて負けた時に言い訳が出てきてルールが崩壊する</span>
+        </div>
+        <div class="rule-item">
+          <span class="rule-icon rule-ng">✕</span>
+          <span class="rule-body"><strong>気分でルールを変えない</strong> — 「今週はヒドゥンが少ないからルールを外そう」は最悪のパターン。相場状況に関わらず守り続けるのがルール</span>
+        </div>
+        <div class="rule-item">
+          <span class="rule-icon rule-ng">✕</span>
+          <span class="rule-body"><strong>負けた時に言い訳しない</strong> — 言い訳している状態は、ルールへの納得が不十分な証拠</span>
+        </div>
+        <div class="rule-item">
+          <span class="rule-icon rule-ok">✓</span>
+          <span class="rule-body"><strong>「納得できるか」が全て</strong> — 徹底的に検証して納得してから使う。納得があれば負けても次へ進める</span>
+        </div>
+        <div class="rule-item">
+          <span class="rule-icon rule-ok">✓</span>
+          <span class="rule-body"><strong>合わなければ迷わず捨てる</strong> — 使わないテクニックを残しておくことが判断の邪魔になる。イエスかノーかを明確にする</span>
+        </div>
+        <div class="rule-item">
+          <span class="rule-icon rule-ok">✓</span>
+          <span class="rule-body"><strong>感情の自己分析も行う</strong> — 5pipsでストレスか、エントリー回数が少ないとイライラするか。自分のトレード心理を把握することが、正しいテクニックの選択につながる</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── CH 11 ─── -->
+  <section class="section" id="ch11">
+    <div class="section-header">
+      <span class="chapter-num">Chapter 11</span>
+      <h2 class="chapter-title">状況別行動マトリクス</h2>
+    </div>
+
+    <div class="statement">
+      <p>最も重要な判断は「<span class="hl-gold">やらない</span>」という判断</p>
+    </div>
+
+    <div style="overflow-x:auto">
+      <table class="matrix-table">
+        <thead>
+          <tr><th>日足状態</th><th>1時間足状態</th><th>5波狙いの判断</th><th>3波狙いの判断</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>ヒドゥン発生</td><td>ヒドゥン発生</td>
+            <td><span class="pill pill-ok">最優先</span> 積極エントリー・伸ばす</td>
+            <td style="color:var(--text-dim)">参照不要</td>
+          </tr>
+          <tr>
+            <td>ヒドゥン発生</td><td>ヒドゥン未発生</td>
+            <td><span class="pill pill-warn">準備段階</span> 前日高値ブレイク待ち</td>
+            <td style="color:var(--text-dim)">参照不要</td>
+          </tr>
+          <tr>
+            <td>ヒドゥン未発生</td><td>どちらでも</td>
+            <td><span class="pill pill-ng">見送り</span> ヒドゥンなし→全不可</td>
+            <td style="color:var(--text-dim)">参照不要</td>
+          </tr>
+          <tr>
+            <td>ダイバーなし</td><td>ダイバーなし</td>
+            <td style="color:var(--text-dim)">参照不要</td>
+            <td><span class="pill pill-ok">最優先</span> 積極エントリー・伸ばす</td>
+          </tr>
+          <tr>
+            <td>ダイバーなし</td><td>ダイバーあり</td>
+            <td style="color:var(--text-dim)">参照不要</td>
+            <td><span class="pill pill-warn">早期利確</span> エントリーは慎重に</td>
+          </tr>
+          <tr>
+            <td>ダイバーあり</td><td>どちらでも</td>
+            <td style="color:var(--text-dim)">参照不要</td>
+            <td><span class="pill pill-ng">回避・利確</span> 新規エントリー禁止</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ─── CH 12 ─── -->
+  <section class="section" id="ch12">
+    <div class="section-header">
+      <span class="chapter-num">Chapter 12</span>
+      <h2 class="chapter-title">勝てる人の思考サイクル</h2>
+    </div>
+
+    <div class="two-col">
+      <div class="card-red">
+        <div class="card-title" style="color:var(--red)">負けた時</div>
+        <p style="color:rgba(224,92,92,0.85)">言い訳しない → なぜ負けたか検証する → ルールの修正か、メンタルの問題か切り分ける → 同じ状況での行動を再定義する</p>
+      </div>
+      <div class="card-green">
+        <div class="card-title" style="color:var(--green)">勝った時</div>
+        <p style="color:rgba(76,175,125,0.9)">喜ぶだけで終わらない → なぜ勝てたか検証する → 再現できる条件を言語化する → 同じ条件が揃った時にロットを上げられるようにする</p>
+      </div>
+    </div>
+
+    <div class="card-amber">
+      <div class="card-title" style="color:var(--amber)">「聞いてすぐ実践」が最も結果を遅らせる</div>
+      <p>学ぶ → 過去検証 → 取り入れるか判断 → ルール確定 → 愚直に守る → 負けても納得できる状態を作る。このサイクルを踏み外して「なんとなく良さそう」で使い始めると、負けた時の言い訳が始まり、ルールが崩壊する。</p>
+    </div>
+  </section>
+
+  <!-- ─── FINAL ─── -->
+  <section class="section" id="final">
+    <div class="section-header">
+      <span class="chapter-num">本質まとめ</span>
+      <h2 class="chapter-title">このマニュアルが伝えたかった3つの真実</h2>
+    </div>
+
+    <div class="final-grid">
+      <div class="final-card final-purple">
+        <div class="final-title">ヒドゥンは選ぶ技術</div>
+        <div class="final-body">エントリーを増やすためではなく、入ってはいけない押し目を排除するためにある</div>
+      </div>
+      <div class="final-card final-coral">
+        <div class="final-title">ダイバーはやめる技術</div>
+        <div class="final-body">逆張りのサインではなく、利確・回避・除外の判断を助けるためにある</div>
+      </div>
+      <div class="final-card final-teal">
+        <div class="final-title">やらない判断が最強</div>
+        <div class="final-body">利益は「多くトレードすること」ではなく「少数の質の高いトレード」から生まれる</div>
+      </div>
+    </div>
+
+    <div class="contrast-pair" style="margin-top:1.5rem">
+      <div class="contrast-ng">
+        <div class="contrast-header">間違った方向</div>
+        <p>テクニックを増やす<br>全部取ろうとする<br>勝とうとする<br>エントリー回数を増やす</p>
+      </div>
+      <div class="contrast-ok">
+        <div class="contrast-header">本質の方向</div>
+        <p>エントリーを削る<br>一部だけ取る<br>負け方を管理する<br>質の高い1手に集中する</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-content">
+      <span class="footer-title">Elliott × Hidden Divergence × Divergence — Complete Master Manual</span>
+      <div class="footer-line"></div>
+      <span class="footer-title" style="white-space:nowrap">全12章</span>
+    </div>
+  </footer>
+</div>
+
+<script>
+const sections = document.querySelectorAll('.section');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

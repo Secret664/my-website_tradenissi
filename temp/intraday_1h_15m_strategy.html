@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>短期売買戦略 | マルチタイムフレーム完全解説</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;700&family=Noto+Sans+JP:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --ink:      #0b0f19;
+  --ink2:     #141928;
+  --ink3:     #1c2436;
+  --surface:  #232c3f;
+  --surface2: #2c3650;
+  --muted:    #6b7a99;
+  --line:     rgba(255,255,255,.08);
+  --line2:    rgba(255,255,255,.14);
+  --white:    #ffffff;
+  --off:      #e8edf5;
+  --gold:     #c9a84c;
+  --gold2:    #f0c96a;
+  --gold-bg:  rgba(201,168,76,.10);
+  --blue:     #4a90d9;
+  --blue-bg:  rgba(74,144,217,.10);
+  --green:    #3dbf7e;
+  --green-bg: rgba(61,191,126,.10);
+  --red:      #e05555;
+  --red-bg:   rgba(224,85,85,.10);
+  --amber:    #e09a30;
+  --amber-bg: rgba(224,154,48,.10);
+  --font-serif: 'Playfair Display', 'Noto Serif JP', serif;
+  --font-sans:  'Noto Sans JP', sans-serif;
+  --font-mono:  'JetBrains Mono', monospace;
+}
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-sans);
+  background: var(--ink);
+  color: var(--off);
+  font-size: 15px;
+  line-height: 1.8;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── SIDEBAR ── */
+.sidebar {
+  position: fixed; top: 0; left: 0;
+  width: 256px; height: 100vh;
+  background: var(--ink2);
+  border-right: 1px solid var(--line2);
+  display: flex; flex-direction: column;
+  overflow: hidden;
+  z-index: 50;
+}
+.sidebar-top {
+  padding: 28px 24px 20px;
+  border-bottom: 1px solid var(--line2);
+  flex-shrink: 0;
+}
+.sid-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: .2em;
+  color: var(--gold);
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.sid-title {
+  font-family: var(--font-serif);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--white);
+  line-height: 1.4;
+}
+.sidebar-nav {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 0 24px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--surface2) transparent;
+}
+.sidebar-nav::-webkit-scrollbar { width: 4px; }
+.sidebar-nav::-webkit-scrollbar-thumb { background: var(--surface2); border-radius: 4px; }
+.nav-item { display: block; }
+.nav-item a {
+  display: flex; align-items: center; gap: 12px;
+  padding: 9px 20px;
+  text-decoration: none;
+  color: var(--muted);
+  font-size: 12.5px;
+  font-weight: 500;
+  transition: color .2s, background .2s;
+  border-left: 2px solid transparent;
+}
+.nav-item a:hover { color: var(--off); background: rgba(255,255,255,.04); }
+.nav-item a.active { color: var(--gold); border-left-color: var(--gold); background: var(--gold-bg); }
+.nav-num {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: inherit;
+  opacity: .6;
+  min-width: 18px;
+}
+
+/* ── MAIN ── */
+.main { margin-left: 256px; }
+
+/* ── HERO ── */
+.hero {
+  background: var(--ink2);
+  border-bottom: 1px solid var(--line2);
+  padding: 72px 64px 64px;
+  position: relative;
+  overflow: hidden;
+}
+.hero-accent {
+  position: absolute; top: 0; right: 0;
+  width: 480px; height: 480px;
+  background: radial-gradient(ellipse at top right, rgba(201,168,76,.07) 0%, transparent 65%);
+  pointer-events: none;
+}
+.hero-accent2 {
+  position: absolute; bottom: -100px; left: 10%;
+  width: 320px; height: 320px;
+  background: radial-gradient(ellipse, rgba(74,144,217,.05) 0%, transparent 65%);
+  pointer-events: none;
+}
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 11px; letter-spacing: .18em; text-transform: uppercase;
+  color: var(--gold);
+  background: var(--gold-bg);
+  border: 1px solid rgba(201,168,76,.3);
+  padding: 5px 14px; border-radius: 4px;
+  margin-bottom: 28px;
+}
+.hero h1 {
+  font-family: var(--font-serif);
+  font-size: 52px; font-weight: 900;
+  color: var(--white);
+  line-height: 1.15;
+  letter-spacing: -.02em;
+  margin-bottom: 6px;
+}
+.hero h1 em { color: var(--gold); font-style: normal; }
+.hero-sub {
+  font-size: 18px; font-weight: 300;
+  color: var(--muted);
+  margin-bottom: 40px;
+  letter-spacing: .02em;
+}
+.hero-pills { display: flex; flex-wrap: wrap; gap: 8px; }
+.pill {
+  padding: 5px 14px;
+  border: 1px solid var(--line2);
+  border-radius: 20px;
+  font-size: 12px; color: var(--muted);
+  font-weight: 500;
+  transition: border-color .2s, color .2s;
+}
+.pill:hover { border-color: var(--gold); color: var(--gold); }
+
+/* ── CONTENT WRAPPER ── */
+.content { padding: 0 64px 100px; max-width: 860px; }
+
+/* ── CHAPTER ── */
+.chapter { padding-top: 72px; }
+.ch-header {
+  display: flex; align-items: flex-start; gap: 20px;
+  margin-bottom: 36px;
+}
+.ch-num {
+  font-family: var(--font-mono); font-size: 11px;
+  letter-spacing: .12em; color: var(--gold);
+  background: var(--gold-bg); border: 1px solid rgba(201,168,76,.25);
+  padding: 4px 10px;
+  border-radius: 4px;
+  white-space: nowrap; margin-top: 7px;
+}
+.ch-title {
+  font-family: var(--font-serif);
+  font-size: 30px; font-weight: 700;
+  color: var(--white); line-height: 1.25;
+  border-bottom: 1px solid var(--line2);
+  padding-bottom: 18px; flex: 1;
+}
+
+/* ── SECTION LABEL ── */
+.sec-label {
+  display: flex; align-items: center;
+  gap: 8px;
+  font-size: 13px; font-weight: 700; letter-spacing: .04em;
+  color: var(--gold); text-transform: uppercase;
+  margin: 32px 0 14px;
+}
+.sec-label::before { content: ''; width: 20px; height: 1px; background: var(--gold); flex-shrink: 0; }
+
+/* ── BODY TEXT ── */
+.body-t { margin-bottom: 14px; color: rgba(232,237,245,.85); line-height: 1.85; }
+
+/* ── CALLOUT BOXES ── */
+.box {
+  border-radius: 6px; padding: 16px 20px;
+  margin-bottom: 16px; font-size: 14px;
+  line-height: 1.75;
+  border-left: 3px solid;
+}
+.box p + p { margin-top: 6px; }
+.box strong { font-weight: 700; }
+.box-gold   { background: var(--gold-bg);   border-color: var(--gold);  color: rgba(232,237,245,.9); }
+.box-blue   { background: var(--blue-bg);   border-color: var(--blue);  color: rgba(232,237,245,.9); }
+.box-green  { background: var(--green-bg);  border-color: var(--green); color: rgba(232,237,245,.9); }
+.box-red    { background: var(--red-bg);    border-color: var(--red);   color: #f4a0a0; font-weight: 500; }
+.box-amber  { background: var(--amber-bg);  border-color: var(--amber); color: rgba(232,237,245,.9); }
+
+/* ── TABLES ── */
+.tbl-wrap { overflow-x: auto; margin-bottom: 20px; border-radius: 8px; border: 1px solid var(--line2); }
+table { width: 100%; border-collapse: collapse; font-size: 13.5px; background: var(--ink2); }
+th {
+  background: var(--ink3); color: var(--gold);
+  font-weight: 700; font-size: 12px; letter-spacing: .06em; text-transform: uppercase;
+  padding: 12px 16px; text-align: left;
+  border-bottom: 1px solid var(--line2);
+}
+td { padding: 11px 16px; border-bottom: 1px solid var(--line); vertical-align: top; line-height: 1.65; color: rgba(232,237,245,.85); }
+tr:last-child td { border-bottom: none; }
+tr:nth-child(even) td { background: rgba(255,255,255,.02); }
+td.lbl { color: var(--white); font-weight: 700; white-space: nowrap; }
+td.ok  { color: var(--green); font-weight: 700; }
+td.ng  { color: var(--red);   font-weight: 700; }
+
+/* ── BULLETS ── */
+ul.blist { list-style: none; margin-bottom: 14px; }
+ul.blist li {
+  padding: 5px 0 5px 20px;
+  position: relative;
+  font-size: 14px; line-height: 1.7;
+  color: rgba(232,237,245,.85);
+}
+ul.blist li::before {
+  content: ''; position: absolute; left: 0; top: 14px;
+  width: 6px; height: 6px;
+  border-radius: 50%; background: var(--gold);
+}
+ul.blist.gr li::before { background: var(--green); }
+ul.blist.rd li::before { background: var(--red); }
+
+/* ── CODE / FLOW ── */
+.code {
+  background: rgba(0,0,0,.45);
+  border: 1px solid var(--line2);
+  border-left: 3px solid var(--blue);
+  border-radius: 6px;
+  padding: 20px 22px;
+  font-family: var(--font-mono);
+  font-size: 12px; line-height: 1.9;
+  color: rgba(232,237,245,.8);
+  margin-bottom: 20px;
+  overflow-x: auto; white-space: pre;
+}
+.code .ok  { color: var(--green); }
+.code .ng  { color: var(--red); }
+.code .hl  { color: var(--gold); font-weight: 700; }
+.code .dim { color: var(--muted); }
+
+/* ── COMPARE GRID ── */
+.cmp { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; }
+.cmp-card {
+  background: var(--ink2); border: 1px solid var(--line2);
+  border-radius: 8px; padding: 20px;
+}
+.cmp-card.good { border-color: rgba(61,191,126,.35); }
+.cmp-card.bad  { border-color: rgba(224,85,85,.35); }
+.cmp-card h4 { font-size: 13px; font-weight: 700; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--line); }
+.cmp-card.good h4 { color: var(--green); }
+.cmp-card.bad  h4 { color: var(--red); }
+
+/* ── PATTERN CARDS ── */
+.pattern-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; }
+.pat-card {
+  background: var(--ink2); border: 1px solid var(--line2);
+  border-radius: 8px; padding: 20px;
+}
+.pat-tag {
+  display: inline-block; font-family: var(--font-mono);
+  font-size: 10px; letter-spacing: .1em; text-transform: uppercase;
+  padding: 3px 10px; border-radius: 3px; margin-bottom: 10px;
+}
+.pat-tag.early { background: var(--amber-bg); color: var(--amber); border: 1px solid rgba(224,154,48,.3); }
+.pat-tag.safe  { background: var(--green-bg);  color: var(--green); border: 1px solid rgba(61,191,126,.3); }
+.pat-card h4 { font-size: 14px; font-weight: 700; color: var(--white); margin-bottom: 8px; }
+.pat-body { font-size: 13px; color: var(--muted); line-height: 1.7; margin-bottom: 12px; }
+.pc-row { display: flex; align-items: center; gap: 6px; font-size: 12.5px; margin: 3px 0; }
+.pc-ok { color: var(--green); }
+.pc-ng { color: var(--red); }
+
+/* ── FINAL BANNER ── */
+.final {
+  background: linear-gradient(135deg, var(--ink3) 0%, var(--ink2) 100%);
+  border: 1px solid rgba(201,168,76,.3);
+  border-radius: 12px;
+  padding: 44px 48px;
+  margin-top: 48px;
+  position: relative; overflow: hidden;
+}
+.final::before {
+  content: '';
+  position: absolute; top: -80px; right: -80px;
+  width: 300px; height: 300px;
+  background: radial-gradient(ellipse, rgba(201,168,76,.08) 0%, transparent 65%);
+  pointer-events: none;
+}
+.final-ey { font-family: var(--font-mono); font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; }
+.final-title { font-family: var(--font-serif); font-size: 26px; font-weight: 700; color: var(--white); margin-bottom: 28px; }
+.final-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.final-item {
+  background: rgba(255,255,255,.04);
+  border: 1px solid var(--line2);
+  border-radius: 8px; padding: 16px 18px;
+}
+.fi-key { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--gold); margin-bottom: 6px; }
+.fi-val { font-size: 13px; color: rgba(232,237,245,.8); line-height: 1.6; }
+
+/* ── DIVIDER ── */
+.div { height: 1px; background: var(--line2); margin: 40px 0; }
+
+/* ── SCROLL BTN ── */
+.stb {
+  position: fixed; bottom: 28px; right: 28px;
+  width: 42px; height: 42px;
+  background: var(--gold); color: var(--ink);
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-size: 16px; cursor: pointer;
+  text-decoration: none;
+  box-shadow: 0 4px 16px rgba(201,168,76,.3);
+  opacity: 0; transition: opacity .3s;
+  font-weight: 700; line-height: 1;
+  z-index: 100;
+}
+.stb.vis { opacity: 1; }
+
+/* ── TECH BADGE ── */
+.tbadge {
+  display: inline-flex; align-items: center;
+  background: var(--surface);
+  border: 1px solid var(--line2);
+  border-radius: 4px; padding: 2px 8px;
+  font-family: var(--font-mono); font-size: 11px; color: var(--gold2);
+  font-weight: 500;
+}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeIn { from { opacity:0; transform: translateY(16px); } to { opacity:1; transform: none; } }
+.chapter { animation: fadeIn .5s ease both; }
+
+@media (max-width: 900px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; }
+  .hero, .content { padding-left: 24px; padding-right: 24px; }
+  .cmp, .pattern-grid, .final-grid { grid-template-columns: 1fr; }
+}
+@media print {
+  .sidebar, .stb { display: none; }
+  .main { margin-left: 0; }
+}
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="sidebar-top">
+    <div class="sid-eyebrow">Trading Strategy</div>
+    <div class="sid-title">マルチタイムフレーム<br>戦略 完全解説</div>
+  </div>
+  <div class="sidebar-nav">
+    <div class="nav-item"><a href="#c1"><span class="nav-num">01</span>トレードの大原則</a></div>
+    <div class="nav-item"><a href="#c2"><span class="nav-num">02</span>15分足を使う理由</a></div>
+    <div class="nav-item"><a href="#c3"><span class="nav-num">03</span>15分足の最大の問題</a></div>
+    <div class="nav-item"><a href="#c4"><span class="nav-num">04</span>テクニカルの本質</a></div>
+    <div class="nav-item"><a href="#c5"><span class="nav-num">05</span>5波（押し目買い）の本質</a></div>
+    <div class="nav-item"><a href="#c6"><span class="nav-num">06</span>15分足での5波戦略</a></div>
+    <div class="nav-item"><a href="#c7"><span class="nav-num">07</span>3波（ブレイク）戦略</a></div>
+    <div class="nav-item"><a href="#c8"><span class="nav-num">08</span>トレンドラインの役割</a></div>
+    <div class="nav-item"><a href="#c9"><span class="nav-num">09</span>負けないための思考</a></div>
+    <div class="nav-item"><a href="#c10"><span class="nav-num">10</span>短期足の落とし穴</a></div>
+    <div class="nav-item"><a href="#c11"><span class="nav-num">11</span>時間足の使い分け</a></div>
+    <div class="nav-item"><a href="#c12"><span class="nav-num">12</span>最終結論</a></div>
+  </div>
+</nav>
+
+<main class="main">
+
+<div class="hero">
+  <div class="hero-accent"></div>
+  <div class="hero-accent2"></div>
+  <div class="hero-eyebrow">📘 Short-Term Trading Strategy</div>
+  <h1>短期売買戦略<br><em>1時間足と15分足</em><br>の正しい使い方</h1>
+  <p class="hero-sub">マルチタイムフレーム戦略　完全解説</p>
+  <div class="hero-pills">
+    <span class="pill">1時間足 ＝ シナリオ</span>
+    <span class="pill">15分足 ＝ 例外対応</span>
+    <span class="pill">5波（押し目買い）</span>
+    <span class="pill">3波（ブレイク）</span>
+    <span class="pill">負けない設計</span>
+  </div>
+</div>
+
+<div class="content">
+
+<section class="chapter" id="c1">
+  <div class="ch-header">
+    <span class="ch-num">CHAPTER 01</span>
+    <h2 class="ch-title">トレードの大原則</h2>
+  </div>
+  <div class="box box-gold"><strong>結論：トレードの軸は必ず「1時間足」。15分足はあくまで補助であり、主軸にはなれない。</strong></div>
+  <div class="sec-label">なぜ1時間足が主軸なのか</div>
+  <p class="body-t">1時間足がトレードの基準になる理由は、「多くのトレーダーが共通認識を持てる時間足」だからだ。時間足が長いほど信用度は高くなり、以下の特性が生まれる。</p>
+  <ul class="blist">
+    <li>多くのトレーダーが同じ高値・安値を見ている</li>
+    <li>大口・アルゴリズムの意図が反映されやすい</li>
+    <li>チャートの構造（本流）が読み取れる</li>
+    <li>高値・安値の認識が市場参加者の間で一致しやすい</li>
+  </ul>
+  <div class="sec-label">短期足（15分・5分）の本質</div>
+  <ul class="blist rd">
+    <li>波形が細かくなりノイズが増える</li>
+    <li>見るポイントがトレーダーによってバラバラになる</li>
+    <li>大衆の認識がズレる → エントリー根拠が弱くなる</li>
+  </ul>
+  <div class="box box-amber">1時間足の直線の中に15分足の波形がある。つまり<strong>15分足は「途中経過（ノイズ）」</strong>であり、<strong>1時間足が「構造（本流）」</strong>である。</div>
+  <div class="sec-label">時間足別の役割整理</div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>時間足</th><th>役割</th><th>信用度</th></tr></thead>
+      <tbody>
+        <tr><td class="lbl">1時間足</td><td>シナリオ作成・本命エントリー</td><td class="ok">高い（大口・共通認識）</td></tr>
+        <tr><td class="lbl">15分足</td><td>補助・例外対応のみ</td><td class="ng">低い（ノイズ多・認識バラバラ）</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="box box-green"><strong>「1時間足のみで勝てる状態を作る」のが大原則。15分足は主軸ではなく補助である。</strong></div>
+</section>
+
+<div class="div"></div>
+
+<section class="chapter" id="c2">
+  <div class="ch-header">
+    <span class="ch-num">CHAPTER 02</span>
+    <h2 class="ch-title">15分足を使う理由</h2>
+  </div>
+  <div class="box box-gold"><strong>結論：15分足は「仕方なく使う」もの。1時間足で取れない相場を補うための代替手段である。</strong></div>
+  <div class="sec-label">使用目的：1時間足で取れない相場への対応</div>
+  <div class="cmp">
+    <div class="cmp-card good">
+      <h4>✅ 理想パターン（押し目が来た場合）</h4>
+      <ul class="blist gr">
+        <li>相場が押し目ゾーンまで下がってくる</li>
+        <li>1時間足でエントリー</li>
+        <li>最安値付近で買える → 最も有利なポジション</li>
+      </ul>
+      <div class="box box-green" style="margin-bottom:0">→ このパターンが一番ラクに勝てる。<strong>15分足は不要。</strong></div>
+    </div>
+    <div class="cmp-card bad">
+      <h4>⚠️ 例外パターン（押し目が来ない場合）</h4>
+      <ul class="blist rd">
+        <li>押し目を作らずそのまま上昇してしまった</li>
+        <li>安いところで買えない</li>
+        <li>「買いが異常に強い状態」と判断</li>
+      </ul>
+      <div class="box box-amber" style="margin-bottom:0">→ この時だけ、<strong>仕方なく15分足に切り替える</strong></div>
+    </div>
+  </div>
+  <div class="box box-red">「チャンスを増やしたいから15分足を使う」という発想は「精度を捨てて回数に逃げている状態」であり、連敗の原因になる。</div>
+</section>
+
+<div class="div"></div>
+
+<section class="chapter" id="c3">
+  <div class="ch-header">
+    <span class="ch-num">CHAPTER 03</span>
+    <h2 class="ch-title">15分足の最大の問題</h2>
+  </div>
+  <div class="sec-label">問題：信用度が低い</div>
+  <ul class="blist rd">
+    <li>波が細かすぎる → ダマシ・ノイズが頻発する</li>
+    <li>トレーダーによって見方がバラバラ → 共通認識がない</li>
+    <li>大口・アルゴの意図が読み取りにくい</li>
+    <li>「騙しを作るために存在する時間足」とも言える</li>
+  </ul>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>時間足</th><th>必要なもの</th><th>理由</th></tr></thead>
+      <tbody>
+        <tr><td class="lbl">1時間足</td><td>ロジックのみでOK</td><td class="ok">環境が強く構造が明確 → そのまま入れる</td></tr>
+        <tr><td class="lbl">15分足</td><td>ロジック＋テクニカル必須</td><td class="ng">信用度が低い分、根拠を追加して補う</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="box box-amber"><strong>15分足は「確認作業」なしで使ってはならない。</strong>本当に入っていいか、テクニカルで必ず確認してから入る。</div>
+</section>
+
+<div class="div"></div>
+
+<section class="chapter" id="c4">
+  <div class="ch-header">
+    <span class="ch-num">CHAPTER 04</span>
+    <h2 class="ch-title">テクニカルの本質</h2>
+  </div>
+  <div class="cmp">
+    <div class="cmp-card bad">
+      <h4>❌ よくある誤解</h4>
+      <ul class="blist rd">
+        <li>とりあえずインジを入れる</li>
+        <li>有名だから使う（RSI・MACDなど）</li>
+        <li>インジを増やせば精度が上がる</li>
+      </ul>
+    </div>
+    <div class="cmp-card good">
+      <h4>✅ 正しい考え方</h4>
+      <ul class="blist gr">
+        <li>「狙う相場」に合わせて逆算して選ぶ</li>
+        <li>なぜそのテクニカルを使うか説明できる</li>
+        <li>3つ以内に絞る。増やすと判断が遅れる</li>
+      </ul>
+    </div>
+  </div>
+  <div class="sec-label">本講義で使用するテクニカルと役割</div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>テクニカル</th><th>役割</th></tr></thead>
+      <tbody>
+        <tr><td class="lbl">前日高値・安値</td><td>相場の強さ確認（本物の上昇か？）</td></tr>
+        <tr><td class="lbl">ストキャスティクス</td><td>エントリータイミングの確認</td></tr>
+        <tr><td class="lbl">MACD</td><td>トレンドの強さ・継続性の確認</td></tr>
+        <tr><td class="lbl">トレンドライン</td><td>流れの転換確認（崩れたか？）</td></tr>
+        <tr><td class="lbl">鉄板チャート</td><td>例外処理（1発目は捨てる）</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="box box-blue"><strong>どのテクニカルを使うかより「どう組み合わせるか」が正解。</strong>ノウハウコレクターになってはいけない。</div>
+</section>
+
+<div class="div"></div>
+
+<section class="chapter" id="c5">
+  <div class="ch-header">
+    <span class="ch-num">CHAPTER 05</span>
+    <h2 class="ch-title">5波（押し目買い）戦略の本質</h2>
+  </div>
+  <div class="box box-gold"><strong>基本思想：安いところで買い、高いところで売る。最安値付近で拾うことが目的。</strong></div>
+  <div class="sec-label">正しい感情 vs 初心者の誤った感情</div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>状況</th><th>初心者の感情（❌）</th><th>正しい感情（✅）</th><th>理由</th></tr></thead>
+      <tbody>
+        <tr><td class="lbl">相場が下がる</td><td class="ng">不安・怖い</td><td class="ok">嬉しい</td><td>より安く買えるから</td></tr>
+        <tr><td class="lbl">エントリー前に上がる</td><td class="ng">安心・追いかけたい</td><td class="ok">悲しい</td><td>安く買えなくなるから</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="box box-red">初心者は「上がると安心、下がると不安」と感じる。これは5波トレードにおいて完全に逆の感情であり、負ける原因になる。</div>
+  <div class="sec-label">1時間足 vs 15分足（押し目の見え方）</div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>時間足</th><th>押し目の数</th><th>性質</th><th>結果</th></tr></thead>
+      <tbody>
+        <tr><td class="lbl">1時間足</td><td>1箇所・明確</td><td>大口の仕込みゾーン</td><td class="ok">安く買える → 勝ちやすい</td></tr>
+        <tr><td class="lbl">15分足</td><td>複数発生</td><td>偽物が混ざる</td><td class="ng">高値掴みになる → 負けの原因</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<div class="div"></div>
+
+<section class="chapter" id="c6">
+  <div class="ch-header">
+    <span class="ch-num">CHAPTER 06</span>
+    <h2 class="ch-title">15分足での5波戦略</h2>
+  </div>
+  <div class="box box-red"><strong>問題：上昇後にそのまま上がるか急落するかが判断できない。</strong>この2つを区別できない状態でエントリーすることが最大の危険。</div>
+  <div class="sec-label">解決策：前日高値・安値を使う</div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>状況</th><th>意味</th><th>判断</th><th>行動</th></tr></thead>
+      <tbody>
+        <tr><td class="lbl">前日高値ブレイク前</td><td>上昇の強さが証明されていない</td><td class="ng">怪しい → 様子見</td><td>見送り</td></tr>
+        <tr><td class="lbl">前日高値ブレイク後</td><td>市場全体の買い意識が一致した証明</td><td class="ok">本物の可能性が高い</td><td>15分足でエントリー検討</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="sec-label">さらに精度を上げる：根拠を重ねる</div>
+  <ul class="blist">
+    <li>ライン反発（押し目位置の確認）</li>
+    <li>ストキャスティクス　到達＋クロス（タイミング確認）※クロスのみはNG</li>
+    <li>鉄板チャート（例外処理・1発目は捨てる）</li>
+  </ul>
+  <div class="sec-label">5波：プロの思考フロー</div>
+  <div class="code"><span class="hl">STEP①</span>  1時間足でシナリオを作る
+        ストキャス20付近 ＝ 安いゾーンを特定する
+                ↓
+<span class="hl">STEP②</span>  押し目ゾーンが来るまで待つ
+                ↓
+          来た？
+         ／       ＼
+       <span class="ok">YES</span>           <span class="ng">NO（下がらず上昇）</span>
+         ↓                  ↓
+  <span class="ok">1時間足で          「買いが強い状態」と判断</span>
+  <span class="ok">エントリー（本命）             ↓</span>
+                      前日高値をブレイクしたか？
+                        ／              ＼
+                <span class="ok">YES</span>               <span class="ng">NO</span>
+                        ↓                 ↓
+                  <span class="ok">15分足に切替</span>        <span class="ng">スルー（終了）</span>
+                        ↓
+               ストキャス：到達＋クロス？
+                    ／           ＼
+                  <span class="ok">YES</span>              <span class="ng">NO</span>
+                    ↓                ↓
+               <span class="ok">エントリー</span>       <span class="ng">待つ or 諦める</span></div>
+</section>
+
+<div class="div"></div>
+
+<section class="chapter" id="c7">
+  <div class="ch-header">
+    <span class="ch-num">CHAPTER 07</span>
+    <h2 class="ch-title">3波（ブレイク）戦略</h2>
+  </div>
+  <div class="sec-label">5波との発想の根本的な違い</div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th></th><th>5波（押し目買い）</th><th>3波（ブレイク買い）</th></tr></thead>
+      <tbody>
+        <tr><td class="lbl">狙い</td><td>強い上昇に乗る</td><td>弱い売りの崩壊に乗る</td></tr>
+        <tr><td class="lbl">発想</td><td>安く買う</td><td>売り勢が諦める瞬間を取る</td></tr>
+        <tr><td class="lbl">根拠</td><td>大口の仕込みゾーン</td><td>損切りの集中・燃料化</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="box box-amber"><strong>5波と3波は「真逆の発想」。</strong>混同すると判断がブレる。</div>
+  <div class="sec-label">市場心理：なぜ転換で急上昇するのか</div>
+  <div class="code"><span class="dim">【トレンドライン機能中】</span>
+価格
+  ↓  ↓  ↓   <span class="ng">← 売りが入り続けている（売り勢の防衛ライン）</span>
+   ＼  ＼  ＼
+    ─────────────── トレンドライン
+
+<span class="dim">【トレンドラインブレイク後】</span>
+価格           ／ <span class="ok">← ここで何が起きる？</span>
+─────────────╱
+    ↑ ブレイク
+
+  <span class="ok">① 売り勢の損切り（強制的な買い）が一斉に発動</span>
+  <span class="ok">② 新規の買い勢が参入</span>
+  <span class="ok">③ 買いが一気に重なる → 急騰</span></div>
+  <div class="box box-green"><strong>ブレイク ＝ 「売りが諦めた瞬間」。</strong>売り勢の損切りが燃料となり、上昇が加速する。3波は「売りの終わりを取るトレード」である。</div>
+  <div class="sec-label">3波で使うテクニカル（15分足）</div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>テクニカル</th><th>役割</th><th>条件</th></tr></thead>
+      <tbody>
+        <tr><td class="lbl">トレンドライン</td><td>流れが崩れたかどうかの確認</td><td>ブレイクされた時点で転換シグナル</td></tr>
+        <tr><td class="lbl">MACD</td><td>トレンドの強さ・継続性の確認</td><td><strong class="ok">0ライン以上であること</strong></td></tr>
+        <tr><td class="lbl">ストキャスティクス</td><td>エントリータイミングの確認</td><td><strong class="ok">切り上げを確認してから入る</strong></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<div class="div"></div>
+
+<section class="chapter" id="c8">
+  <div class="ch-header">
+    <span class="ch-num">CHAPTER 08</span>
+    <h2 class="ch-title">トレンドラインの役割とエントリーパターン</h2>
+  </div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>役割</th><th>内容</th></tr></thead>
+      <tbody>
+        <tr><td class="lbl">売り勢の強さを可視化</td><td>ラインが機能している間 ＝ 売りの圧力が継続している</td></tr>
+        <tr><td class="lbl">崩れた瞬間を捉える</td><td>ブレイク ＝ 売り勢が敗退した証拠 → 買い転換のシグナル</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="sec-label">エントリー2パターン</div>
+  <div class="pattern-grid">
+    <div class="pat-card">
+      <div class="pat-tag early">Pattern 01 — Early</div>
+      <h4>即エントリー（上級者向け）</h4>
+      <p class="pat-body">トレンドラインブレイクと高値更新が確認できた時点で即入る。</p>
+      <div class="pc-row ok">✅ 利幅が大きい</div>
+      <div class="pc-row ng">❌ ダマシのリスクあり</div>
+      <div class="pc-row ng">❌ 確定前のため判断が難しい</div>
+    </div>
+    <div class="pat-card">
+      <div class="pat-tag safe">Pattern 02 — Safe</div>
+      <h4>安全型（最推奨・初中級者向け）</h4>
+      <p class="pat-body">ブレイク後、押し目をつけてから高値ブレイクで入る。転換確定後のエントリー。</p>
+      <div class="pc-row ok">✅ 勝率が高い</div>
+      <div class="pc-row ok">✅ 損切り位置が明確</div>
+      <div class="pc-row ng">❌ 利幅はやや小さい</div>
+    </div>
+  </div>
+  <div class="sec-label">3波：プロの思考フロー</div>
+  <div class="code"><span class="hl">STEP①</span>  1時間足で環境確認（押しが深いか？）
+               ↓
+<span class="hl">STEP②</span>  15分足に切替・トレンドラインを引く
+               ↓
+<span class="hl">STEP③</span>  ライン機能中か？
+         ／             ＼
+       <span class="ng">YES → 待つ</span>         <span class="ok">NO（ブレイク）</span>
+                        ↓
+                    <span class="hl">STEP④</span>  本物か確認
+                         <span class="ok">MACD 0ライン以上か？</span>
+                         <span class="ok">ストキャス 切り上げているか？</span>
+                        ↓
+                    <span class="hl">STEP⑤</span>  エントリーパターン選択
+                    ／                          ＼
+            <span class="ok">パターン①</span>                    <span class="ok">パターン②</span>
+              ブレイク直後 即エントリー          押し目後の高値ブレイク</div>
+</section>
+
+<div class="div"></div>
+
+<section class="chapter" id="c9">
+  <div class="ch-header">
+    <span class="ch-num">CHAPTER 09</span>
+    <h2 class="ch-title">負けないための思考</h2>
+  </div>
+  <div class="box box-gold"><strong>最重要思想：「勝つ」ではなく「負けない」ことを最優先にする。</strong></div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>一般トレーダー（❌）</th><th>勝てるトレーダー（✅）</th></tr></thead>
+      <tbody>
+        <tr><td class="ng">勝ち方を探す</td><td class="ok">負け方を潰す</td></tr>
+        <tr><td class="ng">エントリー数を増やす</td><td class="ok">条件が揃わなければ見送る</td></tr>
+        <tr><td class="ng">短期足で回数を稼ごうとする</td><td class="ok">精度が高い場面だけを狙う</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="sec-label">具体的な行動指針</div>
+  <ul class="blist gr">
+    <li>条件が揃わなければエントリーしない</li>
+    <li>来なかった場合は「見送り」が正解</li>
+    <li>1通貨1日1チャンスで十分（一番いい場所は1つしかない）</li>
+    <li>2回以上入っている ＝ シナリオがズレているサイン</li>
+    <li>ストキャスが到達＋クロスするまで待つ（クロスのみはNG）</li>
+  </ul>
+  <div class="box box-green"><strong>「入らない判断」ができるようになること。</strong>これが一気に勝率を上げる最大のスキルである。</div>
+</section>
+
+<div class="div"></div>
+
+<section class="chapter" id="c10">
+  <div class="ch-header">
+    <span class="ch-num">CHAPTER 10</span>
+    <h2 class="ch-title">短期足の最大の落とし穴</h2>
+  </div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>誤解（❌）</th><th>現実（✅）</th></tr></thead>
+      <tbody>
+        <tr><td class="ng">回数を増やせば稼げる</td><td>精度が落ちるだけ。連敗してメンタルが崩れる</td></tr>
+        <tr><td class="ng">短期足の方が利益が出る</td><td>ノイズ・ダマシが多く損切り連発になる</td></tr>
+        <tr><td class="ng">15分足でチャンスを増やす</td><td>精度を捨てて回数に逃げる状態</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="code"><span class="dim">短期足だけを見た時の地獄パターン</span>
+
+上がった → <span class="ng">買う</span> → 下がる → <span class="ng">損切り</span>
+         → また上がる → <span class="ng">また買う</span> → また下がる → <span class="ng">また損切り</span>
+
+→ 15分足のストキャスクロスだけで2箇所のダマシを避けることは<span class="ng">不可能</span>
+→ なぜなら15分足は<span class="ng">「騙しを作るために存在する時間足」</span>だからだ</div>
+  <div class="sec-label">正解：勝てるポイントだけを狙う</div>
+  <ul class="blist gr">
+    <li>1時間足で場所を決めてから入る</li>
+    <li>無駄なトレードを徹底的に排除する</li>
+    <li>「全部取ろうとするな」→ 本命だけを取りに行く</li>
+  </ul>
+</section>
+
+<div class="div"></div>
+
+<section class="chapter" id="c11">
+  <div class="ch-header">
+    <span class="ch-num">CHAPTER 11</span>
+    <h2 class="ch-title">時間足の使い分け</h2>
+  </div>
+  <div class="sec-label">判断基準：スタート地点で分岐するだけ</div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>状況</th><th>使用する時間足</th><th>理由</th></tr></thead>
+      <tbody>
+        <tr><td class="lbl">押し目が来た（下がった）</td><td class="ok">1時間足　本命エントリー</td><td>最安値付近で最も有利に買える</td></tr>
+        <tr><td class="lbl">押し目が来ない（上がった）</td><td class="ok">15分足　代替エントリー</td><td>例外対応・仕方なく使う</td></tr>
+        <tr><td class="lbl">どちらでもない（不明）</td><td class="ng">スルー（見送り）</td><td>条件が揃わない → 入らない</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="code">       相場の動き
+          ↓
+    下がってきた？
+    ／              ＼
+  <span class="ok">YES</span>                 <span class="ng">NO（上がった）</span>
+    ↓                        ↓
+<span class="ok">1時間足（本命）      前日高値をブレイクしたか？</span>
+                         ／                  ＼
+                       <span class="ok">YES</span>                    <span class="ng">NO</span>
+                        ↓                      ↓
+                   <span class="ok">15分足に切替</span>            <span class="ng">スルー（終了）</span>
+                   <span class="dim">（条件付き）</span></div>
+  <div class="sec-label">マルチタイムフレームの正しい使い方</div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>ステップ</th><th>内容</th><th>時間足</th></tr></thead>
+      <tbody>
+        <tr><td class="lbl">① シナリオ作成</td><td>その日の高値・安値の極値を予測</td><td>1時間足</td></tr>
+        <tr><td class="lbl">② 場所を特定</td><td>押し目ゾーン・ブレイクポイントを決める</td><td>1時間足</td></tr>
+        <tr><td class="lbl">③ 待つ</td><td>その場所が来るまで何もしない</td><td>─</td></tr>
+        <tr><td class="lbl">④-A 来た場合</td><td>そのままエントリー（本命）</td><td>1時間足</td></tr>
+        <tr><td class="lbl">④-B 来ない場合</td><td>強さを判断 → 条件付きで代替</td><td>15分足</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<div class="div"></div>
+
+<section class="chapter" id="c12">
+  <div class="ch-header">
+    <span class="ch-num">CHAPTER 12</span>
+    <h2 class="ch-title">最終結論</h2>
+  </div>
+  <div class="sec-label">トレードの本質：5つの原則</div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>原則</th><th>内容</th></tr></thead>
+      <tbody>
+        <tr><td class="lbl">① 1時間足が主軸</td><td>シナリオ作成・本命エントリーはすべて1時間足</td></tr>
+        <tr><td class="lbl">② 15分足は補助</td><td>シナリオが崩れた時・取り逃した時だけ使う</td></tr>
+        <tr><td class="lbl">③ 短期足は信用度が低い</td><td>テクニカルで必ず補強する・単体で使わない</td></tr>
+        <tr><td class="lbl">④ 相場を選ぶことが全て</td><td>条件が揃う場面だけを狙い、それ以外は見送る</td></tr>
+        <tr><td class="lbl">⑤ 負けない設計が先</td><td>勝ち方を探す前に、負け方を徹底的に潰す</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="sec-label">最重要ポイント：「どんな相場を狙うか」</div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th></th><th>5波（押し目買い）</th><th>3波（ブレイク）</th></tr></thead>
+      <tbody>
+        <tr><td class="lbl">目的</td><td>安く買う</td><td>損切りを刈り取る</td></tr>
+        <tr><td class="lbl">本命時間足</td><td>1時間足</td><td>1時間足</td></tr>
+        <tr>
+          <td class="lbl">15分足の条件</td>
+          <td>前日高値ブレイク<br>＋ストキャス 到達・クロス</td>
+          <td style="color:var(--gold);font-weight:700;">トレンドラインブレイク<br>＋MACD > 0<br>＋ストキャス 切り上げ</td>
+        </tr>
+        <tr><td class="lbl">15分足の位置づけ</td><td>取り逃がした時の代替</td><td>精度を上げる補助</td></tr>
+        <tr><td class="lbl">最大の罠</td><td>偽の押し目・高値掴み</td><td>ラインブレイクのダマシ</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="sec-label">最後に：手法ではなく「構造理解」</div>
+  <ul class="blist gr">
+    <li>手法ではなく構造理解 → なぜそのエントリーなのかを説明できること</li>
+    <li>インジではなく意味理解 → テクニカルの役割を把握して使うこと</li>
+    <li>回数ではなく精度 → 本命だけを取りに行く姿勢</li>
+  </ul>
+  <div class="final">
+    <div class="final-ey">🔥 Complete Summary</div>
+    <div class="final-title">この戦略は「負けないために設計された戦略」</div>
+    <div class="final-grid">
+      <div class="final-item">
+        <div class="fi-key">1時間足の役割</div>
+        <div class="fi-val">シナリオ（構造）を作る<br>本命エントリーの場所を決める</div>
+      </div>
+      <div class="final-item">
+        <div class="fi-key">15分足の役割</div>
+        <div class="fi-val">修正・例外対応<br>「悔しい時の保険」として使う</div>
+      </div>
+      <div class="final-item">
+        <div class="fi-key">5波の15分足条件</div>
+        <div class="fi-val">前日高値ブレイク<br>＋ストキャス 到達・クロス</div>
+      </div>
+      <div class="final-item">
+        <div class="fi-key">3波の15分足条件</div>
+        <div class="fi-val">トレンドラインブレイク<br>＋MACD > 0<br>＋ストキャス 切り上げ</div>
+      </div>
+    </div>
+  </div>
+</section>
+</div></main>
+
+<a class="stb" href="#" id="stb">↑</a>
+
+<script>
+const chs = document.querySelectorAll('.chapter');
+const navAs = document.querySelectorAll('.nav-item a');
+const stb = document.getElementById('stb');
+
+function update() {
+  let cur = chs[0].id;
+  chs.forEach(c => { if (window.scrollY + 140 >= c.offsetTop) cur = c.id; });
+  navAs.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + cur));
+  stb.classList.toggle('vis', window.scrollY > 400);
+}
+window.addEventListener('scroll', update, { passive: true });
+update();
+stb.addEventListener('click', e => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); });
+</script>
+</body>
+</html>
