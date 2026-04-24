@@ -1,0 +1,1582 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>5波終了戦略 ― 決済と資金流入が重なる瞬間を狙う技術</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@300;400;500;700&family=Noto+Sans+JP:wght@300;400;500;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+/* ── Reset & base ─────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --navy:   #1B3A6B;
+  --steel:  #2E5FA3;
+  --indigo: #3D4F8F;
+  --sky:    #EAF3FB;
+  --skyD:   #C8DFF4;
+  --mint:   #E8F5EE;
+  --mintD:  #A8D5BA;
+  --amber:  #FEF8E7;
+  --amberD: #E8C84A;
+  --rose:   #FDF0F0;
+  --roseD:  #E8A0A0;
+  --slate:  #F5F7FA;
+  --slateD: #E2E6ED;
+  --white:  #FFFFFF;
+  --dark:   #0F1B2D;
+  --mid:    #3A4558;
+  --muted:  #6B7A94;
+  --line:   #D8DEE8;
+  --gold:   #B8930A;
+  --red:    #B03030;
+  --green:  #1A6E3A;
+
+  --font-serif: 'Cormorant Garamond', 'Noto Serif JP', serif;
+  --font-sans:  'Noto Sans JP', sans-serif;
+  --maxw: 860px;
+  --r: 10px;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.85;
+  color: var(--mid);
+  background: #F8FAFD;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Nav sidebar ───────────────────────────────────── */
+#nav {
+  position: fixed;
+  top: 0; left: 0;
+  width: 260px;
+  height: 100vh;
+  background: var(--navy);
+  overflow-y: auto;
+  padding: 28px 0 40px;
+  z-index: 100;
+  transition: transform .35s cubic-bezier(.4,0,.2,1);
+}
+#nav::-webkit-scrollbar { width: 4px; }
+#nav::-webkit-scrollbar-thumb { background: rgba(255,255,255,.2); border-radius: 2px; }
+
+.nav-logo {
+  padding: 0 22px 24px;
+  border-bottom: 1px solid rgba(255,255,255,.12);
+  margin-bottom: 16px;
+}
+.nav-logo h2 {
+  font-family: var(--font-serif);
+  font-size: 14px;
+  color: rgba(255,255,255,.9);
+  font-weight: 600;
+  letter-spacing: .03em;
+  line-height: 1.5;
+}
+.nav-logo span {
+  font-size: 10px;
+  color: rgba(255,255,255,.45);
+  display: block;
+  margin-top: 4px;
+  letter-spacing: .05em;
+}
+
+.nav-section {
+  padding: 4px 0;
+}
+.nav-ch {
+  display: block;
+  padding: 7px 22px;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: rgba(255,255,255,.4);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  cursor: default;
+}
+.nav-link {
+  display: block;
+  padding: 6px 22px 6px 28px;
+  font-size: 12px;
+  color: rgba(255,255,255,.65);
+  text-decoration: none;
+  transition: color .2s, background .2s;
+  border-left: 2px solid transparent;
+  letter-spacing: .01em;
+}
+.nav-link:hover { color: #fff; background: rgba(255,255,255,.07); }
+.nav-link.active { color: #fff; border-left-color: #6AB4F5; background: rgba(255,255,255,.08); }
+
+/* ── Main layout ───────────────────────────────────── */
+#main {
+  margin-left: 260px;
+  min-height: 100vh;
+}
+
+/* ── Cover ─────────────────────────────────────────── */
+#cover {
+  background: linear-gradient(135deg, #0D1F40 0%, #1B3A6B 45%, #2E5FA3 100%);
+  padding: 100px 60px 90px;
+  position: relative;
+  overflow: hidden;
+}
+#cover::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 800px 500px at 80% 20%, rgba(100,180,255,.08) 0%, transparent 70%),
+    radial-gradient(ellipse 600px 400px at 10% 80%, rgba(46,95,163,.4) 0%, transparent 70%);
+}
+#cover::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.2), transparent);
+}
+.cover-inner { position: relative; max-width: var(--maxw); }
+.cover-tag {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: #6AB4F5;
+  border: 1px solid rgba(106,180,245,.4);
+  padding: 5px 14px;
+  border-radius: 30px;
+  margin-bottom: 36px;
+}
+.cover-title {
+  font-family: var(--font-serif);
+  font-size: clamp(44px, 6vw, 72px);
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.1;
+  letter-spacing: -.01em;
+  margin-bottom: 18px;
+}
+.cover-title span {
+  display: block;
+  font-size: clamp(20px, 2.8vw, 30px);
+  font-weight: 400;
+  color: rgba(255,255,255,.7);
+  font-family: var(--font-sans);
+  letter-spacing: .01em;
+  margin-top: 14px;
+}
+.cover-sub {
+  font-size: 14px;
+  color: rgba(255,255,255,.5);
+  font-style: italic;
+  font-family: var(--font-serif);
+  margin-bottom: 48px;
+}
+.cover-desc {
+  font-size: 14px;
+  color: rgba(255,255,255,.65);
+  line-height: 1.9;
+  max-width: 580px;
+  border-left: 2px solid rgba(106,180,245,.5);
+  padding-left: 18px;
+}
+
+/* ── Article wrapper ────────────────────────────────── */
+article {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 60px 60px 100px;
+}
+
+/* ── Preface ─────────────────────────────────────────── */
+.preface {
+  background: var(--white);
+  border-radius: var(--r);
+  padding: 44px 48px;
+  margin: 40px 0 0;
+  border: 1px solid var(--line);
+  box-shadow: 0 2px 16px rgba(27,58,107,.06);
+}
+.preface-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--steel);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.preface-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+}
+.preface h2 {
+  font-family: var(--font-serif);
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 18px;
+}
+
+/* ── Chapter ─────────────────────────────────────────── */
+.chapter {
+  margin-top: 64px;
+}
+.chapter-header {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--steel) 100%);
+  border-radius: var(--r) var(--r) 0 0;
+  padding: 36px 40px 32px;
+  position: relative;
+  overflow: hidden;
+}
+.chapter-header::after {
+  content: '';
+  position: absolute;
+  top: -40px; right: -40px;
+  width: 160px; height: 160px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.04);
+}
+.ch-num {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.5);
+  margin-bottom: 8px;
+}
+.ch-title {
+  font-family: var(--font-serif);
+  font-size: clamp(22px, 3vw, 30px);
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.25;
+  position: relative;
+}
+.chapter-body {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-top: none;
+  border-radius: 0 0 var(--r) var(--r);
+  padding: 44px 44px 50px;
+  box-shadow: 0 4px 24px rgba(27,58,107,.07);
+}
+
+/* ── Sections ─────────────────────────────────────────── */
+.section { margin-top: 44px; }
+.section:first-child { margin-top: 0; }
+
+h2.sec-title {
+  font-family: var(--font-serif);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--navy);
+  border-left: 4px solid var(--steel);
+  padding-left: 14px;
+  margin-bottom: 18px;
+  line-height: 1.4;
+}
+
+h3.sub-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--steel);
+  margin: 24px 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+h3.sub-title::before {
+  content: '';
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--steel);
+  flex-shrink: 0;
+}
+
+p.body { margin-bottom: 14px; font-size: 14.5px; line-height: 1.9; color: var(--mid); }
+p.body:last-child { margin-bottom: 0; }
+
+/* ── Callout boxes ─────────────────────────────────────── */
+.callout {
+  border-radius: 8px;
+  padding: 22px 26px;
+  margin: 22px 0;
+  position: relative;
+}
+.callout-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.callout-label::before {
+  content: '';
+  width: 3px; height: 14px;
+  border-radius: 2px;
+  background: currentColor;
+}
+.callout ul { padding-left: 0; list-style: none; }
+.callout ul li {
+  padding: 3px 0 3px 16px;
+  position: relative;
+  font-size: 14px;
+  line-height: 1.75;
+}
+.callout ul li::before {
+  content: '–';
+  position: absolute; left: 0;
+  color: currentColor;
+  opacity: .5;
+}
+.callout ul li.empty { height: 8px; }
+.callout p { font-size: 14px; line-height: 1.8; margin-bottom: 6px; }
+.callout p:last-child { margin-bottom: 0; }
+
+.callout.sky   { background: var(--sky);   border: 1px solid var(--skyD);   color: var(--navy); }
+.callout.mint  { background: var(--mint);  border: 1px solid var(--mintD);  color: var(--green); }
+.callout.amber { background: var(--amber); border: 1px solid var(--amberD); color: var(--gold); }
+.callout.rose  { background: var(--rose);  border: 1px solid var(--roseD);  color: var(--red); }
+
+.callout.sky  .callout-body  { color: var(--dark); }
+.callout.mint .callout-body  { color: var(--dark); }
+.callout.amber .callout-body { color: var(--dark); }
+.callout.rose .callout-body  { color: var(--dark); }
+
+/* ── Tables ─────────────────────────────────────────────── */
+.tbl-wrap {
+  overflow-x: auto;
+  margin: 18px 0;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  box-shadow: 0 1px 8px rgba(27,58,107,.05);
+}
+table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+thead tr { background: var(--navy); }
+thead th {
+  color: #fff;
+  font-weight: 600;
+  padding: 11px 16px;
+  text-align: left;
+  letter-spacing: .02em;
+  font-size: 13px;
+}
+tbody tr { border-bottom: 1px solid var(--line); transition: background .15s; }
+tbody tr:last-child { border-bottom: none; }
+tbody tr:nth-child(even) { background: var(--slate); }
+tbody tr:hover { background: var(--sky); }
+tbody td {
+  padding: 11px 16px;
+  vertical-align: top;
+  color: var(--mid);
+  line-height: 1.7;
+}
+tbody td:first-child { font-weight: 500; color: var(--dark); white-space: nowrap; }
+
+/* ── Ordered / unordered lists ────────────────────────── */
+ol.proc {
+  counter-reset: proc;
+  list-style: none;
+  padding: 0;
+  margin: 16px 0;
+}
+ol.proc li {
+  counter-increment: proc;
+  display: flex;
+  gap: 14px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 14px;
+  line-height: 1.75;
+  align-items: flex-start;
+}
+ol.proc li:last-child { border-bottom: none; }
+ol.proc li::before {
+  content: counter(proc);
+  flex-shrink: 0;
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  background: var(--navy);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1px;
+}
+
+ul.bullets {
+  list-style: none;
+  padding: 0;
+  margin: 14px 0;
+}
+ul.bullets li {
+  padding: 5px 0 5px 20px;
+  position: relative;
+  font-size: 14px;
+  line-height: 1.8;
+}
+ul.bullets li::before {
+  content: '•';
+  position: absolute; left: 4px;
+  color: var(--steel);
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+/* ── Step flow box ─────────────────────────────────────── */
+.steps {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 18px 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.step {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--line);
+  background: var(--white);
+  transition: background .15s;
+}
+.step:last-child { border-bottom: none; }
+.step:hover { background: var(--sky); }
+.step-badge {
+  flex-shrink: 0;
+  background: var(--navy);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  padding: 4px 10px;
+  border-radius: 4px;
+  margin-top: 2px;
+}
+.step-body { font-size: 13.5px; line-height: 1.75; }
+.step-body strong { color: var(--navy); }
+
+/* ── Judge badge ─────────────────────────────────────────── */
+.judge { display: flex; gap: 10px; margin: 6px 0; font-size: 13.5px; align-items: flex-start; }
+.judge-tag {
+  flex-shrink: 0;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .05em;
+  padding: 3px 9px;
+  border-radius: 4px;
+  margin-top: 2px;
+}
+.judge-tag.ok  { background: #D4EDDA; color: #1A6E3A; }
+.judge-tag.ng  { background: #F8D7DA; color: #B03030; }
+.judge-tag.cau { background: #FEF8E7; color: #B8930A; }
+
+/* ── Divider ─────────────────────────────────────────────── */
+.divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--line), transparent);
+  margin: 36px 0;
+}
+
+/* ── Final section ──────────────────────────────────────── */
+.final-box {
+  background: linear-gradient(135deg, #0D1F40, #1B3A6B);
+  border-radius: var(--r);
+  padding: 52px 52px 56px;
+  margin-top: 64px;
+  position: relative;
+  overflow: hidden;
+  color: #fff;
+}
+.final-box::before {
+  content: '';
+  position: absolute;
+  top: -60px; right: -60px;
+  width: 240px; height: 240px;
+  border-radius: 50%;
+  background: rgba(106,180,245,.06);
+}
+.final-box h2 {
+  font-family: var(--font-serif);
+  font-size: 26px;
+  color: #fff;
+  margin-bottom: 22px;
+  position: relative;
+}
+.final-box p, .final-box li {
+  color: rgba(255,255,255,.75);
+  font-size: 14.5px;
+  line-height: 1.9;
+}
+.final-box .highlight {
+  color: #fff;
+  font-weight: 600;
+  font-family: var(--font-serif);
+  font-size: 18px;
+  margin: 22px 0;
+  display: block;
+  padding: 14px 18px;
+  border-left: 3px solid #6AB4F5;
+  background: rgba(255,255,255,.05);
+  border-radius: 0 6px 6px 0;
+}
+.final-three {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+  margin-top: 28px;
+}
+.final-card {
+  background: rgba(255,255,255,.07);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 8px;
+  padding: 18px 20px;
+}
+.final-card .fc-num {
+  font-size: 28px;
+  font-family: var(--font-serif);
+  font-weight: 700;
+  color: #6AB4F5;
+  margin-bottom: 8px;
+}
+.final-card p { font-size: 13px; color: rgba(255,255,255,.65); line-height: 1.7; }
+
+/* ── Scroll-to-top ─────────────────────────────────────── */
+#totop {
+  position: fixed;
+  bottom: 32px; right: 32px;
+  width: 44px; height: 44px;
+  background: var(--navy);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(27,58,107,.3);
+  opacity: 0;
+  transition: opacity .3s, transform .3s;
+  font-size: 18px;
+  z-index: 200;
+}
+#totop.show { opacity: 1; }
+#totop:hover { transform: translateY(-2px); }
+
+/* ── Progress bar ──────────────────────────────────────── */
+#progress {
+  position: fixed;
+  top: 0; left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #6AB4F5, #2E5FA3);
+  z-index: 300;
+  transition: width .1s linear;
+}
+
+/* ── Responsive ────────────────────────────────────────── */
+@media (max-width: 960px) {
+  #nav { transform: translateX(-260px); }
+  #nav.open { transform: translateX(0); }
+  #main { margin-left: 0; }
+  article { padding: 40px 24px 80px; }
+  #cover { padding: 60px 24px 60px; }
+  .final-three { grid-template-columns: 1fr; }
+  .chapter-body { padding: 28px 24px 36px; }
+  #menu-btn { display: flex; }
+}
+
+#menu-btn {
+  display: none;
+  position: fixed;
+  top: 16px; left: 16px;
+  width: 42px; height: 42px;
+  background: var(--navy);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  flex-direction: column;
+  gap: 5px;
+}
+#menu-btn span {
+  display: block;
+  width: 22px; height: 2px;
+  background: #fff;
+  border-radius: 1px;
+  transition: transform .3s, opacity .3s;
+}
+
+/* ── Animations ────────────────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.chapter { animation: fadeUp .5s ease both; }
+.chapter:nth-child(1) { animation-delay: .05s; }
+.chapter:nth-child(2) { animation-delay: .1s; }
+.chapter:nth-child(3) { animation-delay: .15s; }
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<!-- ── Sidebar nav ── -->
+<nav id="nav">
+  <div class="nav-logo">
+    <h2>5波終了戦略</h2>
+    <span>個人テクニックノート</span>
+  </div>
+  <div class="nav-section">
+    <span class="nav-ch">はじめに</span>
+    <a class="nav-link" href="#preface">序文</a>
+  </div>
+  <div class="nav-section">
+    <span class="nav-ch">第1章</span>
+    <a class="nav-link" href="#ch1-1">1-1 2つの売り</a>
+    <a class="nav-link" href="#ch1-2">1-2 3つの課題</a>
+    <a class="nav-link" href="#ch1-3">1-3 本質的位置づけ</a>
+  </div>
+  <div class="nav-section">
+    <span class="nav-ch">第2章</span>
+    <a class="nav-link" href="#ch2-1">2-1 3波の影響力</a>
+    <a class="nav-link" href="#ch2-2">2-2 心理パターン2種</a>
+    <a class="nav-link" href="#ch2-3">2-3 押しの深さ</a>
+    <a class="nav-link" href="#ch2-4">2-4 教科書の罠</a>
+    <a class="nav-link" href="#ch2-5">2-5 往復ビンタ</a>
+    <a class="nav-link" href="#ch2-6">2-6 戦略への落とし込み</a>
+  </div>
+  <div class="nav-section">
+    <span class="nav-ch">第3章</span>
+    <a class="nav-link" href="#ch3-1">3-1 純5波状態とは</a>
+    <a class="nav-link" href="#ch3-2">3-2 形成プロセス</a>
+    <a class="nav-link" href="#ch3-3">3-3 パターン分類</a>
+    <a class="nav-link" href="#ch3-4">3-4 実戦判断</a>
+    <a class="nav-link" href="#ch3-5">3-5 新規売りの条件</a>
+  </div>
+  <div class="nav-section">
+    <span class="nav-ch">第4章</span>
+    <a class="nav-link" href="#ch4-1">4-1 主観エントリーのリスク</a>
+    <a class="nav-link" href="#ch4-2">4-2 主観と客観の使い分け</a>
+    <a class="nav-link" href="#ch4-3">4-3 客観視の本質</a>
+    <a class="nav-link" href="#ch4-4">4-4 優位性が崩れるパターン</a>
+    <a class="nav-link" href="#ch4-5">4-5 必須条件</a>
+    <a class="nav-link" href="#ch4-6">4-6 勝てる思考フレーム</a>
+  </div>
+  <div class="nav-section">
+    <span class="nav-ch">第5章</span>
+    <a class="nav-link" href="#ch5-1">5-1 分布という視点</a>
+    <a class="nav-link" href="#ch5-2">5-2 参加者分布と値動き</a>
+    <a class="nav-link" href="#ch5-3">5-3 停滞の2種類</a>
+    <a class="nav-link" href="#ch5-4">5-4 流動性の視点</a>
+    <a class="nav-link" href="#ch5-5">5-5 ゾーンで捉える</a>
+    <a class="nav-link" href="#ch5-6">5-6 両建て設計</a>
+    <a class="nav-link" href="#ch5-7">5-7 3回目タッチのリスク</a>
+  </div>
+  <div class="nav-section">
+    <span class="nav-ch">第6章</span>
+    <a class="nav-link" href="#ch6-1">6-1 良い5波終了の見分け方</a>
+    <a class="nav-link" href="#ch6-2">6-2 爆発的動きの構造</a>
+    <a class="nav-link" href="#ch6-3">6-3 ブレイク前後の戦略</a>
+    <a class="nav-link" href="#ch6-4">6-4 3シナリオ設計</a>
+    <a class="nav-link" href="#ch6-5">6-5 ラインの「今」</a>
+    <a class="nav-link" href="#ch6-6">6-6 エントリー最終原則</a>
+  </div>
+  <div class="nav-section">
+    <span class="nav-ch">終章</span>
+    <a class="nav-link" href="#final">思考体系の統合</a>
+  </div>
+</nav>
+
+<button id="menu-btn" aria-label="メニュー">
+  <span></span><span></span><span></span>
+</button>
+
+<!-- ── Main content ── -->
+<div id="main">
+
+  <!-- Cover -->
+  <section id="cover">
+    <div class="cover-inner">
+      <div class="cover-tag">Personal Trading Notes — Elliott Wave</div>
+      <h1 class="cover-title">
+        5波終了戦略
+        <span>決済と資金流入が重なる瞬間を狙う技術</span>
+      </h1>
+      <p class="cover-sub">― 大衆心理とポジション解消から読み解く「爆発ポイント」 ―</p>
+      <p class="cover-desc">
+        「形を当てるトレード」から抜け出し、「誰がポジションを持ち、誰が決済するか」を読み解くための実践ノート。自分のトレードに落とし込むために整理した内容をまとめている。
+      </p>
+    </div>
+  </section>
+
+  <article>
+
+    <!-- ── はじめに ── -->
+    <div class="preface" id="preface">
+      <div class="preface-label">はじめに</div>
+      <h2>形を見るのではなく、ポジションを読む</h2>
+      <p class="body">エリオット波動を「形を当てるゲーム」として捉えてしまうと、「ここが5波の終点に見えるから売る」という主観的な逆張りを繰り返すことになる。踏み上げられ、往復ビンタを食らい、やがて相場から遠ざかる。こうした失敗パターンを抜け出すために、このノートをまとめた。</p>
+      <div class="callout sky" style="margin:20px 0">
+        <div class="callout-label">ここでの核心</div>
+        <div class="callout-body">
+          <p>5波終了とは「形を当てるもの」ではない。<br>「負ける側が確定した瞬間に、その流れに乗る順張り」として捉えること。これが5波終了トレードの出発点になる。</p>
+        </div>
+      </div>
+      <p class="body">「負ける側が確定する」とは何か。市場にいる全プレイヤーの「ポジションの中身」と「心理状態」を読み解き、決済売りと新規売りが同時に重なる瞬間を見極めること。このノートを繰り返し確認しながら、「今、参加者分布はどうなっているか」を自分に問える習慣をつけていく。</p>
+    </div>
+
+    <!-- ══════════ CHAPTER 1 ══════════ -->
+    <div class="chapter" id="ch1">
+      <div class="chapter-header">
+        <div class="ch-num">Chapter 1</div>
+        <div class="ch-title">5波終了の本質構造</div>
+      </div>
+      <div class="chapter-body">
+
+        <div class="section" id="ch1-1">
+          <h2 class="sec-title">1-1　下落を構成する「2つの売り」</h2>
+          <p class="body">5波終了後の下落は、2種類の売りが重なった時にのみ大きく動く傾向がある。まずこの原則を押さえておくこと。</p>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>売りの種類</th><th>内容・背景</th></tr></thead>
+              <tbody>
+                <tr><td>新規の売り（ショート参入）</td><td>逆張り勢が5波終了を確認し、新規にショートポジションを建てる売り</td></tr>
+                <tr><td>決済の売り（利確・損切り）</td><td>上昇波で買いを保有していた勢力が手仕舞いを行う売り</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="body">どちらか一方だけでは下落エネルギーが不足しやすい。両方が重なった局面にこそ、大きな下落が生まれやすい。この非対称性を無視して売りを仕掛けると、片方しか出ていない局面で損切りさせられやすくなる。</p>
+          <div class="callout mint">
+            <div class="callout-label">原則①</div>
+            <div class="callout-body">
+              <p>強い下落が生まれるのは、「新規売り」と「決済売り」が同時に重なる局面。どちらか片方だけでは「弱い下落」にとどまりやすい。</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="section" id="ch1-2">
+          <h2 class="sec-title">1-2　なぜ5波終了は難しいのか　― 3つの本質的な課題 ―</h2>
+          <p class="body">5波終了局面が難しい理由には、大きく3つの課題がある。</p>
+
+          <h3 class="sub-title">課題①　目線の慣性（認知バイアス）</h3>
+          <p class="body">長期間「買い目線」で動いてきた後に、突然「売り目線」に切り替えることは、技術の問題というより認知構造の問題になる。具体的に以下の3つのバイアスが強く作用しやすい。</p>
+          <ul class="bullets">
+            <li><strong>アンカリング</strong>　：　直前の上昇値動きに引っ張られ、「まだ上がるはず」と感じてしまう</li>
+            <li><strong>トレンド信仰</strong>　：　継続してきたトレンドは続くと無意識のうちに信じやすい</li>
+            <li><strong>利益体験の固着</strong>　：　買いで成功してきた体験が、売りへの転換を妨げる</li>
+          </ul>
+          <p class="body">「頭では分かっていても売りが打てない」状況は、こうしたバイアスが原因であり、スキルだけでは解決しきれない。</p>
+
+          <h3 class="sub-title">課題②　方向は確定しやすいが、値幅は不確定</h3>
+          <p class="body">5波終了後の相場は、方向の優位性はある程度明確だが、それ以外の要素は全て不確定になる。</p>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>要素</th><th>確度</th><th>トレードへの影響</th></tr></thead>
+              <tbody>
+                <tr><td>方向（下）</td><td>◎ 比較的確定</td><td>エントリーの根拠になりやすい</td></tr>
+                <tr><td>値幅</td><td>✕ 不確定</td><td>利確ターゲットの設定が難しい</td></tr>
+                <tr><td>ボラティリティ</td><td>✕ 不確定</td><td>ポジションサイズの判断が難しい</td></tr>
+                <tr><td>継続性</td><td>✕ 不確定</td><td>スイングかスキャかの判断が難しい</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3 class="sub-title">課題③　トレード設計が難しくなる</h3>
+          <p class="body">3波・5波には比較的明確なルールがある（3波：伸ばす・少ない回数、5波：伸ばさない・多い回数）。しかし5波終了後の局面には確立されたルールが存在しない。スキャルでも、スイングでも、分割でも理論上は成立するため、逆に「自分の戦略設計力」が全面的に問われるフェーズになりやすい。</p>
+          <div class="callout amber">
+            <div class="callout-label">エッジ（優位性）について</div>
+            <div class="callout-body">
+              <p>5波終了後に「様子見」して初動を逃すケースが多い。初動をしっかり捉えられるだけで、自然と少数派の立場に立てる。難しさの裏側にエッジが潜んでいる。</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="section" id="ch1-3">
+          <h2 class="sec-title">1-3　5波終了の本質的な位置づけ</h2>
+          <p class="body">5波終了は「方向の優位性はあるが、それ以外は全て不確定」という矛盾した特性を持つ局面になる。</p>
+          <p class="body">5波終了は「逆張り」ではなく、「負ける側が確定したポイントに乗っていく順張り」として設計すること。この認識がずれると、大きな損失につながりやすい。</p>
+        </div>
+
+      </div><!-- /chapter-body -->
+    </div><!-- /chapter -->
+
+    <!-- ══════════ CHAPTER 2 ══════════ -->
+    <div class="chapter" id="ch2">
+      <div class="chapter-header">
+        <div class="ch-num">Chapter 2</div>
+        <div class="ch-title">3波トレーダーの心理が値動きを支配する</div>
+      </div>
+      <div class="chapter-body">
+
+        <div class="section" id="ch2-1">
+          <h2 class="sec-title">2-1　なぜ3波が市場に大きな影響を与えるのか</h2>
+          <p class="body">市場で最も影響力を持つのは、3波でポジションを建てた参加者。理由はシンプルで、ポジションサイズが最も大きいからになる。</p>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>波</th><th>特徴・市場における役割</th></tr></thead>
+              <tbody>
+                <tr><td>3波</td><td>最大ポジションを持つ「市場の本体」。含み益が最も大きくなりやすい。</td></tr>
+                <tr><td>5波</td><td>後乗り・小さいポジション。3波勢の動きに追随する形になりやすい。</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="body">市場の「本体ポジション」は3波勢が握っている。彼らが決済するかどうかが、5波終了後の下落の強さを左右する。5波終了の分析は実質的に「3波トレーダーの心理を読む作業」になる。</p>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="section" id="ch2-2">
+          <h2 class="sec-title">2-2　3波勢の心理パターン　― 2つのケース ―</h2>
+          <h3 class="sub-title">ケース①　3波が長く伸びた場合（決済売りが出にくい）</h3>
+          <p class="body">3波が長く伸びると、3波勢は「爆益状態」になりやすい。含み益が大きすぎて「まだ伸びるだろう」という余裕が生まれ、利確しなくなる。「性格が悪い（利確しない）」とも表現される状態。</p>
+          <div class="callout rose">
+            <div class="callout-label">ケース①の帰結</div>
+            <div class="callout-body">
+              <ul>
+                <li>含み益：大きい状態　→　まだ握り続けやすい</li>
+                <li>決済売り：出にくい</li>
+                <li>売り圧力：弱まりやすい</li>
+                <li class="empty"></li>
+                <li>→ 5波終了後の下落は「弱くなりやすい」</li>
+              </ul>
+            </div>
+          </div>
+          <h3 class="sub-title">ケース②　3波がそこまで伸びなかった場合（決済売りが出やすい）</h3>
+          <p class="body">3波の伸びが控えめだと、含み益は限定的で利確意欲が高まりやすい。不安感も加わり、5波終了局面で決済売りが出やすくなる。</p>
+          <div class="callout mint">
+            <div class="callout-label">ケース②の帰結</div>
+            <div class="callout-body">
+              <ul>
+                <li>含み益：限定的　→　利確したい気持ちが生まれやすい</li>
+                <li>決済売り：出やすい</li>
+                <li>売り圧力：強まりやすい</li>
+                <li class="empty"></li>
+                <li>→ 5波終了後の下落は「強くなりやすい」</li>
+              </ul>
+            </div>
+          </div>
+          <p class="body">「3波の満足度が5波終了の下落の強さを左右する」という構造になる。3波の伸び方を確認することが、5波終了の強さを見極める上での重要ポイントになる。</p>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="section" id="ch2-3">
+          <h2 class="sec-title">2-3　「押しの深さ」で燃料を読む</h2>
+          <p class="body">3波勢の心理状態を読む上で使えるのが「押しの深さ」。3波と5波の間の押し（4波）がどれだけ深いかを見る。</p>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>押しの深さ</th><th>意味するもの</th><th>5波終了後の下落への影響</th></tr></thead>
+              <tbody>
+                <tr><td>浅い押し</td><td>損切りされていない。3波ポジションが残存している。</td><td>売りの燃料が少なく、下落が弱くなりやすい</td></tr>
+                <tr><td>深い押し</td><td>含み益が減り、不安が高まっている。3波勢が逃げやすい。</td><td>決済売りの燃料が増え、下落が強くなりやすい</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="callout sky">
+            <div class="callout-label">実戦判断の手がかり</div>
+            <div class="callout-body">
+              <p><strong>「3波勢は今、余裕があるか？焦っているか？」</strong></p>
+              <ul>
+                <li>余裕がある　→　利確しない　→　下げにくい　→　スキャル（回数勝負）が向いている</li>
+                <li>焦っている　→　利確したい　→　下げやすい　→　スイングで伸ばせる可能性がある</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="section" id="ch2-4">
+          <h2 class="sec-title">2-4　教科書パターンが「最も下がりにくい」理由</h2>
+          <p class="body">エリオット波動の教科書通りに綺麗に完成した「3波長い・4波浅い・5波の伸び」パターンは、実は最も下がりにくいパターンであることが多い。3波勢が爆益状態で握り続けているため、決済売りがほとんど出にくい。新規売りだけでは下落エネルギーが不足し、ダラダラとした調整にとどまりやすくなる。</p>
+          <p class="body">加えて、教科書パターンはトレンドが強いため、新規の逆張り勢も入りにくい。売りの「新規」も「決済」も両方が弱くなり、結果として調整波にとどまりやすくなる。</p>
+          <div class="callout rose">
+            <div class="callout-label">教科書パターンで起きやすいこと</div>
+            <div class="callout-body">
+              <ul>
+                <li>新規売り：トレンドが強くて怖くて入りにくい</li>
+                <li>決済売り：3波勢が含み益大で動かない</li>
+                <li class="empty"></li>
+                <li>→ 売りが「片方しか存在しない」状態になりやすい</li>
+                <li>→ 下落しても調整波にとどまりやすい</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="section" id="ch2-5">
+          <h2 class="sec-title">2-5　往復ビンタが起きるメカニズム</h2>
+          <p class="body">「往復ビンタ」に遭うプロセスを整理しておく。形だけ見てポジションの中身を無視した結果がそのまま出てくる。</p>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>段階</th><th>起きていること</th></tr></thead>
+              <tbody>
+                <tr><td>① 売りを仕掛ける</td><td>「5波が完成しそう」と見て売りエントリー</td></tr>
+                <tr><td>② 下がらない</td><td>3波勢が握り続けているため決済売りが出ない</td></tr>
+                <tr><td>③ 損切り</td><td>「やはり上なのか…」と判断して損切り</td></tr>
+                <tr><td>④ 買いに転換</td><td>「やはり5波は継続だ」と判断して買う</td></tr>
+                <tr><td>⑤ また下がる</td><td>今度は下落してきて混乱に陥る</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="body">このサイクルの根本原因は「大衆心理を見ずに形だけ見ていること」にある。「形がそれらしく見える」ことと「実際に機能する局面かどうか」は全く別の話。</p>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="section" id="ch2-6">
+          <h2 class="sec-title">2-6　トレード戦略への落とし込み</h2>
+          <p class="body">3波の状態によって、戦略は以下のように変わってくる。</p>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>3波の状態</th><th>5波終了後の性質</th><th>適した戦略</th></tr></thead>
+              <tbody>
+                <tr><td>3波が長い（押し浅い）</td><td>決済売りが出にくい。下げ弱くなりやすい。</td><td>スキャル中心・回数勝負。無理に伸ばさない。もしくは触らない。</td></tr>
+                <tr><td>3波が普通〜崩れ気味（押しある）</td><td>決済売りが出やすい。下げ強くなりやすい。</td><td>スイングで伸ばす。エントリーを厳選する。</td></tr>
+                <tr><td>3波が短い</td><td>ポジション自体が少ない。軽い崩れになりやすい。</td><td>比較的狙いやすい。ただし値幅は限定的になりやすい。</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══════════ CHAPTER 3 ══════════ -->
+    <div class="chapter" id="ch3">
+      <div class="chapter-header">
+        <div class="ch-num">Chapter 3</div>
+        <div class="ch-title">「純5波状態」という核心概念</div>
+      </div>
+      <div class="chapter-body">
+
+        <div class="section" id="ch3-1">
+          <h2 class="sec-title">3-1　純5波状態とは何か</h2>
+          <p class="body">5波終了後の下落が機能しやすい条件として「純5波状態」を押さえておく。「3波で建てたポジションが解消済みで残っていない状態」のこと。</p>
+          <div class="callout sky">
+            <div class="callout-label">純5波状態の定義</div>
+            <div class="callout-body">
+              <p>3波でポジションを建てた全ての参加者が、深い押し（損切り・利確）によってポジションを解消している状態。</p>
+              <p>残っているのは「5波の買いポジション」だけ。この状態を「3波のゴミが残っていない状態」とも言う。</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="section" id="ch3-2">
+          <h2 class="sec-title">3-2　純5波状態が形成されるプロセス</h2>
+          <ol class="proc">
+            <li>3波でポジションを建てた参加者がいる</li>
+            <li>深い押しで含み益が大幅に減少する</li>
+            <li>不安を感じた3波勢が損切りや利確を実行する</li>
+            <li>3波ポジションが解消される</li>
+            <li>その後の上昇は5波勢だけで形成される</li>
+            <li>5波終了時　→　5波勢の決済＋新規売りが重なりやすくなる</li>
+            <li>相場が崩れやすい構造になる</li>
+          </ol>
+          <p class="body">一言でまとめると、「純5波状態＝3波ポジションが解消されており、5波終了時に決済売りが集中しやすい状態」ということになる。</p>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="section" id="ch3-3">
+          <h2 class="sec-title">3-3　パターン分類　― やっていい場面・やらない場面 ―</h2>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>パターン</th><th>状態</th><th>判断・戦略</th></tr></thead>
+              <tbody>
+                <tr><td>❌ 推奨しない：3波が長く押しが浅い</td><td>3波ポジションが残存中</td><td>売るタイミングではない。触らない方が無難。</td></tr>
+                <tr><td>✅ 最も狙いやすい：深い押しがあり一度崩れた</td><td>3波ポジションが解消済み</td><td>決済＋新規売りが重なりやすい。積極的に狙える。</td></tr>
+                <tr><td>✅ 比較的狙いやすい：3波自体が短い</td><td>ポジション量自体が少ない</td><td>軽い崩れが期待できる。値幅は限定的になりやすい。</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="section" id="ch3-4">
+          <h2 class="sec-title">3-4　実戦判断の手がかり</h2>
+          <div class="callout mint">
+            <div class="callout-label">実戦判断の問い</div>
+            <div class="callout-body">
+              <p><strong>「3波で乗った参加者は、まだポジションを保有しているか？」</strong></p>
+              <ul>
+                <li>まだ保有している可能性が高い　→　売るタイミングではない</li>
+                <li>解消済みの可能性が高い　　　　→　売りを検討できる局面</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="section" id="ch3-5">
+          <h2 class="sec-title">3-5　新規売りが入りやすい条件　― 「買いが少ない相場」 ―</h2>
+          <p class="body">純5波状態に加えて、もう一つ押さえておきたい条件がある。「買いが少ない相場でしか、新規売りは入りにくい」という点。</p>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>買いの状態</th><th>相場の動き</th><th>新規売りの入りやすさ</th></tr></thead>
+              <tbody>
+                <tr><td>買いが多い</td><td>上がりやすい</td><td>売りが怖くて入りにくい</td></tr>
+                <tr><td>買いが少ない</td><td>上がりにくい</td><td>売りが入りやすくなる</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <h3 class="sub-title">「買いが少ない波形」の見分け方　― 1波が長いパターン ―</h3>
+          <p class="body">1波が長いパターンがこれにあたる。初動で急上昇すると乗り遅れた人が増え、3波・5波への参加者が減る。トレンドに勢いがなくなり、買いが溜まりにくい構造になる。</p>
+          <div class="callout sky">
+            <div class="callout-label">1波の長さと買いの溜まり方</div>
+            <div class="callout-body">
+              <ul>
+                <li>1波が長い　→　乗り遅れた人が多い　→　3波・5波に参加者が少ない　→　買いが溜まりにくい　→　5波終了時に売りが入りやすい</li>
+                <li class="empty"></li>
+                <li>1波が短い　→　3波・5波に買いが集中　→　5波終了時に売りが入りにくい</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══════════ CHAPTER 4 ══════════ -->
+    <div class="chapter" id="ch4">
+      <div class="chapter-header">
+        <div class="ch-num">Chapter 4</div>
+        <div class="ch-title">主観と客観の分離　― プロの判断軸 ―</div>
+      </div>
+      <div class="chapter-body">
+
+        <div class="section" id="ch4-1">
+          <h2 class="sec-title">4-1　主観エントリーが引き起こすリスク</h2>
+          <p class="body">5波終了局面で最も多い失敗パターンが、「主観でここが5波だろうと判断して売る」こと。非常に不利な賭けになりやすい。</p>
+          <div class="callout rose">
+            <div class="callout-label">主観エントリーが不利になりやすい理由</div>
+            <div class="callout-body">
+              <ul>
+                <li>その判断が「3波の途中」だった場合　→　踏み上げられる</li>
+                <li>その判断が「トレンド中の押し」だった場合　→　損切りになりやすい</li>
+                <li class="empty"></li>
+                <li>主観的なカウントは、市場の資金量の前では脆くなりやすい。</li>
+                <li>相場は「正しさ」ではなく「資金量」で動くから。</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="section" id="ch4-2">
+          <h2 class="sec-title">4-2　主観と客観の正しい使い分け</h2>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>局面</th><th>必要な思考</th></tr></thead>
+              <tbody>
+                <tr><td>3波・5波を狙う局面</td><td>主観でOK。方向さえ合えば機能しやすいため、自分の見立てで乗っていける。</td></tr>
+                <tr><td>5波終了を狙う局面</td><td>客観的な視点が必須。他の全参加者の認識を読む必要があるため、主観だけでは機能しにくい。</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="body">3波・5波狙いは「乗るだけ」の主観でいい。でも5波終了は「戦う側を見極める」客観が必要になってくる。</p>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="section" id="ch4-3">
+          <h2 class="sec-title">4-3　客観視の本質　― 他のトレーダーの認識を読む ―</h2>
+          <p class="body">「客観的に見る」とは、感情を排除することではない。「他のトレーダーがその局面をどう見ているかを考えること」が、トレードにおける客観視の意味になる。</p>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>思考の種類</th><th>具体的な内容</th></tr></thead>
+              <tbody>
+                <tr><td>主観的な見方</td><td>自分は5波が終わりと見ている　→　売りを仕掛ける</td></tr>
+                <tr><td>客観的な見方</td><td>他の参加者は3波継続と見ている　→　買いが入ってくる　→　自分の売りが踏まれる可能性がある</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="body">相場は「自分のカウントが正しいかどうか」ではなく、「市場の多数派がどちらを向いているか」で動く。自分のカウントへの固執が最大のリスクになる。</p>
+          <p class="body">さらに言えば、客観視とは「ステイ派（様子見）と攻め派がいる中で、多数派がどちらに傾いているかを見ること」になる。攻め派の中で売りと買いが拮抗すればボラが出やすく、どちらかに偏れば一方向に動きやすくなる。</p>
+          <div class="callout sky">
+            <div class="callout-label">客観視のポイント</div>
+            <div class="callout-body">
+              <p>問うべきは「自分の分析が正しいか」ではなく、「市場の多数派は今、どちらを向いているか」になる。</p>
+              <ul>
+                <li>多数派が3波継続と見ている　→　売りは危険</li>
+                <li>多数派が上がらないと感じ始めた　→　売りが機能しやすくなる</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="section" id="ch4-4">
+          <h2 class="sec-title">4-4　5波終了の優位性が崩れるパターン</h2>
+          <p class="body">一度成立した5波終了の優位性が、途中で崩れることがある。この変化に気づかずポジションを持ち続けると大きなリスクになる。</p>
+          <h3 class="sub-title">優位性が崩れるプロセス</h3>
+          <ol class="proc">
+            <li>元々の状態：レンジ相場で3波が弱い　→　5波終了が狙いやすい環境</li>
+            <li>新しい綺麗なN字（トレンド構造）が形成される</li>
+            <li>市場参加者のエリオットカウントが更新される</li>
+            <li>「これは新しい3波の始まりではないか？」と認識するトレーダーが増加する</li>
+            <li>押し目買い勢が参入し、上昇継続のエネルギーが生まれる</li>
+            <li>5波終了を狙って売りを持っていた参加者が踏み上げられる</li>
+          </ol>
+          <p class="body">本質は「市場参加者の認識が変わった」こと。「5波が終わりそう」という認識が「これはまだ3波では？」に変わると、買いたい人が増えて優位性は薄れていく。</p>
+          <div class="callout amber">
+            <div class="callout-label">優位性が崩れる際の重要な判断</div>
+            <div class="callout-body">
+              <p>「別のカウントで3波に見える構造が出た時点で、5波終了を狙う優位性は崩れていると判断すること。」</p>
+              <p>このタイミングで素直に撤退できるかどうかが、判断力の差になる。</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="section" id="ch4-5">
+          <h2 class="sec-title">4-5　5波終了を狙うための必須条件</h2>
+          <p class="body">以下の条件を確認してから、5波終了を狙うかどうかを判断する。一つでも不明確なら、触らない選択肢を優先する。</p>
+          <div class="steps">
+            <div class="step">
+              <div class="step-badge">STEP 1</div>
+              <div class="step-body">3波のポジションは解消されているか？<br><strong>解消されていない可能性が高い → 見送り</strong></div>
+            </div>
+            <div class="step">
+              <div class="step-badge">STEP 2</div>
+              <div class="step-body">市場の多数派は3波継続と見ているか？<br><strong>まだ継続と見ている参加者が多い → 見送り</strong></div>
+            </div>
+            <div class="step">
+              <div class="step-badge">STEP 3</div>
+              <div class="step-body">新規の逆張り勢が入る根拠があるか？<br><strong>根拠が見当たらない → 見送り</strong></div>
+            </div>
+            <div class="step">
+              <div class="step-badge">STEP 4</div>
+              <div class="step-body">大口（長期資金）が動きやすい価格帯か？<br><strong>そうでない → 慎重に判断</strong></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="section" id="ch4-6">
+          <h2 class="sec-title">4-6　勝ちやすいトレーダーの思考フレーム</h2>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>思考の方向性</th><th>具体的な内容</th></tr></thead>
+              <tbody>
+                <tr><td>避けた方がよい思考</td><td>「自分のエリオットカウントが正しい」という確信から売りを仕掛ける</td></tr>
+                <tr><td>機能しやすい思考</td><td>「今、市場の多数派はどちらを向いているか」「誰が損切りしそうか」「大口はどこで動くか」を問い続ける</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="body">「利益をいくら取れるか」より「どこで構造が終わったか」を先に見ること。そうすることで判断の軸がぶれにくくなる。</p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══════════ CHAPTER 5 ══════════ -->
+    <div class="chapter" id="ch5">
+      <div class="chapter-header">
+        <div class="ch-num">Chapter 5</div>
+        <div class="ch-title">相場を「分布」で読む　― 流動性の視点 ―</div>
+      </div>
+      <div class="chapter-body">
+
+        <div class="section" id="ch5-1">
+          <h2 class="sec-title">5-1　相場の本質：答えではなく分布</h2>
+          <div class="callout sky">
+            <div class="callout-label">相場の本質的な定義</div>
+            <div class="callout-body">
+              <p><strong>値動き ＝ 参加者の衝突量</strong></p>
+              <p>売りと買いがどれだけの量で、どのバランスで存在しているか。それがそのまま値動きの強さと方向を決める。相場に「正解」はない。あるのは「その瞬間の参加者の分布」だけ。</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="section" id="ch5-2">
+          <h2 class="sec-title">5-2　参加者分布と値動きの関係</h2>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>参加者の状態</th><th>値動きの傾向</th><th>適した戦略</th></tr></thead>
+              <tbody>
+                <tr><td>誰も入らない</td><td>ボラなし・横ばい</td><td>触らないことが最善</td></tr>
+                <tr><td>売りと買いが拮抗して存在する</td><td>ボラあり・レンジ化</td><td>逆張り回転戦略が機能しやすい</td></tr>
+                <tr><td>一方向に資金が集中する</td><td>トレンド発生</td><td>順張り戦略が機能しやすい</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="section" id="ch5-3">
+          <h2 class="sec-title">5-3　停滞の「2種類」を識別する　― 期待値フィルターの核心 ―</h2>
+          <p class="body">5波終了後の停滞には、見た目は似ていても中身が全く違う2種類がある。</p>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>停滞の種類</th><th>正体と値動き</th></tr></thead>
+              <tbody>
+                <tr><td>小さい停滞（①）</td><td>参加者がいない。ボラなし・方向も出ない。値幅ゼロに近くなりやすい。</td></tr>
+                <tr><td>大きい停滞（②）</td><td>売りも買いも存在している。ボラはあるがトレンドは出ない。レンジ形成しやすい。</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="body">リアルタイムではどちらになるか確定できない、というのが最重要ポイントになる。</p>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>トレーダータイプ</th><th>不確定局面での対応</th></tr></thead>
+              <tbody>
+                <tr><td>勝率重視型</td><td>小さい停滞（①）になる可能性がある以上、触らない。機会損失より損失回避を優先する。</td></tr>
+                <tr><td>回数重視型</td><td>大きい停滞（②）になる可能性に賭けて、早めに仕掛ける。</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="callout mint">
+            <div class="callout-label">期待値フィルターの本質</div>
+            <div class="callout-body">
+              <p>「分からない相場は、分析が足りないのではなく、そもそもやらなくていい相場。」</p>
+              <p>機会損失より、意味のないリスクを取らないことを優先する。これが勝率を安定させるための考え方になる。</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="section" id="ch5-4">
+          <h2 class="sec-title">5-4　流動性（Liquidity）という視点</h2>
+          <p class="body">「参加者の分布」をさらに抽象化したのが「流動性（Liquidity）」になる。5波終了を判断する上では「新規買い」と「決済売り」という2つの流動性を確認することが基本。これが重なる時に大きな動きが出やすく、片方だけの時は値動きが限定的になりやすい。</p>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>流動性の状態</th><th>相場の傾向</th></tr></thead>
+              <tbody>
+                <tr><td>流動性が一方向に集中</td><td>トレンドが発生しやすい</td></tr>
+                <tr><td>流動性が分散（売りも買いも）</td><td>レンジ化しやすい</td></tr>
+                <tr><td>流動性が枯渇</td><td>ボラなし・動きにくい</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="section" id="ch5-5">
+          <h2 class="sec-title">5-5　5波終了を「点」ではなく「ゾーン」で捉える</h2>
+          <p class="body">5波終了を「ある一点」として決め打ちしようとすると失敗しやすい。実際の相場では、5波終了は一定の価格帯（ゾーン）として現れることが多い。</p>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>捉え方</th><th>トレードへの影響</th></tr></thead>
+              <tbody>
+                <tr><td>「一点」として捉える</td><td>当たるか外れるかの賭けになりやすく、ゾーン内での往復に対応できない</td></tr>
+                <tr><td>「ゾーン」として捉える</td><td>ゾーン内での有利ポジション構築が可能になる。柔軟な対応がしやすい。</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="body">重要なサポートゾーンに到達すると、売り継続勢・押し目買い勢・短期勢の3者が同時に存在する「カオス（＝レンジ化）」状態になりやすい。「方向は読みにくいが、動き方は読める」状態。この認識があれば、レンジ戦略が成立しやすくなる。</p>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="section" id="ch5-6">
+          <h2 class="sec-title">5-6　ゾーン内で「上下どちらもやる」際の設計</h2>
+          <p class="body">「売りも買いもやる」という戦略は理論的には正しい。ただし明確なルールなしに実行すると、感情トレードになりやすい。</p>
+          <div class="steps">
+            <div class="step">
+              <div class="step-badge">設計①</div>
+              <div class="step-body"><strong>ゾーン固定</strong>　：　上限ラインと下限ラインを事前に設定し、その範囲の内側だけでエントリーする。この境界がなければポジション管理が崩壊しやすい。</div>
+            </div>
+            <div class="step">
+              <div class="step-badge">設計②</div>
+              <div class="step-body"><strong>超短期利確</strong>　：　トレンドがない局面では伸びた後にすぐ反転しやすい。含み益が出たら早めに逃げる習慣をつける。</div>
+            </div>
+            <div class="step">
+              <div class="step-badge">設計③</div>
+              <div class="step-body"><strong>やめるラインを先に決める</strong>　：　「上に抜けたら売り禁止・買い目線に切り替え」「下に抜けたら買い禁止・売り目線に切り替え」という判断ラインを事前に決めておく。</div>
+            </div>
+          </div>
+          <div class="callout amber">
+            <div class="callout-label">両建て思考で最も避けたいパターン</div>
+            <div class="callout-body">
+              <p>「頭を使わずに、なんとなく売りも買いもやる」→ 感情トレードになり往復ビンタに陥りやすい。</p>
+              <p>正しい両建ては「場所で思想を切り替える」こと。</p>
+              <ul>
+                <li>下限ゾーン到達　→　買い目線に切り替える</li>
+                <li>上限ゾーン到達　→　売り目線に切り替える</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="section" id="ch5-7">
+          <h2 class="sec-title">5-7　同じラインへの3回目タッチに潜むリスク</h2>
+          <p class="body">同じラインへの接触が繰り返されるにつれて、意識する参加者の数が増えていく。この構造を理解しておくことで、「よくある損切りのパターン」を回避しやすくなる。</p>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>タッチの回数</th><th>市場参加者の反応</th></tr></thead>
+              <tbody>
+                <tr><td>1回目</td><td>気づかない参加者が多い。反応は少ない。</td></tr>
+                <tr><td>2回目</td><td>一部の参加者が意識し始める。反応がやや増える。</td></tr>
+                <tr><td>3回目</td><td>多くの参加者が意識している。ロングの損切りとショートの逆指値が集中しやすい。</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="body">3回目になると、集中している損切りや逆指値を「狙う動き（ストップ狩り）」が発生しやすくなる。全員が意識しているラインは、タッチエントリーが機能しにくくなる。</p>
+          <div class="callout sky">
+            <div class="callout-label">3回目タッチでの推奨アプローチ</div>
+            <div class="callout-body">
+              <div class="judge"><div class="judge-tag ng">NG</div>タッチした瞬間にエントリー（ストップ狩りに遭いやすい）</div>
+              <div class="judge"><div class="judge-tag ok">OK</div>反転の確認を待ってからエントリー（ストキャスのクロス・実際の値動きの変化を確認する）</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══════════ CHAPTER 6 ══════════ -->
+    <div class="chapter" id="ch6">
+      <div class="chapter-header">
+        <div class="ch-num">Chapter 6</div>
+        <div class="ch-title">実戦統合　― プロの思考体系と判断フロー ―</div>
+      </div>
+      <div class="chapter-body">
+
+        <div class="section" id="ch6-1">
+          <h2 class="sec-title">6-1　「積極的に狙える5波終了」と「そうでない5波終了」</h2>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>種類</th><th>条件・特徴・戦略</th></tr></thead>
+              <tbody>
+                <tr><td>✅ 積極的に狙える5波終了</td><td>新規買いが明確に強い。売りが崩れ始めている。高値を更新している。→ 3波ロジックへの切り替えタイミング。</td></tr>
+                <tr><td>❌ 積極的には狙いにくい5波終了</td><td>買いもあるが売りも強い。高値を抜けていない。両方の力が拮抗中。→ レンジ戦略に徹するか、見送る。</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="body">高値を更新するかどうかが最初の判定基準になる。更新しない限りは「まだ決着がついていない」と見ておく。</p>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="section" id="ch6-2">
+          <h2 class="sec-title">6-2　爆発的な動きが起きる構造</h2>
+          <p class="body">5波終了後に大きな動きが出る時、内部では複数の売り（または買い）が同時多発している。</p>
+          <div class="callout rose">
+            <div class="callout-label">爆発的下落が起きる内部構造</div>
+            <div class="callout-body">
+              <ul>
+                <li>① 新規売り（5波終了を確認した逆張り勢の参入）</li>
+                <li>＋ ② 決済売り（3波・5波の買い勢の利確）</li>
+                <li>＋ ③ 損切り売り（残存ロングポジションの強制ロスカット）</li>
+                <li class="empty"></li>
+                <li>→ 売りが3つの方向から同時に集中する</li>
+                <li>→ 「レンジ → ブレイク → 急落」という動きが発生しやすくなる</li>
+              </ul>
+            </div>
+          </div>
+          <h3 class="sub-title">「大衆のストーリーが崩壊する瞬間」</h3>
+          <p class="body">三尊・トレンドラインなど、多くの参加者が意識しているポイントを越えた瞬間、大衆のシナリオが一斉に崩れる。「自分の想定が外れた」と気づいた参加者が一斉に解消しようとする。この集中が爆発的な動きを生む。</p>
+          <div class="callout amber">
+            <div class="callout-label">大口（お金持ち）の視点</div>
+            <div class="callout-body">
+              <p>爆発的な動きを強化するのが「大口資金の参入」になる。大口資金は「割安かどうか」で動く傾向がある。</p>
+              <ul>
+                <li>5波終了が安値圏（割安）で起きる場合　→　大口の買いが入りやすい　→　反転が強くなりやすい</li>
+                <li>5波終了が高値圏（割高）で起きる場合　→　大口の売りが入りやすい　→　下落が強くなりやすい</li>
+              </ul>
+              <p>「その価格は割安か割高か」を意識しておくと、5波終了の爆発力を事前に見積もる手がかりになる。</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="section" id="ch6-3">
+          <h2 class="sec-title">6-3　ブレイク前後での戦略変更　― なぜ切り替えが必要か ―</h2>
+          <p class="body">ブレイク前とブレイク後では、参加者の構成が根本的に変わる。この変化を無視して同じ戦略を続けると、大きな損失につながりやすい。</p>
+
+          <h3 class="sub-title">ブレイク前（レンジ状態）</h3>
+          <p class="body">売り勢と買い勢が両方いるため、上限・下限の反転を狙うレンジ戦略が機能しやすい。ブレイクが起きた際には損失になりやすいので、利確は早めにすること。</p>
+
+          <h3 class="sub-title">ブレイク後に何が変わるのか</h3>
+          <p class="body">ブレイクが起きると、一方の勢力のポジションが解消・損切りされる。需給の構造が変わり、一方向への流れが生まれやすくなる。</p>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>ブレイクの種類</th><th>需給の変化・推奨戦略</th></tr></thead>
+              <tbody>
+                <tr><td>上方向へのブレイク（高値更新）</td><td>それまで売り勢が支えていた価格帯が突破された。売り勢のポジションが解消・損切り済みになりやすい。買い勢が主導権を持つ。→ 押し目買い・3波狙いへ切り替えが自然な流れ。</td></tr>
+                <tr><td>下方向へのブレイク（安値割れ）</td><td>買い勢のポジションが解消・損切り済みになりやすい。売り勢が主導権を持つ。→ 戻り売り・下落継続の流れに合わせるのが自然。</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3 class="sub-title">ブレイク後に避けたい行動</h3>
+          <p class="body">上抜けが確定した後の「戻り売り」は非常に難しい。売り勢はポジションを解消済みで、買い勢が主導権を持っている状態でブレイク方向と逆のポジションを持つことになる。下方向ブレイク後の「押し目買い」も同様で、買い勢がほぼ撤退した後に単独で買い向かうことになりやすい。</p>
+          <div class="callout sky">
+            <div class="callout-label">ブレイク前後の戦略切り替えポイント</div>
+            <div class="callout-body">
+              <p><strong>■ ブレイク前（レンジ状態）</strong><br>
+              売りも買いも両方存在している。上限で売り・下限で買いのレンジ戦略が有効。</p>
+              <p><strong>■ ブレイク後（需給が変化した状態）</strong><br>
+              一方の勢力がポジション解消済みになっている。ブレイクした方向への順張り戦略に切り替える。ブレイクした方向と逆行するポジションは、非常に不利な立場になりやすい。</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="section" id="ch6-4">
+          <h2 class="sec-title">6-4　3シナリオの事前設計</h2>
+          <p class="body">どの方向に動いても対応できる状態を事前に作っておくこと。「取る相場よりミスしない相場」の実践になる。</p>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>シナリオ</th><th>発動条件</th><th>推奨アクション</th></tr></thead>
+              <tbody>
+                <tr><td>A：上抜け（5波終了確定）</td><td>高値更新・明確なブレイク確定</td><td>5波終了の確定と見て、押し目買い・3波狙いへ移行する</td></tr>
+                <tr><td>B：下抜け（5波継続）</td><td>安値割れ・買い勢の限界</td><td>5波の継続と見て、戻り売り・下落継続の流れに乗る</td></tr>
+                <tr><td>C：レンジ継続</td><td>どちらも明確に抜けない</td><td>逆張り回転・超短期利確を繰り返す。ブレイクを待つ。</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="section" id="ch6-5">
+          <h2 class="sec-title">6-5　ラインの「今」を見る</h2>
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>アプローチ</th><th>結果</th></tr></thead>
+              <tbody>
+                <tr><td>❌ 多くのラインを引いて全部を意識する</td><td>判断が混乱しやすく、どのラインに従うか迷いやすい</td></tr>
+                <tr><td>✅ 「今、実際に戦っている場所」だけを意識する</td><td>判断がシンプルになり、エントリーの精度が上がりやすい</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="body">「ラインは過去ではなく、今を見る」ということを意識しておく。過去の節目より、今実際に機能している価格帯に集中することで判断の精度が上がりやすい。ブレイク後の「直近高値（ブレイクラインそのもの）」は、過去のラインより今の相場で機能しやすい。</p>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="section" id="ch6-6">
+          <h2 class="sec-title">6-6　エントリーの最終原則</h2>
+          <div class="callout mint">
+            <div class="callout-label">5波終了トレードの最終ルール</div>
+            <div class="callout-body">
+              <ul>
+                <li>① 三尊・トレンドライン・重要ラインの「否定（崩れ）」を待つ。「終わりそう」な段階では動かない。「終わった」と確認してから動く。</li>
+                <li class="empty"></li>
+                <li>② 決済売りが集中しやすい場所だけを狙う。損切りと利確が重なりやすいポイントに限定することで優位性が生まれる。</li>
+                <li class="empty"></li>
+                <li>③ 乗り遅れた場合は追いかけない。不利な場所での参入は期待値が低い。次の有利な形（押し目など）を待つ。</li>
+              </ul>
+            </div>
+          </div>
+          <div class="callout sky">
+            <div class="callout-label">有利ポジションの重要性</div>
+            <div class="callout-body">
+              <p>トレードは「どこで乗るか」で結果の大部分が決まる。含み益のある状態でポジションを持っている人が、心理的にも資金的にも有利な立場になる。不利な場所で乗ること自体が、勝つ可能性を大きく下げることになる。</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══════════ FINAL ══════════ -->
+    <div class="final-box" id="final">
+      <h2>終章　思考体系の完全統合</h2>
+
+      <p>ここまで整理した内容は、以下のレベル段階の「LEVEL 3〜4」に位置するアプローチになる。</p>
+      <div class="final-three" style="margin:24px 0 32px">
+        <div class="final-card"><div class="fc-num">L1</div><p>ラインとパターンで判断。「形」しか見えていない。</p></div>
+        <div class="final-card"><div class="fc-num">L2</div><p>エリオット波動のカウントで判断。自分のカウントに縛られやすい。</p></div>
+        <div class="final-card"><div class="fc-num">L3</div><p>「誰が入るか」を考えて判断。静的な分析にとどまりやすい。</p></div>
+        <div class="final-card"><div class="fc-num">L4</div><p>「参加者の分布と衝突量」で判断する。このノートが目指す視点。</p></div>
+      </div>
+
+      <span class="highlight">「5波が終わりそうだから売る」という思考を手放していく。<br>代わりに常に自分に問い続けるのは、たった一つのことになる。</span>
+
+      <span class="highlight" style="font-size:22px; margin:8px 0;">「今、もう誰も買えない状態になっているか？」</span>
+
+      <p style="margin-top:20px">相場は予測するものではなく、確認するもの。確定した事実に丁寧に乗る。乗り遅れても追いかけない。やらない相場は、やらないと決める。</p>
+      <p style="margin-top:12px; font-size:13px; color:rgba(255,255,255,.4); text-align:center; margin-top:36px; font-family:var(--font-serif); font-style:italic;">― 了 ―</p>
+    </div>
+
+  </article>
+</div>
+
+<button id="totop" aria-label="トップへ戻る">↑</button>
+
+<script>
+// Progress bar
+const prog = document.getElementById('progress');
+window.addEventListener('scroll', () => {
+  const s = document.documentElement.scrollTop;
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  prog.style.width = (s / h * 100) + '%';
+});
+
+// Scroll to top
+const totop = document.getElementById('totop');
+window.addEventListener('scroll', () => {
+  totop.classList.toggle('show', window.scrollY > 400);
+});
+totop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+// Active nav link
+const links = document.querySelectorAll('.nav-link');
+const sections = [...links].map(l => document.querySelector(l.getAttribute('href'))).filter(Boolean);
+
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      links.forEach(l => l.classList.remove('active'));
+      const link = document.querySelector(`.nav-link[href="#${e.target.id}"]`);
+      if (link) link.classList.add('active');
+    }
+  });
+}, { rootMargin: '-30% 0px -60% 0px' });
+sections.forEach(s => obs.observe(s));
+
+// Mobile menu
+const nav = document.getElementById('nav');
+const btn = document.getElementById('menu-btn');
+btn.addEventListener('click', () => nav.classList.toggle('open'));
+document.addEventListener('click', e => {
+  if (!nav.contains(e.target) && e.target !== btn) nav.classList.remove('open');
+});
+</script>
+</body>
+</html>
