@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>秘伝マニュアル — CLASSIFIED</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+--bg:#05080F;
+--bg2:#090D18;
+--bg3:#0D1424;
+--panel:#111827;
+--panel2:#141C2E;
+--cyan:#00C8FF;
+--cyan2:#00A0D0;
+--cyan-dim:rgba(0,200,255,0.12);
+--cyan-border:rgba(0,200,255,0.35);
+--amber:#FFB347;
+--amber-dim:rgba(255,179,71,0.12);
+--amber-border:rgba(255,179,71,0.35);
+--red:#FF4E4E;
+--red-dim:rgba(255,78,78,0.12);
+--red-border:rgba(255,78,78,0.35);
+--green:#2DDA8A;
+--green-dim:rgba(45,218,138,0.1);
+--green-border:rgba(45,218,138,0.3);
+--purple:#A78BFA;
+--purple-dim:rgba(167,139,250,0.12);
+--purple-border:rgba(167,139,250,0.35);
+--blue:#60A5FA;
+--blue-dim:rgba(96,165,250,0.1);
+--blue-border:rgba(96,165,250,0.3);
+--gray:#4A5568;
+--gray-dim:rgba(74,85,104,0.3);
+--text:#C8D8E8;
+--text2:#7A90A8;
+--text3:#4A5C6E;
+--border:rgba(0,200,255,0.1);
+--border2:rgba(0,200,255,0.2);
+--line:rgba(255,255,255,0.06);
+}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Noto Sans JP','Rajdhani',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  line-height:1.7;
+  min-height:100vh;
+  position:relative;
+}
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  background:
+    repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,200,255,0.015) 2px,rgba(0,200,255,0.015) 4px);
+  pointer-events:none;z-index:0;
+}
+.wrap{width:100%;max-width:100%;padding:0;position:relative;z-index:1}
+
+/* ===== HEADER ===== */
+.hdr{
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;
+  padding:20px 40px 18px;
+  background:linear-gradient(180deg,rgba(0,200,255,0.06) 0%,transparent 100%);
+  border-bottom:1px solid var(--border2);
+}
+.hdr-left{display:flex;flex-direction:column;gap:2px}
+.hdr-icon{
+  font-family:'Share Tech Mono',monospace;
+  font-size:11px;color:var(--cyan);letter-spacing:0.15em;
+  opacity:0.7;margin-bottom:4px;
+}
+.hdr-title{
+  font-family:'Rajdhani',sans-serif;
+  font-size:28px;font-weight:700;
+  color:#FFFFFF;letter-spacing:0.05em;
+  text-shadow:0 0 30px rgba(0,200,255,0.4);
+}
+.hdr-sub{
+  font-family:'Share Tech Mono',monospace;
+  font-size:11px;color:var(--cyan2);letter-spacing:0.12em;opacity:0.8;
+}
+.hdr-right{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.hdr-badge{
+  font-family:'Share Tech Mono',monospace;
+  font-size:10px;letter-spacing:0.1em;padding:5px 12px;
+  border-radius:3px;
+}
+.hb-purple{background:var(--purple-dim);color:var(--purple);border:1px solid var(--purple-border)}
+.hb-cyan{background:var(--cyan-dim);color:var(--cyan);border:1px solid var(--cyan-border)}
+.hb-amber{background:var(--amber-dim);color:var(--amber);border:1px solid var(--amber-border)}
+
+/* corner decoration */
+.corner{position:absolute;width:14px;height:14px}
+.corner-tl{top:0;left:0;border-top:2px solid var(--cyan);border-left:2px solid var(--cyan)}
+.corner-tr{top:0;right:0;border-top:2px solid var(--cyan);border-right:2px solid var(--cyan)}
+.corner-bl{bottom:0;left:0;border-bottom:2px solid var(--cyan);border-left:2px solid var(--cyan)}
+.corner-br{bottom:0;right:0;border-bottom:2px solid var(--cyan);border-right:2px solid var(--cyan)}
+
+/* ===== TABS ===== */
+.tab-bar{
+  display:flex;gap:0;
+  background:var(--bg2);
+  border-bottom:2px solid var(--border2);
+  padding:0 40px;
+  overflow-x:auto;
+  scrollbar-width:none;
+}
+.tab-bar::-webkit-scrollbar{display:none}
+.tab{
+  font-family:'Rajdhani',sans-serif;
+  font-size:13px;font-weight:600;letter-spacing:0.08em;
+  padding:14px 22px;
+  color:var(--text3);
+  cursor:pointer;
+  border:none;background:transparent;
+  border-bottom:3px solid transparent;
+  margin-bottom:-2px;
+  position:relative;
+  transition:color 0.2s,border-color 0.2s,background 0.2s;
+  white-space:nowrap;
+  display:flex;align-items:center;gap:8px;
+}
+.tab:hover{color:var(--cyan2);background:rgba(0,200,255,0.04)}
+.tab.on{
+  color:var(--cyan);
+  border-bottom-color:var(--cyan);
+  background:rgba(0,200,255,0.06);
+}
+.tab .t-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--text3);
+  transition:background 0.2s, box-shadow 0.2s;
+  flex-shrink:0;
+}
+.tab.on .t-dot{
+  background:var(--cyan);
+  box-shadow:0 0 6px var(--cyan);
+}
+.tab:hover .t-dot{background:var(--cyan2)}
+.tab .t-num{
+  font-family:'Share Tech Mono',monospace;
+  font-size:10px;
+  opacity:0.6;
+}
+
+/* ===== CONTENT AREA ===== */
+.content-area{padding:32px 40px 60px}
+.sec{display:none}
+.sec.on{display:block}
+
+/* ===== CARDS ===== */
+.card{
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:6px;
+  padding:24px 28px;
+  margin-bottom:16px;
+  position:relative;
+}
+.card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--cyan-border),transparent);
+}
+.card-title{
+  font-family:'Rajdhani',sans-serif;
+  font-size:16px;font-weight:700;letter-spacing:0.1em;
+  color:#E0EAF4;margin-bottom:16px;
+  display:flex;align-items:center;gap:10px;
+}
+.card-title::before{
+  content:'';display:block;width:3px;height:18px;background:var(--cyan);border-radius:2px;
+  flex-shrink:0;
+}
+.cs{
+  background:var(--bg2);
+  border:1px solid var(--line);
+  border-radius:4px;
+  padding:14px 18px;
+  margin-bottom:8px;
+}
+.cs:last-child{margin-bottom:0}
+
+/* ===== GRID ===== */
+.g2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
+.g3{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1fr);gap:10px}
+@media(max-width:700px){.g2,.g3{grid-template-columns:1fr}}
+
+/* ===== BADGES ===== */
+.bdg{
+  display:inline-block;padding:2px 10px;border-radius:3px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:10px;letter-spacing:0.08em;font-weight:400;
+}
+.bp{background:var(--purple-dim);color:var(--purple);border:1px solid var(--purple-border)}
+.bt{background:var(--green-dim);color:var(--green);border:1px solid var(--green-border)}
+.bc{background:var(--red-dim);color:var(--red);border:1px solid var(--red-border)}
+.bbl{background:var(--blue-dim);color:var(--blue);border:1px solid var(--blue-border)}
+.bgr{background:var(--gray-dim);color:#8A9AAA;border:1px solid rgba(74,85,104,0.5)}
+.bgg{background:var(--green-dim);color:var(--green);border:1px solid var(--green-border)}
+.brd{background:var(--red-dim);color:var(--red);border:1px solid var(--red-border)}
+.bam{background:var(--amber-dim);color:var(--amber);border:1px solid var(--amber-border)}
+.bcn{background:var(--cyan-dim);color:var(--cyan);border:1px solid var(--cyan-border)}
+
+/* ===== ALERTS ===== */
+.al{border-radius:4px;padding:12px 16px;font-size:13px;margin:12px 0;line-height:1.65;border-left:3px solid}
+.al-am{background:var(--amber-dim);border-left-color:var(--amber);color:var(--amber)}
+.al-gn{background:var(--green-dim);border-left-color:var(--green);color:var(--green)}
+.al-rd{background:var(--red-dim);border-left-color:var(--red);color:var(--red)}
+.al-bl{background:var(--blue-dim);border-left-color:var(--blue);color:var(--blue)}
+.al-cn{background:var(--cyan-dim);border-left-color:var(--cyan);color:var(--cyan)}
+.al strong{color:inherit}
+
+/* ===== TABLES ===== */
+.tbl{width:100%;border-collapse:collapse;font-size:12px}
+.tbl th{
+  text-align:left;font-family:'Rajdhani',sans-serif;font-weight:600;letter-spacing:0.08em;
+  padding:10px 12px;
+  border-bottom:1px solid var(--border2);
+  color:var(--cyan2);font-size:11px;
+  background:rgba(0,200,255,0.04);
+}
+.tbl td{
+  padding:9px 12px;
+  border-bottom:1px solid var(--line);
+  vertical-align:top;color:var(--text2);font-size:12px;
+}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:rgba(0,200,255,0.03);color:var(--text)}
+.tbl strong{color:var(--text);font-weight:500}
+
+/* ===== TEXT ===== */
+h1{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:#fff}
+h2{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:600;letter-spacing:0.08em;color:#C0D0E0;margin-bottom:12px}
+h3{font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:600;letter-spacing:0.06em;color:#9AB0C8;margin-bottom:8px}
+p{font-size:13px;color:var(--text2);line-height:1.75;margin-bottom:8px}
+p:last-child{margin-bottom:0}
+strong{color:var(--text);font-weight:500}
+.mn{font-size:11px;color:var(--text3);margin-top:6px;line-height:1.6;font-family:'Share Tech Mono',monospace}
+
+/* ===== PRIORITY DISPLAY ===== */
+.priority-bar{
+  display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+  padding:16px;background:var(--bg2);border-radius:6px;margin:14px 0;
+  border:1px solid var(--border);
+}
+.prio-box{
+  padding:12px 20px;border-radius:4px;flex:1;min-width:160px;
+}
+.prio-box-a{background:rgba(167,139,250,0.1);border:1px solid var(--purple-border)}
+.prio-box-b{background:rgba(45,218,138,0.08);border:1px solid var(--green-border)}
+.prio-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:0.1em;margin-bottom:4px;opacity:0.8}
+.prio-value{font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700}
+.prio-box-a .prio-label{color:var(--purple)}
+.prio-box-a .prio-value{color:var(--purple)}
+.prio-box-b .prio-label{color:var(--green)}
+.prio-box-b .prio-value{color:var(--green)}
+.prio-arrow{font-size:22px;color:var(--text3)}
+
+/* ===== STEPS ===== */
+.steps{list-style:none;counter-reset:st}
+.steps li{
+  counter-increment:st;
+  display:flex;gap:12px;
+  padding:8px 0;
+  border-bottom:1px solid var(--line);
+  font-size:13px;color:var(--text2);
+  align-items:flex-start;line-height:1.65;
+}
+.steps li:last-child{border-bottom:none}
+.steps li::before{
+  content:counter(st);
+  min-width:22px;height:22px;
+  border-radius:3px;
+  background:var(--cyan-dim);
+  border:1px solid var(--cyan-border);
+  color:var(--cyan);
+  font-family:'Share Tech Mono',monospace;
+  font-size:11px;font-weight:400;
+  display:inline-flex;align-items:center;justify-content:center;
+  flex-shrink:0;margin-top:2px;
+}
+.steps li strong{color:var(--text)}
+
+/* ===== PHASE CARDS ===== */
+.pc{
+  border:1px solid var(--border);
+  border-radius:6px;padding:16px 20px;margin-bottom:12px;
+  position:relative;overflow:hidden;
+  background:var(--panel2);
+}
+.pc::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%}
+.pa::before{background:var(--purple)}
+.pb::before{background:var(--green)}
+.pcb::before{background:var(--red)}
+.pbl::before{background:var(--blue)}
+.pgn::before{background:var(--green)}
+.pam::before{background:var(--amber)}
+.prd::before{background:var(--red)}
+
+/* ===== CHECK LIST ===== */
+.ch{display:flex;gap:10px;margin-bottom:8px;align-items:flex-start;font-size:13px;color:var(--text2);line-height:1.65}
+.ch:last-child{margin-bottom:0}
+.chn{
+  min-width:20px;height:20px;border-radius:3px;
+  background:var(--bg2);border:1px solid var(--border2);
+  font-family:'Share Tech Mono',monospace;
+  font-size:10px;color:var(--cyan);
+  display:inline-flex;align-items:center;justify-content:center;
+  flex-shrink:0;margin-top:2px;
+}
+
+/* ===== ROW ===== */
+.row{display:flex;gap:10px;margin-bottom:8px;font-size:13px;align-items:flex-start}
+.row:last-child{margin-bottom:0}
+.lbl{font-weight:600;color:var(--text);min-width:48px;flex-shrink:0;padding-top:1px;font-family:'Rajdhani',sans-serif;font-size:13px;letter-spacing:0.04em}
+.val{color:var(--text2);line-height:1.65}
+
+/* ===== DIVIDER ===== */
+.dv{height:1px;background:var(--line);margin:12px 0}
+.sep{
+  display:flex;align-items:center;gap:10px;margin:20px 0 14px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:10px;color:var(--cyan2);letter-spacing:0.12em;
+}
+.sep::after{content:'';flex:1;height:1px;background:var(--border2)}
+
+/* ===== STATUS TAGS ===== */
+.ok-tag{
+  background:var(--green-dim);color:var(--green);
+  padding:2px 10px;border-radius:3px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:10px;font-weight:400;display:inline-block;
+  border:1px solid var(--green-border);
+}
+.ng-tag{
+  background:var(--red-dim);color:var(--red);
+  padding:2px 10px;border-radius:3px;
+  font-family:'Share Tech Mono',monospace;
+  font-size:10px;font-weight:400;display:inline-block;
+  border:1px solid var(--red-border);
+}
+
+/* ===== FORMULA ===== */
+.formula{
+  background:var(--bg2);border-left:3px solid var(--blue);
+  border:1px solid var(--blue-border);border-left-width:3px;
+  padding:14px 18px;margin:14px 0;border-radius:0 4px 4px 0;
+}
+.formula h3{color:var(--blue);margin-bottom:8px}
+.formula p{color:var(--text2)}
+
+/* ===== PHASE TIMELINE ===== */
+.phase-wrap{position:relative;padding-left:28px}
+.phase-wrap::before{content:'';position:absolute;left:6px;top:8px;bottom:8px;width:1px;background:var(--border2)}
+.phase-item{position:relative;margin-bottom:16px}
+.phase-dot{
+  position:absolute;left:-22px;top:5px;
+  width:14px;height:14px;border-radius:2px;
+  border:2px solid;
+}
+
+/* ===== ENTRY PATTERN CARDS ===== */
+.entry-card{
+  border:1px solid var(--border);border-radius:6px;padding:16px 20px;
+  background:var(--panel2);margin-bottom:12px;
+  border-top-width:2px;
+}
+.entry-card-a{border-top-color:var(--purple)}
+.entry-card-b{border-top-color:var(--green)}
+.entry-card-c{border-top-color:var(--red)}
+.entry-label{
+  font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.1em;
+  margin-bottom:12px;display:flex;align-items:center;gap:8px;
+}
+
+/* ===== SCAN DECORATION ===== */
+.data-bar{
+  display:flex;align-items:center;gap:8px;padding:8px 0;
+  border-bottom:1px solid var(--line);
+  font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text3);
+}
+.data-bar span{color:var(--cyan2)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="hdr-left">
+    <div class="hdr-icon">▸ SYSTEM: TRADING INTELLIGENCE MANUAL // CONFIDENTIAL</div>
+    <div class="hdr-title">秘伝マニュアル <span style="color:var(--cyan);font-size:20px;">COMPLETE EDITION</span></div>
+    <div class="hdr-sub">ELLIOTT WAVE × SESSION TRADING × CROWD PSYCHOLOGY</div>
+  </div>
+  <div class="hdr-right">
+    <span class="hdr-badge hb-purple">▸ ELLIOTT WAVE</span>
+    <span class="hdr-badge hb-cyan">▸ SESSION TRADE</span>
+    <span class="hdr-badge hb-amber">⚠ CLASSIFIED</span>
+  </div>
+</div>
+
+<!-- TAB BAR -->
+<div class="tab-bar">
+  <button class="tab on" onclick="go(event,'f1')"><span class="t-dot"></span><span class="t-num">01</span> 本質・基礎</button>
+  <button class="tab" onclick="go(event,'f2')"><span class="t-dot"></span><span class="t-num">02</span> 判断フロー</button>
+  <button class="tab" onclick="go(event,'f3')"><span class="t-dot"></span><span class="t-num">03</span> 全16パターン</button>
+  <button class="tab" onclick="go(event,'f4')"><span class="t-dot"></span><span class="t-num">04</span> エントリー A/B/C</button>
+  <button class="tab" onclick="go(event,'f5')"><span class="t-dot"></span><span class="t-num">05</span> NYタイム専用</button>
+  <button class="tab" onclick="go(event,'f6')"><span class="t-dot"></span><span class="t-num">06</span> 東京タイム専用</button>
+  <button class="tab" onclick="go(event,'f7')"><span class="t-dot"></span><span class="t-num">07</span> 禁則・鉄則</button>
+</div>
+
+<div class="content-area">
+
+<!-- ① 本質・基礎 -->
+<div id="s-f1" class="sec on">
+
+<div class="card">
+  <div class="card-title">この手法の本質</div>
+  <div style="border:1px solid var(--cyan-border);background:var(--cyan-dim);padding:14px 18px;border-radius:4px;margin-bottom:16px;border-left:3px solid var(--cyan)">
+    <p style="color:var(--text)">チャートを攻略するのではなく、<strong>世界中のトレーダーの感情・行動パターン</strong>を先読みして乗る手法。買う人が多いから上がる。売る人が多いから下がる。この大衆心理の流れを先取りするのがすべての出発点。</p>
+  </div>
+  <div class="g2">
+    <div class="cs">
+      <span class="bdg bp" style="margin-bottom:8px;display:inline-block">ELLIOTT WAVE</span>
+      <p>2〜3ヶ月スパンの<strong>長期集団心理</strong>。機関投資家・大口ファンドが積み上げる方向性。個人の短期売買より圧倒的に強い力を持つ。</p>
+    </div>
+    <div class="cs">
+      <span class="bdg bt" style="margin-bottom:8px;display:inline-block">SESSION TRADE</span>
+      <p>「今日中に利益を出したい」という<strong>デイトレ・スキャルの24時間以内の集団心理</strong>。東京・欧州・NYの市場参加者の行動をパターン化したもの。</p>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">2軸の優先順位（最重要）</div>
+  <div class="priority-bar">
+    <div class="prio-box prio-box-a">
+      <div class="prio-label">軸① 長期（3〜4ヶ月）</div>
+      <div class="prio-value">エリオット波動</div>
+    </div>
+    <div class="prio-arrow">&gt;&gt;</div>
+    <div class="prio-box prio-box-b">
+      <div class="prio-label">軸② 短期（今日1日）</div>
+      <div class="prio-value">時間帯トレード</div>
+    </div>
+  </div>
+  <div class="al al-am">長期の大衆心理（エリオット）は短期の大衆心理（時間帯）より常に強い。両者が逆方向を向いているときは絶対にエントリーしない。これが最多の負けパターン。</div>
+</div>
+
+<div class="card">
+  <div class="card-title">なぜ前日高値・安値が最強の判断基準なのか</div>
+  <div class="g2">
+    <div class="cs">
+      <span class="ng-tag" style="margin-bottom:8px;display:inline-block">使うべきでない基準</span>
+      <p>1時間足の高値安値、移動平均線（期間で答えが変わる）</p>
+      <p class="mn">// 人によって答えが異なる → 集団行動が起きない → 機能しない</p>
+    </div>
+    <div class="cs">
+      <span class="ok-tag" style="margin-bottom:8px;display:inline-block">最強の基準</span>
+      <p>前日の最高値・最安値</p>
+      <p class="mn">// 1万人中1万人が同じ価格を指す → 集団行動が集中 → 強く機能する</p>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">各タイムゾーンと大衆心理</div>
+  <table class="tbl">
+    <tr><th>市場</th><th>日本時間（夏）</th><th>日本時間（冬）</th><th>主な参加者</th><th>役割</th></tr>
+    <tr><td><span class="bdg bam">TOKYO</span></td><td>〜15時</td><td>〜16時</td><td>アジア勢・日本株連動</td><td>その日の方向性を形成（参加者少）</td></tr>
+    <tr><td><span class="bdg bbl">EUROPE</span></td><td>15〜21時</td><td>16〜22時</td><td>欧州勢・大口ファンド</td><td>主力の新規エントリー（最重要）</td></tr>
+    <tr><td><span class="bdg bc">NY</span></td><td>21〜翌2時</td><td>22〜翌3時</td><td>米国勢・欧州の決済組</td><td>継続 または 利確による逆転</td></tr>
+  </table>
+</div>
+
+</div><!-- /f1 -->
+
+<!-- ② 判断フロー -->
+<div id="s-f2" class="sec">
+
+<div class="card">
+  <div class="card-title">1日の判断フロー</div>
+  <ol class="steps">
+    <li><strong>13〜14時：</strong>日足エリオット波動を確認する。3波・5波（上昇/下落）が出ているか確認。不明確な通貨ペアはその日の対象外にする</li>
+    <li><strong>15時（冬16時）：</strong>東京タイムの結果を確認する。前日最高値・最安値のブレイク有無で「上昇/下落/レンジ/ちょい動き」を判定する（判定はヒゲを含む）</li>
+    <li><strong>15〜21時（欧州）：</strong>判定結果に応じてエントリー手法（A/B/C）を選択。欧州タイム中の値動きの幅も記録しておく</li>
+    <li><strong>21時（冬22時）：</strong>欧州タイムの結果を確認しNYパターンを確定させる。パターンに応じてNY専用手法でエントリーを検討する</li>
+    <li><strong>翌2時（冬3時）：</strong>NYタイムのポジションは損益に関わらず強制決済する</li>
+  </ol>
+</div>
+
+<div class="card">
+  <div class="card-title">東京タイム判定（15時の確認）</div>
+  <table class="tbl">
+    <tr><th>確認結果</th><th>東京タイム判定</th><th>対応パターン</th></tr>
+    <tr><td><strong>前日最高値をブレイクしキープ</strong></td><td><span class="ok-tag">上昇</span></td><td>①⑤（欧州買い）/ ③⑦（NY対応）</td></tr>
+    <tr><td><strong>前日最安値をブレイクしキープ</strong></td><td><span class="ng-tag">下落</span></td><td>②⑥（欧州売り）/ ④⑧（NY対応）</td></tr>
+    <tr><td><strong>どちらもブレイクなし</strong></td><td><span class="bdg bgr">レンジ</span></td><td>⑨〜⑭（エリオット方向で判断）</td></tr>
+    <tr><td><strong>上昇しているが前日最高値に届かない</strong></td><td><span class="bdg bam">ちょい上昇</span></td><td>⑮（欧州ちょい下落 → NY上昇）</td></tr>
+    <tr><td><strong>下落しているが前日最安値に届かない</strong></td><td><span class="bdg bam">ちょい下落</span></td><td>⑯（欧州ちょい上昇 → NY下落）</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <div class="card-title">欧州タイム判定（NYへの連携）</div>
+  <div class="cs" style="margin-bottom:12px">
+    <h3>欧州上昇の判定：東京タイム上昇幅との比較</h3>
+    <table class="tbl" style="margin-top:10px">
+      <tr><th>東京の値幅</th><th>欧州の値幅</th><th>判定</th><th>NYの扱い</th></tr>
+      <tr><td>例：30pips</td><td>ほぼ同程度（〜35pips）</td><td><span class="ok-tag">欧州上昇</span></td><td>パターン③で売り目線</td></tr>
+      <tr><td>例：30pips</td><td>大幅超過（50pips超）</td><td><span class="bdg bam">要注意</span></td><td>実は東京がレンジだった可能性。NY売りは控える</td></tr>
+      <tr><td>例：30pips</td><td>明らかに少ない（15pips未満）</td><td><span class="ok-tag">欧州レンジ</span></td><td>パターン⑦で買い目線</td></tr>
+    </table>
+  </div>
+  <div class="cs">
+    <h3>「イケイケ確認」（パターン⑪⑫で必須）</h3>
+    <p>21時時点で欧州の動きが逆流せず方向をキープしているかを確認する。</p>
+    <div style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap">
+      <span class="ok-tag">▸ キープ中 → ⑪⑫エントリーOK（欧州勢がポジション保有継続）</span>
+      <span class="ng-tag">▸ 逆流・戻り発生 → エントリーしない（欧州勢が利確開始）</span>
+    </div>
+  </div>
+</div>
+
+</div><!-- /f2 -->
+
+<!-- ③ 全16パターン -->
+<div id="s-f3" class="sec">
+
+<div class="card">
+  <div class="card-title">全16パターン 完全表</div>
+  <p style="font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--text3);margin-bottom:12px">// <span class="bdg brd">⚡REQUIRED</span> = エリオット波動の確認が絶対に必要なパターン</p>
+  <table class="tbl">
+    <tr><th>#</th><th>東京</th><th>欧州</th><th>NY</th><th>働く大衆心理</th><th>Elliott</th></tr>
+    <tr><td><span class="bdg bp">①</span></td><td><span class="ok-tag">上昇</span></td><td>→ <span class="ok-tag">上昇</span></td><td>—</td><td>欧州勢が東京のトレンドに乗って新規買い</td><td style="color:var(--text3)">なくても可</td></tr>
+    <tr><td><span class="bdg bp">②</span></td><td><span class="ng-tag">下落</span></td><td>→ <span class="ng-tag">下落</span></td><td>—</td><td>欧州勢が東京のトレンドに乗って新規売り</td><td style="color:var(--text3)">なくても可</td></tr>
+    <tr><td><span class="bdg bc">③</span></td><td><span class="ok-tag">上昇</span></td><td><span class="ok-tag">上昇</span></td><td>→ <span class="ng-tag">下落</span></td><td>東京・欧州の買いポジ利確決済が集中して下落</td><td style="color:var(--amber)">注意※1</td></tr>
+    <tr><td><span class="bdg bc">④</span></td><td><span class="ng-tag">下落</span></td><td><span class="ng-tag">下落</span></td><td>→ <span class="ok-tag">上昇</span></td><td>東京・欧州の売りポジ利確決済が集中して上昇</td><td style="color:var(--amber)">注意※1</td></tr>
+    <tr><td><span class="bdg bp">⑤</span></td><td><span class="ok-tag">上昇</span></td><td>→ <span class="bdg bgr">レンジ</span></td><td>—</td><td>新規買いが集まったが欧州タイムは勢い不足でレンジ化</td><td style="color:var(--text3)">なくても可</td></tr>
+    <tr><td><span class="bdg bp">⑥</span></td><td><span class="ng-tag">下落</span></td><td>→ <span class="bdg bgr">レンジ</span></td><td>—</td><td>新規売りが集まったが欧州タイムは勢い不足でレンジ化</td><td style="color:var(--text3)">なくても可</td></tr>
+    <tr><td><span class="bdg bp">⑦</span></td><td><span class="ok-tag">上昇</span></td><td><span class="bdg bgr">レンジ</span></td><td>→ <span class="ok-tag">上昇</span></td><td>まだ買いたいトレーダーが残っておりNYで最後の新規買いが集中</td><td style="color:var(--blue)">推奨</td></tr>
+    <tr><td><span class="bdg bp">⑧</span></td><td><span class="ng-tag">下落</span></td><td><span class="bdg bgr">レンジ</span></td><td>→ <span class="ng-tag">下落</span></td><td>まだ売りたいトレーダーが残っておりNYで最後の新規売りが集中</td><td style="color:var(--blue)">推奨</td></tr>
+    <tr><td><span class="bdg brd">⑨</span></td><td><span class="bdg bgr">レンジ</span></td><td>→ <span class="ok-tag">上昇</span></td><td>→ <span class="ok-tag">上昇</span></td><td>東京静止後に欧州がエリオット方向へ動き出す。NY継続</td><td><span class="bdg brd">⚡必須</span></td></tr>
+    <tr><td><span class="bdg brd">⑩</span></td><td><span class="bdg bgr">レンジ</span></td><td>→ <span class="ng-tag">下落</span></td><td>→ <span class="ng-tag">下落</span></td><td>東京静止後に欧州がエリオット方向へ動き出す。NY継続</td><td><span class="bdg brd">⚡必須</span></td></tr>
+    <tr><td><span class="bdg brd">⑪</span></td><td><span class="bdg bgr">レンジ</span></td><td><span class="ok-tag">上昇</span></td><td>→ <span class="ok-tag">上昇</span></td><td>欧州勢がポジション保有継続（逆流なし）→ NYも追随</td><td><span class="bdg brd">⚡必須</span></td></tr>
+    <tr><td><span class="bdg brd">⑫</span></td><td><span class="bdg bgr">レンジ</span></td><td><span class="ng-tag">下落</span></td><td>→ <span class="ng-tag">下落</span></td><td>欧州勢がポジション保有継続（逆流なし）→ NYも追随</td><td><span class="bdg brd">⚡必須</span></td></tr>
+    <tr><td><span class="bdg brd">⑬</span></td><td><span class="bdg bgr">レンジ</span></td><td><span class="bdg bgr">レンジ</span></td><td>→ <span class="ok-tag">急上昇</span></td><td>本日安値が超明確 → NYで世界のトレーダーが一斉に集中買い</td><td><span class="bdg brd">⚡必須</span></td></tr>
+    <tr><td><span class="bdg brd">⑭</span></td><td><span class="bdg bgr">レンジ</span></td><td><span class="bdg bgr">レンジ</span></td><td>→ <span class="ng-tag">急下落</span></td><td>本日高値が超明確 → NYで世界のトレーダーが一斉に集中売り</td><td><span class="bdg brd">⚡必須</span></td></tr>
+    <tr><td><span class="bdg bam">⑮</span></td><td><span class="bdg bam">ちょい上昇</span></td><td><span class="ng-tag">ちょい下落</span></td><td>→ <span class="ok-tag">上昇</span></td><td>押し目が形成されNYで安値拾いの買いが集まる</td><td><span class="bdg brd">⚡必須</span></td></tr>
+    <tr><td><span class="bdg bam">⑯</span></td><td><span class="bdg bam">ちょい下落</span></td><td><span class="ok-tag">ちょい上昇</span></td><td>→ <span class="ng-tag">下落</span></td><td>戻り目が形成されNYで高値売りが集まる</td><td><span class="bdg brd">⚡必須</span></td></tr>
+  </table>
+  <div class="al al-am" style="margin-top:12px">※1 パターン③④：日足エリオットが上昇方向なら③は使わない。下落方向なら④は使わない。長期の大衆心理が決済売り・買いより強く機能するため。</div>
+</div>
+
+<div class="card">
+  <div class="card-title">ちょい上昇・ちょい下落の定義（⑮⑯）</div>
+  <div class="g2">
+    <div class="cs">
+      <h3>ちょい上昇</h3>
+      <p>価格は上昇しているが<strong>前日最高値に届いていない</strong>状態で15時を迎える。</p>
+      <p class="mn">// 前日最高値をブレイクしていれば通常の「上昇」パターン（①〜⑦）で対処</p>
+    </div>
+    <div class="cs">
+      <h3>ちょい下落</h3>
+      <p>価格は下落しているが<strong>前日最安値に届いていない</strong>状態で15時を迎える。</p>
+      <p class="mn">// 前日最安値をブレイクしていれば通常の「下落」パターン（②〜⑧）で対処</p>
+    </div>
+  </div>
+</div>
+
+</div><!-- /f3 -->
+
+<!-- ④ エントリー A/B/C -->
+<div id="s-f4" class="sec">
+
+<div class="card">
+  <div class="card-title">3パターンの選択基準</div>
+  <p style="margin-bottom:14px">エントリーの本質は「ブレイクアウト」か「押し目買い」の2種類のみ。ロジック不要の「即エントリー」を含む計3パターン。どれを選ぶかはライフスタイルと性格による。</p>
+  <div class="g3">
+    <div class="entry-card entry-card-a">
+      <div class="entry-label"><span class="bdg bp">A</span> 即エントリー</div>
+      <p>ロジック一切不要。15時確認 → 即入り → OCOで放置。</p>
+      <p class="mn">// 忙しくて条件確認できない人向け</p>
+    </div>
+    <div class="entry-card entry-card-b">
+      <div class="entry-label"><span class="bdg bt">B</span> 押し目買い</div>
+      <p>5波ロジック。15分足でストキャスクロスを待つ。安値で入る。</p>
+      <p class="mn">// 精度重視・欧州中に見られる人向け</p>
+    </div>
+    <div class="entry-card entry-card-c">
+      <div class="entry-label"><span class="bdg bc">C</span> ブレイクアウト</div>
+      <p>3波ロジック。ブレイク瞬間のストキャス状態を確認。</p>
+      <p class="mn">// Aより精度を上げたいが押し目は待てない人向け</p>
+    </div>
+  </div>
+</div>
+
+<div class="pc pa">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+    <span class="bdg bp">A</span><h2 style="margin:0">即エントリー（ロジック不要）</h2>
+  </div>
+  <ol class="steps">
+    <li>15時（冬16時）にチャートを開く</li>
+    <li>東京タイム中に前日最高値をブレイクしキープしているかを確認する</li>
+    <li>確認できたら<strong>その瞬間に買いエントリー</strong>（ストキャス等の追加条件は不要）</li>
+    <li>エントリーと同時にOCO注文（損切り＋利確）を設定してチャートを閉じる</li>
+  </ol>
+  <div class="dv"></div>
+  <div class="g2">
+    <div>
+      <div class="row"><span class="lbl">損切り</span><span class="val">前日最高値のやや下。前日最高値を割れた時点でパターン否定のため即撤退。</span></div>
+    </div>
+    <div>
+      <div class="row"><span class="lbl">利確</span><span class="val">以下3択から1つ選ぶ（自分に合うものを固定で使い続ける）</span></div>
+      <div class="ch"><span class="chn">1</span><span><strong>固定10〜15pips</strong>（最もシンプル・感情が入らない）</span></div>
+      <div class="ch"><span class="chn">2</span><span><strong>損切り幅と同じ幅</strong>（損切り20pipsなら利確も20pips。1対1のRR）</span></div>
+      <div class="ch"><span class="chn">3</span><span><strong>東京タイム上昇幅と同じpips</strong>（東京で40pips上昇なら欧州でも40pips狙う）</span></div>
+    </div>
+  </div>
+  <div class="al al-gn" style="margin-top:12px">応用：欧州レンジ（⑤）になる可能性を踏まえ、「ここまで戻したら買い」という指値注文を事前設定する方法もある。良い価格でのエントリーが実現できる。</div>
+</div>
+
+<div class="pc pb">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+    <span class="bdg bt">B</span><h2 style="margin:0">押し目買い（5波ロジック）</h2>
+  </div>
+  <ol class="steps">
+    <li>1時間足で東京タイムが前日最高値をブレイク・キープしていることを確認する</li>
+    <li>チャートを<strong>15分足</strong>に切り替える</li>
+    <li><strong>前日最高値より上の状態を維持したまま</strong>、ストキャスが20〜30付近まで下がる押し目を待つ</li>
+    <li>ストキャスがゴールデンクロスしたタイミングで買いエントリー</li>
+    <li>15分足でサインが出ない場合は<strong>5分足</strong>に落として同じ条件（ストキャスクロス）を探す</li>
+  </ol>
+  <div class="al al-rd">前日最高値を割り込んでからクロスしても入らない。前日最高値より上にいることが必須条件。</div>
+  <div class="dv"></div>
+  <div class="g2">
+    <div>
+      <div class="row"><span class="lbl">損切り</span><span class="val">前日最高値の下に置く。押し目の深さに関わらずこの基準は変えない。</span></div>
+    </div>
+    <div>
+      <div class="row"><span class="lbl">利確</span><span class="val">以下2択から選ぶ</span></div>
+      <div class="ch"><span class="chn">1</span><span><strong>15分足の直近高値付近</strong>で利確する</span></div>
+      <div class="ch"><span class="chn">2</span><span><strong>固定5〜10pips</strong>（欧州レンジ時でも安全に利確できる早め決済）</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="pc pcb">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+    <span class="bdg bc">C</span><h2 style="margin:0">ブレイクアウト（3波ロジック）</h2>
+  </div>
+  <ol class="steps">
+    <li>15時（冬16時）に1時間足で前日最高値のブレイクを確認する</li>
+    <li>そのときの<strong>ストキャスの方向</strong>を確認する（切り上がりか、切り下がりか）</li>
+    <li>ストキャスが<strong>切り上がっている</strong> → <span class="ok-tag">即座に買いエントリーOK</span></li>
+    <li>ストキャスが<strong>切り下がっている</strong> → <span class="ng-tag">その瞬間はエントリーしない</span> → <strong>マックリのゴールデンクロス</strong>が出るまで待つ</li>
+  </ol>
+  <div class="dv"></div>
+  <div class="g2">
+    <div>
+      <div class="row"><span class="lbl">損切り</span><span class="val">前日最高値の下に置く（パターンBと同じ基準）</span></div>
+    </div>
+    <div>
+      <div class="row"><span class="lbl">利確</span><span class="val">以下2択から選ぶ</span></div>
+      <div class="ch"><span class="chn">1</span><span><strong>東京タイム上昇幅と同じpips</strong>（東京で上昇した幅分を欧州で狙う）</span></div>
+      <div class="ch"><span class="chn">2</span><span><strong>マックリがデッドクロスしたタイミング</strong>で利確（トレンドの勢い消滅サイン）</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">欧州タイムの賞味期限</div>
+  <div class="al al-am">欧州タイム（A/B/C）のポジションは21時（冬22時）まで。21時を過ぎたらNYパターンとして改めて別の判断をする。</div>
+</div>
+
+</div><!-- /f4 -->
+
+<!-- ⑤ NYタイム専用 -->
+<div id="s-f5" class="sec">
+
+<div class="formula">
+  <h3>N波動の原則（NYタイム利確の基本公式）</h3>
+  <p style="font-size:15px;font-weight:500;color:var(--blue);margin:8px 0;font-family:'Rajdhani',sans-serif;letter-spacing:0.05em">NYタイムの利確目安 ≈ 欧州タイムで動いた値幅と同程度</p>
+  <p>例：欧州タイムで85pips動いた → NYでもこの水準から約85pipsを利確目標に設定する。パターン⑦⑧⑪⑫に適用する。</p>
+</div>
+
+<div class="sep">逆張りNY（パターン③④）：東京・欧州で動いた方向と逆にNYが動く</div>
+
+<div class="pc pcb">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+    <span class="bdg bc">パターン③</span>
+    <h3 style="margin:0">東京↑ 欧州↑ → NY売り（利確決済が下落を作る）</h3>
+  </div>
+  <div class="g2">
+    <div>
+      <ol class="steps">
+        <li>21時（冬22時）にストキャスが<strong>80付近</strong>にあることを確認する</li>
+        <li>NY入りを境に売りエントリー</li>
+      </ol>
+      <div class="row" style="margin-top:10px"><span class="lbl">損切り</span><span class="val">直近高値の上に置く</span></div>
+      <div class="row"><span class="lbl">利確</span><span class="val">固定pips または ストキャスが20付近まで下がったら早め決済</span></div>
+    </div>
+    <div class="cs">
+      <div class="al-rd al" style="margin:0"><strong>使用禁止：</strong>日足エリオット波動が上昇方向（3波・5波）のときは③を使わない。長期の買い圧力が決済売りより強く、下がらず上昇継続する可能性が高い。</div>
+    </div>
+  </div>
+</div>
+
+<div class="pc pbl">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+    <span class="bdg bbl">パターン④</span>
+    <h3 style="margin:0">東京↓ 欧州↓ → NY買い（利確決済が上昇を作る）</h3>
+  </div>
+  <div class="g2">
+    <div>
+      <ol class="steps">
+        <li>21時にストキャスが<strong>20付近</strong>にあることを確認する</li>
+        <li>NY入りを境に買いエントリー</li>
+      </ol>
+      <div class="row" style="margin-top:10px"><span class="lbl">損切り</span><span class="val">直近安値の下に置く</span></div>
+      <div class="row"><span class="lbl">利確</span><span class="val">固定pips または ストキャスが80付近まで上がったら早め決済</span></div>
+    </div>
+    <div class="cs">
+      <div class="al-rd al" style="margin:0"><strong>使用禁止：</strong>日足エリオット波動が下落方向（3波・5波）のときは④を使わない。</div>
+    </div>
+  </div>
+</div>
+
+<div class="sep">順張りNY（パターン⑦⑧）：東京が動き欧州がレンジ → NYが東京と同方向に動く</div>
+
+<div class="pc pb">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+    <span class="bdg bp">パターン⑦⑧</span>
+    <h3 style="margin:0">東京↑（↓）→ 欧州レンジ → NY同方向</h3>
+  </div>
+  <div class="g2">
+    <div>
+      <ol class="steps">
+        <li>21時（冬22時）を確認する</li>
+        <li><strong>15分足</strong>でストキャスのクロスを確認する</li>
+        <li>15分足でサインが出ない場合は<strong>5分足</strong>に落として同じ条件を探す</li>
+        <li>クロスが確認できたら東京と同方向にエントリー</li>
+      </ol>
+    </div>
+    <div>
+      <div class="row"><span class="lbl">損切り</span><span class="val">前日高値（⑦上昇）または前日安値（⑧下落）の付近</span></div>
+      <div class="row"><span class="lbl">利確</span><span class="val"><strong>欧州タイムで動いた値幅と同程度のpipsを目標（N波動）</strong></span></div>
+      <p class="mn">// 例：欧州レンジで40pipsの範囲が形成されたなら、NYでもこの水準から約40pips狙う</p>
+    </div>
+  </div>
+</div>
+
+<div class="sep">保有確認型NY（パターン⑪⑫）：東京レンジ・欧州が動く → NYも同方向継続</div>
+
+<div class="pc pgn">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+    <span class="bdg bgg">パターン⑪⑫</span>
+    <h3 style="margin:0">東京レンジ → 欧州↑（↓）→ NY同方向（イケイケ確認必須）</h3>
+  </div>
+  <div class="al al-gn" style="margin-bottom:12px"><strong>「イケイケ確認」が必須：</strong>21時時点で欧州の動きが逆流せず方向をキープしているか確認。逆流・戻りがあればエントリーしない（欧州勢の利確が始まった証拠）。</div>
+  <div class="g2">
+    <div>
+      <ol class="steps">
+        <li>21時にイケイケ確認（逆流なし = 欧州勢がまだポジション保有中）</li>
+        <li>確認できたら<strong>15分足</strong>でストキャスクロスを確認する</li>
+        <li>15分足でサインなし → <strong>5分足</strong>に落として探す</li>
+        <li>クロスが出たら欧州と同方向にエントリー</li>
+      </ol>
+    </div>
+    <div>
+      <div class="row"><span class="lbl">損切り</span><span class="val">前日高安値付近</span></div>
+      <div class="row"><span class="lbl">利確</span><span class="val"><strong>欧州タイムで動いた値幅と同程度のpipsを目標（N波動）</strong></span></div>
+      <div class="cs" style="margin-top:10px"><p><strong>なぜNYも同方向か：</strong>欧州勢が21時になっても保有継続 = まだ伸びると判断中の証拠。NY新規勢も同方向に乗ってくるため勢いが継続する。</p></div>
+    </div>
+  </div>
+</div>
+
+<div class="sep">急騰急落NY（パターン⑬⑭）：東京・欧州ともレンジ → NYで急激に動く</div>
+
+<div class="pc pam">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+    <span class="bdg bam">パターン⑬⑭</span>
+    <h3 style="margin:0">東京レンジ・欧州レンジ → NYで急騰（急落）</h3>
+  </div>
+  <div class="g2">
+    <div>
+      <div class="row"><span class="lbl">エントリー</span><span class="val">以下2択から選ぶ</span></div>
+      <div class="ch"><span class="chn">1</span><span><strong>先仕込み：</strong>欧州終盤（17〜20時頃）に本日の最安値（最高値）付近でエリオット方向にポジションを仕込んでおく</span></div>
+      <div class="ch"><span class="chn">2</span><span><strong>21時クロス：</strong>21時切り替わりのタイミングで15分足（または5分足）のストキャスクロスを確認してエントリー</span></div>
+      <div class="row" style="margin-top:10px"><span class="lbl">損切り</span><span class="val">本日形成された最安値（上昇）または最高値（下落）の付近</span></div>
+      <div class="row"><span class="lbl">利確</span><span class="val">エリオット方向に大きく伸ばす（急騰・急落するため通常より大きく取れる）</span></div>
+    </div>
+    <div class="cs">
+      <p><strong>なぜ急騰急落が起きるのか：</strong>東京・欧州がともにレンジ = 本日の最安値・最高値の位置が超明確。NYで一斉に「安いところで買う」行動が集中するため急激な動きが発生する。</p>
+      <div class="al-rd al" style="margin:10px 0 0"><strong>注意：</strong>エリオット波動が必須。方向が判断できない場合はこのパターンを使わない。</div>
+    </div>
+  </div>
+</div>
+
+<div class="sep">特殊パターン（⑮⑯）：ちょい動き後にNYで方向が出る</div>
+
+<div class="pc pa">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+    <span class="bdg bam">パターン⑮⑯</span>
+    <h3 style="margin:0">東京ちょい動き → 欧州で逆方向にちょい動き → NYで方向確定</h3>
+  </div>
+  <div class="g2">
+    <div class="cs">
+      <h3 style="color:var(--green)">⑮（上昇パターン）</h3>
+      <p>東京：ちょい上昇（前日高値未更新）→ 欧州：ちょい下落 → NY：上昇</p>
+      <p class="mn">// 押し目が形成されNYで安値拾いの買いが集まる。5波の押し目狙いに特に有効。</p>
+    </div>
+    <div class="cs">
+      <h3 style="color:var(--red)">⑯（下落パターン）</h3>
+      <p>東京：ちょい下落（前日安値未更新）→ 欧州：ちょい上昇 → NY：下落</p>
+      <p class="mn">// 戻り目が形成されNYで高値売りが集まる。</p>
+    </div>
+  </div>
+  <div class="row" style="margin-top:12px"><span class="lbl">エントリー</span><span class="val">21時に15分足（または5分足）のストキャスクロスを確認してエントリー</span></div>
+  <div class="row"><span class="lbl">損切り</span><span class="val">本日形成された最安値（⑮）または最高値（⑯）の付近</span></div>
+  <div class="row"><span class="lbl">利確</span><span class="val">直近高値（⑮）または直近安値（⑯）付近。1時間足で5波狙いと組み合わせると精度が高い</span></div>
+</div>
+
+<div class="card">
+  <div class="card-title">NYタイム 共通ルール</div>
+  <div class="g2">
+    <div class="cs"><div class="row"><span class="lbl">賞味期限</span><span class="val">翌2時（冬3時）。超えたら損益に関わらず必ず強制決済する。</span></div></div>
+    <div class="cs"><div class="row"><span class="lbl">5分足</span><span class="val">15分足でストキャスのサインが出ない場合は必ず5分足に落として探す。</span></div></div>
+  </div>
+</div>
+
+</div><!-- /f5 -->
+
+<!-- ⑥ 東京タイム専用 -->
+<div id="s-f6" class="sec">
+
+<div class="card">
+  <div class="card-title">東京タイムトレード（ドル円限定）</div>
+  <div class="al al-cn" style="margin-bottom:14px">通常の時間帯トレードは「東京を観察してヨーロッパ・NYで勝負する」手法。この特別手法は東京タイム自体で勝負する。対象は<strong>ドル円（または円絡み通貨ペア）限定</strong>。</div>
+  <div class="g2">
+    <div style="border:1px solid var(--amber-border);background:var(--amber-dim);border-radius:4px;padding:14px 18px">
+      <span class="bdg bam" style="margin-bottom:8px;display:inline-block">OBSERVATION</span>
+      <p style="font-size:15px;font-weight:600;color:var(--amber);margin-bottom:6px;font-family:'Rajdhani',sans-serif">9:00〜10:00（1時間）</p>
+      <p>ドル円が30pips以上動いたかを確認する。ヒゲを含む最高値〜最安値で計測する。</p>
+    </div>
+    <div style="border:1px solid var(--green-border);background:var(--green-dim);border-radius:4px;padding:14px 18px">
+      <span class="bdg bgg" style="margin-bottom:8px;display:inline-block">BATTLE ZONE</span>
+      <p style="font-size:15px;font-weight:600;color:var(--green);margin-bottom:6px;font-family:'Rajdhani',sans-serif">10:00〜12:00（2時間のみ）</p>
+      <p>パターンが合致した場合のみエントリー。<strong>12時には損益に関わらず絶対に強制決済。</strong></p>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">エントリールール</div>
+  <table class="tbl">
+    <tr><th>9〜10時の値動き</th><th>エントリー方向</th><th>エントリータイミング</th></tr>
+    <tr><td><span class="ok-tag">30pips以上上昇</span></td><td><strong>買いエントリー</strong></td><td><strong>10時ちょうど</strong>（9時58分頃に確認開始が最適。遅れるほど不利になる）</td></tr>
+    <tr><td><span class="ng-tag">30pips以上下落</span></td><td><strong>売りエントリー</strong></td><td><strong>10時ちょうど</strong></td></tr>
+    <tr><td><span class="bdg bgr">30pips未満</span></td><td><strong>トレードしない</strong></td><td>—</td></tr>
+  </table>
+  <div class="al al-am" style="margin-top:12px">10時を過ぎてから気づいてもエントリーしない。残り時間が短くなるほど不利になる一方で、すでに上昇してしまっていれば追いかける意味がない。</div>
+</div>
+
+<div class="card">
+  <div class="card-title">損切り・利確・賞味期限</div>
+  <div class="g2">
+    <div class="pc pam">
+      <h3>利確</h3>
+      <div class="dv"></div>
+      <div class="row"><span class="lbl">基準</span><span class="val"><strong>5〜10pips固定</strong>（欲張らない）</span></div>
+      <p class="mn">// 2時間という短い勝負時間のため、インジケーターの条件が揃う保証がない。シンプルに固定pipsで早期確定する。</p>
+    </div>
+    <div class="pc prd">
+      <h3>損切り（2択から選ぶ）</h3>
+      <div class="dv"></div>
+      <div class="ch"><span class="chn">1</span><span><strong>固定pips</strong>：事前に何pipsで切るかを決めておく</span></div>
+      <div class="ch"><span class="chn">2</span><span><strong>12時強制決済</strong>：損益に関わらず12時になったら必ず決済する</span></div>
+      <div class="al al-rd" style="margin-top:10px;margin-bottom:0">12時を過ぎたポジションは絶対に持ち越さない。前場終了・昼休みでこの時間帯の参加者が一斉に決済し相場の性質が変わる。</div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">なぜ9〜10時・12時が基準なのか</div>
+  <div class="cs" style="margin-bottom:10px">
+    <h3>9〜10時の理由</h3>
+    <p>9時：東京株式市場（前場）が開場。企業の貿易決済・機関投資家の取引により円とドルの両替が大規模に発生する。30pips以上動いた = 株式市場の影響で大きな力が働いた証拠 = トレンドが確認できた状態。30pips未満の場合は力の根拠がなく優位性がない。</p>
+  </div>
+  <div class="cs">
+    <h3>12時の理由</h3>
+    <p>前場終了・昼休み開始。この時間帯でトレードしていた参加者が一斉に決済する。その後の動きはまったく別の力学になるため、この手法で持ったポジションを引き続き保有することに意味がなくなる。</p>
+  </div>
+</div>
+
+</div><!-- /f6 -->
+
+<!-- ⑦ 禁則・鉄則 -->
+<div id="s-f7" class="sec">
+
+<div class="card">
+  <div class="card-title">5つの禁則（すべて守る）</div>
+  <div class="pc prd">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span class="bdg brd">禁則①</span><h3 style="margin:0;color:var(--red)">エリオット波動が出ていない通貨ペアで時間帯パターンを使う</h3></div>
+    <p>波動が不明確な通貨ペアはトレーダーの参加者が少なく、時間帯の大衆心理が機能しない。ユーロドルが日足で不明確なら、エリオットが明確なドル円・ゴールドに絞る。</p>
+  </div>
+  <div class="pc prd">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span class="bdg brd">禁則②</span><h3 style="margin:0;color:var(--red)">エリオット波動の方向と逆方向に時間帯パターンでエントリーする</h3></div>
+    <p>長期（2〜3ヶ月）の大衆心理は短期（今日）の大衆心理より圧倒的に強い。エリオット上昇3波の場面でNY売り（パターン③）を使うなど、方向が逆のトレードは必ず負ける構造になる。</p>
+  </div>
+  <div class="pc prd">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span class="bdg brd">禁則③</span><h3 style="margin:0;color:var(--red)">分からないパターンを無理やり当てはめてエントリーする</h3></div>
+    <p>「自分がエントリーしたいからパターンに当てはめる」のが最悪の行為。東京・欧州・NYのどの判定でも「分からない」が正解なら、やらないのが正解。分からない相場でのトレードに優位性はない。</p>
+  </div>
+  <div class="pc prd">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span class="bdg brd">禁則④</span><h3 style="margin:0;color:var(--red)">賞味期限を過ぎたポジションを持ち続ける</h3></div>
+    <p>欧州タイムのポジション → 21時（冬22時）強制決済。NYタイムのポジション → 翌2時（冬3時）強制決済。東京タイムトレードのポジション → 12時強制決済。含み損・含み益に関わらず必ずクリアにする。</p>
+  </div>
+  <div class="pc prd">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span class="bdg brd">禁則⑤</span><h3 style="margin:0;color:var(--red)">新しい手法を覚えるたびに以前のものを捨てて試し続ける</h3></div>
+    <p>今の手法で結果が出ていない段階で新しい武器を使い出すと、どれも中途半端になる。まずエリオット波動だけで結果を出す。次にパターン①②を追加する。という段階を踏む。</p>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title">やらない方がいい状況</div>
+  <table class="tbl">
+    <tr><th>状況</th><th>理由</th><th>対処</th></tr>
+    <tr><td>日足エリオット波動が不明確</td><td>長期の集団行動が読めない</td><td>その通貨ペアは完全に見送り</td></tr>
+    <tr><td>パターン③④でエリオットが同方向</td><td>長期の大衆心理が決済売りより強い</td><td>そのパターンは使わない</td></tr>
+    <tr><td>重要指標・要人発言がある</td><td>大衆心理パターンが崩れる</td><td>指標前後はエントリー見送りまたは極小ロット</td></tr>
+    <tr><td>⑪⑫でイケイケ確認が取れない（逆流あり）</td><td>欧州勢が利確を開始した証拠</td><td>そのタイミングのエントリーは見送り</td></tr>
+    <tr><td>月曜日序盤</td><td>週初は参加者が少なくパターンが機能しにくい</td><td>エリオット重視、時間帯は補助的に使う</td></tr>
+    <tr><td>NZDカナダ・AUDカナダ等の値動きが乏しいペア</td><td>東京タイムで値動きが起きにくい</td><td>ドル円・ユーロ円・ゴールド等に絞る</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <div class="card-title">学習ロードマップ</div>
+  <div class="phase-wrap">
+    <div class="phase-item">
+      <div class="phase-dot" style="background:var(--purple);border-color:var(--purple)"></div>
+      <div class="cs">
+        <span class="bdg bp" style="margin-bottom:8px;display:inline-block">PHASE 01 — まずここだけ</span>
+        <p>日足エリオット波動のみ。3波・5波の方向に押し目買い・戻り売り。時間帯トレードは使わない。これだけで結果が出る。</p>
+      </div>
+    </div>
+    <div class="phase-item">
+      <div class="phase-dot" style="background:var(--green);border-color:var(--green)"></div>
+      <div class="cs">
+        <span class="bdg bt" style="margin-bottom:8px;display:inline-block">PHASE 02 — パターン①②を追加</span>
+        <p>15時に前日高値・安値のブレイク確認をする習慣をつける。ブレイクしたら欧州タイムに押し目買い（①②）のみ実践。エントリー手法はBから始める。</p>
+      </div>
+    </div>
+    <div class="phase-item">
+      <div class="phase-dot" style="background:var(--amber);border-color:var(--amber)"></div>
+      <div class="cs">
+        <span class="bdg bam" style="margin-bottom:8px;display:inline-block">PHASE 03 — NYパターンを習得</span>
+        <p>欧州タイム終了後のNYを確認する習慣をつける。パターン③④⑦⑧を実践。N波動の利確基準（欧州値幅と同程度）を体得する。</p>
+      </div>
+    </div>
+    <div class="phase-item">
+      <div class="phase-dot" style="background:var(--red);border-color:var(--red)"></div>
+      <div class="cs">
+        <span class="bdg bc" style="margin-bottom:8px;display:inline-block">PHASE 04 — 東京レンジパターンを習得</span>
+        <p>⑨〜⑭のパターンを追加。東京が静止している日にエリオット方向への反応を狙う。⑪⑫のイケイケ確認、⑬⑭の急騰急落を体得する。</p>
+      </div>
+    </div>
+    <div class="phase-item" style="margin-bottom:0">
+      <div class="phase-dot" style="background:var(--cyan);border-color:var(--cyan)"></div>
+      <div class="cs">
+        <span class="bdg bcn" style="margin-bottom:8px;display:inline-block">PHASE 05 — 全16パターンを自在に使う</span>
+        <p>⑮⑯（ちょい動き）と東京タイムトレードを含む全手法を状況に応じて使い分ける。エリオット×時間帯の掛け算で最高精度のトレードを実現する。</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /f7 -->
+
+</div><!-- /content-area -->
+
+<!-- FOOTER STATUS BAR -->
+<div style="border-top:1px solid var(--border2);padding:10px 40px;background:var(--bg2);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+  <div style="display:flex;align-items:center;gap:20px">
+    <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text3)">▸ SYSTEM ONLINE</span>
+    <span style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text3)">// 16 PATTERNS LOADED</span>
+  </div>
+  <div style="font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--text3)">ELLIOTT × SESSION × CROWD PSYCHOLOGY</div>
+</div>
+
+</div><!-- /wrap -->
+
+<script>
+function go(e,id){
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));
+  document.getElementById('s-'+id).classList.add('on');
+  e.currentTarget.classList.add('on');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+</body>
+</html>
