@@ -417,7 +417,7 @@ async function loadData() {
     totalTrades++;
     totalPips += pips;
     if (counts[rank] !== undefined) counts[rank]++;
-    if (rank === "S" || rank === "A") winTrades++;
+    if (pips > 0) winTrades++;
     chartData.push({ date, pips });
 
     const dirClass = dir === "買い" ? "plus" : dir === "売り" ? "minus" : "neutral";
