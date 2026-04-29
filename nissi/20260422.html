@@ -341,5 +341,29 @@
     </div>
 
   </div>
+    <!-- ★ スクリプトはDOMが全て読み込まれた後に実行されるよう、</body>直前に配置 -->
+  <script>
+    document.querySelectorAll('.chart-item img').forEach(img => {
+      img.addEventListener('click', () => {
+        const lightbox    = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightbox-img');
+        const caption     = document.getElementById('lightbox-caption');
+
+        lightboxImg.src     = img.src;
+        caption.textContent = img.alt || '';
+        lightbox.classList.add('open');
+      });
+    });
+
+    document.getElementById('lightbox-close').addEventListener('click', () => {
+      document.getElementById('lightbox').classList.remove('open');
+    });
+
+    document.getElementById('lightbox').addEventListener('click', (e) => {
+      if (e.target.id === 'lightbox') {
+        e.currentTarget.classList.remove('open');
+      }
+    });
+  </script>
 </body>
 </html>
