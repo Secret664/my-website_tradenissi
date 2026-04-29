@@ -68,8 +68,6 @@
 </style>
 </head>
 
-
-
 <body>
 
   <!-- 1. 隠しデータ要素 -->
@@ -86,11 +84,11 @@
   </div>
 
   <!-- ===== LIGHTBOX OVERLAY ===== -->
-<div id="lightbox" role="dialog" aria-modal="true" aria-label="画像拡大">
-  <button id="lightbox-close" aria-label="閉じる">✕</button>
-  <img id="lightbox-img" src="" alt="">
-  <div id="lightbox-caption"></div>
-</div>
+  <div id="lightbox" role="dialog" aria-modal="true" aria-label="画像拡大">
+    <button id="lightbox-close" aria-label="閉じる">✕</button>
+    <img id="lightbox-img" src="" alt="">
+    <div id="lightbox-caption"></div>
+  </div>
 
   <!-- 2. スティッキーヘッダー -->
   <header class="top-header">
@@ -326,32 +324,32 @@
       </div>
     </div>
 
-  </div>
+  </div><!-- /.page-wrap -->
 
+  <!-- ★ スクリプトはDOMが全て読み込まれた後に実行されるよう、</body>直前に配置 -->
   <script>
-document.querySelectorAll('.chart-item img').forEach(img => {
-  img.addEventListener('click', () => {
-    const lightbox = document.getElementById('lightbox');
-    const lightboxImg = document.getElementById('lightbox-img');
-    const caption = document.getElementById('lightbox-caption');
+    document.querySelectorAll('.chart-item img').forEach(img => {
+      img.addEventListener('click', () => {
+        const lightbox    = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightbox-img');
+        const caption     = document.getElementById('lightbox-caption');
 
-    lightboxImg.src = img.src;
-    caption.textContent = img.alt || '';
+        lightboxImg.src     = img.src;
+        caption.textContent = img.alt || '';
+        lightbox.classList.add('open');
+      });
+    });
 
-    lightbox.classList.add('open');
-  });
-});
+    document.getElementById('lightbox-close').addEventListener('click', () => {
+      document.getElementById('lightbox').classList.remove('open');
+    });
 
-document.getElementById('lightbox-close').addEventListener('click', () => {
-  document.getElementById('lightbox').classList.remove('open');
-});
+    document.getElementById('lightbox').addEventListener('click', (e) => {
+      if (e.target.id === 'lightbox') {
+        e.currentTarget.classList.remove('open');
+      }
+    });
+  </script>
 
-// 背景クリックでも閉じる
-document.getElementById('lightbox').addEventListener('click', (e) => {
-  if (e.target.id === 'lightbox') {
-    e.currentTarget.classList.remove('open');
-  }
-});
-</script>
 </body>
 </html>
